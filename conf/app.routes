@@ -1,3 +1,5 @@
 # microservice specific routes
 
 GET        /hello-world             uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.HelloWorld.helloWorld
+
+GET        /foo                     uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.index(id = "")
