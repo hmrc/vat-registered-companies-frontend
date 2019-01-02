@@ -12,7 +12,7 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.views
 
 @Singleton
 class HelloWorld @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
-
+  // foo
   val helloWorld = Action.async { implicit request =>
     Future.successful(Ok(views.html.hello_world()))
   }
