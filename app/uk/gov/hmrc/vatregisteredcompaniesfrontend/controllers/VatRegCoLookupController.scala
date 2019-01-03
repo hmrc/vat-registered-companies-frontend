@@ -17,44 +17,77 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
-import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching
+import play.api.data.Forms.{boolean, mapping, text}
+import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.{Form, Mapping}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.uniform.webmonad._
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.uniform.FakePersistence
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.Lookup
+import views.html.vatregisteredcompaniesfrontend._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class VatRegCoLookupController @Inject()(
   val messagesApi: MessagesApi,
-  cache: ShortLivedHttpCaching
-)(
-  implicit val ec: ExecutionContext
-) extends WebMonadController with FrontendController {
+  connector: VatRegisteredCompaniesConnector,
+  implicit val config: AppConfig
+) extends FrontendController with I18nSupport {
 
+  import VatRegCoLookupController.form
 
-  def program(id: String)(implicit hc: HeaderCarrier): WebMonad[Result] = ???
-
-  def index(id: String): Action[AnyContent] = Action.async { implicit request =>
-    val key = request.session("uuid")
-    val persistence = FakePersistence()
-    runInner(request)(program(id))(id)(persistence.dataGet, persistence.dataPut)
+  def start: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(start()))
   }
 
-  /*
+  def lookupForm: Action[AnyContent] = Action.async {implicit request =>
+    Future.successful(Ok(lookup(form)))
+  }
 
-    def index(id: String): Action[AnyContent] = authorisedAction.async { implicit request =>
-      val persistence = SaveForLaterPersistence("registration", request.internalId, cache.shortLiveCache)
-      cache.get(request.internalId) flatMap {
-        case Some(fd) => runInner(request)(program(fd)(request, implicitly))(id)(persistence.dataGet,persistence.dataPut)
-        case None => NotFound("").pure[Future]
+  def submit = Action.async { implicit request =>
+    form.bindFromRequest().fold(
+      errors => BadRequest(lookup(errors)),
+      lookup => connector.lookup(lookup) map { x =>
+        ???
       }
-    }
-
-
-   */
+    )
+  }
 
 }
+
+object VatRegCoLookupController {
+
+  import uk.gov.voa.play.form.ConditionalMappings._
+
+  private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>
+    c1.apply(v) match {
+      case Valid => c2.apply(v)
+      case i: Invalid => i
+    }
+  }
+
+  private def required(key: String): Constraint[String] = Constraint {
+    case "" => Invalid(s"error.$key.required")
+    case _ => Valid
+  }
+
+  private def vatNumberConstraint(key: String): Constraint[String] = Constraint {
+    case a if !a.matches("^[0-9]{9}|[0-9]{12}$") => Invalid(s"error.$key.invalid")
+  }
+
+  private def mandatoryVatNumber(key: String): Mapping[String] = {
+    text.transform[String](_.trim, s => s).verifying(combine(required(key),vatNumberConstraint(key)))
+  }
+
+  val form: Form[Lookup] = Form(
+    mapping(
+      "target" -> mandatoryVatNumber("target"),
+      "withConsultationNumber" -> boolean,
+      "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
+    )(Lookup.apply)(Lookup.unapply)
+  )
+
+}
+

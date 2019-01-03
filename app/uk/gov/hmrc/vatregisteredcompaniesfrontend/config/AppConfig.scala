@@ -17,10 +17,11 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
+import play.api.i18n.Lang
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes
 
 @Singleton
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
@@ -36,4 +37,16 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val analyticsHost = loadConfig(s"google-analytics.host")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
+
+  def languageMap: Map[String, Lang] = Map(
+    "english" -> Lang("en"),
+    "cymraeg" -> Lang("cy"))
+
+  def routeToSwitchLanguage = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
+
+  lazy val languageTranslationEnabled =
+    runModeConfiguration.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
+
 }

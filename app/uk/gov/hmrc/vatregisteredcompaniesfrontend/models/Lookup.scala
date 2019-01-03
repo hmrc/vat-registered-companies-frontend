@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
+package uk.gov.hmrc.vatregisteredcompaniesfrontend.models
 
-import javax.inject.{Inject, Singleton}
+import play.api.libs.json.{Json, OFormat}
 
-import play.api.i18n.MessagesApi
-import play.api.mvc.Request
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+case class Lookup(
+  target: VatNumber,
+  withConsultationNumber: Boolean = false,
+  requester: Option[VatNumber] = None
+)
 
-@Singleton
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    views.html.error_template(pageTitle, heading, message)
+object Lookup {
+  implicit val lookupFormat: OFormat[Lookup] = Json.format[Lookup]
 }

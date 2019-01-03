@@ -19,7 +19,8 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.uniform
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.uniform.Persistence
-import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching // TODO remove library from build.sbt
+import uk.gov.hmrc.http.cache.client.ShortLivedHttpCaching// TODO remove library from build.sbt
+import cats.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,12 +28,15 @@ import scala.concurrent.{ExecutionContext, Future}
  Just here to make Uniform happy
  */
 case class FakePersistence (implicit
-  ec: ExecutionContext
+  ec: ExecutionContext,
+  hc: HeaderCarrier
 ) extends Persistence {
 
   def dataGet(session: String): Future[Map[String, JsValue]] = Future(Map.empty[String, JsValue])
 
-  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit = Future.successful()
+  def dataPut(session: String, dataIn: Map[String, JsValue]): Unit = {
+    Future(())
+  }
 
 }
 

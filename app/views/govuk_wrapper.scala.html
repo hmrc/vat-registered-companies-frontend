@@ -41,7 +41,7 @@
 
 @insideHeader = {
     @uiLayouts.header_nav(
-      navTitle = Some("vat-registered-companies-frontend"),
+      navTitle = Some(Messages("vatcheck.common.title")),
       navTitleLink = None,
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
@@ -61,14 +61,33 @@
 @footerTop = {}
 @footerLinks = {}
 
+@betaBanner = {
+    <div class="phase-banner" style="text-align: left">
+        <p>
+            <strong class="phase-tag">@Messages("vatcheck.common.alpha")</strong>
+            @Html(Messages("vatcheck.common.alpha-info", appConfig.betaFeedbackUrlAuth))
+        </p>
+    </div>
+}
+
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-      betaBanner = HtmlFormat.empty,
-      includeGridWrapper = false,
-      serviceInfoContent = Some(serviceInfoContent))
+        betaBanner = betaBanner,
+        includeGridWrapper = false,
+        includeHMRCBranding = false,
+        serviceInfoContent = Some(serviceInfoContent))
 }
 
 @mainContentHeader = {
+
+    @if(appConfig.languageTranslationEnabled) {
+        @views.html.language_selection(
+            appConfig.languageMap,
+            appConfig.routeToSwitchLanguage,
+            Some("language-switcher language-switcher-invert")) @*/ TODO sort out classes /*@
+    }
+
+
     @if(contentHeader.isDefined) {
         @uiLayouts.main_content_header(contentHeader = contentHeader.get)
     }

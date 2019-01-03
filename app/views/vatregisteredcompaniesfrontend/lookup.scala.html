@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-import javax.inject.{Inject, Singleton}
+@(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-import play.api.i18n.MessagesApi
-import play.api.mvc.Request
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
-@Singleton
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    views.html.error_template(pageTitle, heading, message)
+@main_template(Messages("vatcheck.lookup.heading")) {
+
+    <h1 class="heading-xlarge">@Messages("vatcheck.lookup.heading")</h1>
+
 }
