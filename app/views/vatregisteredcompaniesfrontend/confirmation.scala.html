@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.models
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.vatregisteredcompaniesfrontend.helpers._
 
-import java.time.{LocalDateTime, ZoneId}
+@(lookup: LookupResponse)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-import play.api.libs.json.{Json, OFormat}
+@main_template(Messages("vatcheck.lookup.heading")) {
 
-case class LookupResponse(
-  target: Option[VatRegisteredCompany],
-  requester: Option[VatNumber] = None,
-  consultationNumber: Option[ConsultationNumber] = None,
-  processingDate: ProcessingDate = LocalDateTime.now(ZoneId.of("Europe/London"))
-)
 
-object LookupResponse {
-  implicit val lookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
+
 }

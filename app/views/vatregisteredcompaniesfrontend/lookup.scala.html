@@ -14,13 +14,80 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import views.html.vatregisteredcompaniesfrontend.helpers._
+
 
 @(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
 @main_template(Messages("vatcheck.lookup.heading")) {
 
+    @error_summary(lookupForm)
+
     <h1 class="heading-xlarge">@Messages("vatcheck.lookup.heading")</h1>
+
+    @form(uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.submit) {
+
+        <fieldset class="form-field-group">
+            @* TODO consider extracting to helper (modify or delete inputText) *@
+            <legend class="visually-hidden">@Messages("vatcheck.lookup.heading")</legend>
+
+            <div class="form-group">
+                <label for="@lookupForm("target").name">
+                    @lookupForm("target").errors.map { error =>
+                        <span class="error-message" data-journey="search-page:error:@lookupForm("target").name">
+                        @Messages(error.message, error.args: _*)
+                        </span>
+                    }
+                </label>
+                <span class="form-hint">@Messages("vatcheck.lookup.target.hint")</span>
+                <input class="form-control @if(lookupForm("target").hasErrors) {form-control-error}"
+                id="@lookupForm("target").name"
+                name="@lookupForm("target").name"
+                value="@lookupForm("target").value"
+                type="text">
+            </div>
+
+            <div class="form-group">
+                <div class="multiple-choice" data-target="requester">
+                    <input class="form-control @if(lookupForm("withConsultationNumber").hasErrors) {form-control-error}"
+                    id="@lookupForm("withConsultationNumber").name"
+                    name="@lookupForm("withConsultationNumber").name"
+                    value="true"
+                    @if(lookupForm("withConsultationNumber").value.contains("true")) { checked="checked" }
+                    type="checkbox">
+                    <label for="@lookupForm("withConsultationNumber").name">
+                        @Messages("vatcheck.lookup.withConsultationNumber.label")
+                    </label>
+                </div>
+
+                <div class="panel panel-border-narrow js-hidden" id="requester">
+                    <label for="@lookupForm("requester").name">
+                        @Messages("vatcheck.lookup.requester.label")
+                        @lookupForm("requester").errors.map { error =>
+                            <span class="error-message" data-journey="search-page:error:@lookupForm("requester").name">
+                            @Messages(error.message, error.args: _*)
+                            </span>
+                        }
+                    </label>
+                    <span class="form-hint">@Messages("vatcheck.lookup.requester.hint")</span>
+                    <input class="form-control @if(lookupForm("requester").hasErrors) {form-control-error}"
+                    id="@lookupForm("requester").name"
+                    name="@lookupForm("requester").name"
+                    value="@lookupForm("requester").value"
+                    type="text">
+
+                </div>
+
+            </div>
+
+
+        </fieldset>
+
+
+        <button class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
+    }
 
 }

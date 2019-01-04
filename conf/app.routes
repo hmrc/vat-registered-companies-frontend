@@ -1,8 +1,10 @@
 # microservice specific routes
+GET        /assets/*file            controllers.Assets.at(path="/public", file)
 
 GET        /hello-world             uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.HelloWorld.helloWorld
 
 GET        /start                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.start
 GET        /enter-vat-details       uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.lookupForm
+POST       /enter-vat-details       uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.submit
 
 GET        /language/:lang          uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.LanguageSwitchController.switchToLanguage(lang: String)

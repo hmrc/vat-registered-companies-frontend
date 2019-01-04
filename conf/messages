@@ -1,7 +1,11 @@
-# wrapper
+# common content
 vatcheck.common.title=Check a UK VAT number
 vatcheck.common.alpha=ALPHA
 vatcheck.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
+
+# comment errors
+vatcheck.common.errorSummary=[WHAT!!]
+
 
 # start page content
 vatcheck.start.heading=Check a UK VAT number
@@ -13,3 +17,19 @@ vatcheck.start.button=Start
 
 # lookup form content
 vatcheck.lookup.heading=What is the UK VAT number you want to check?
+vatcheck.lookup.target.hint=This is 9 or 12 numbers, sometimes with ‘GB’ at the start, like 123456789 or GB123456789
+vatcheck.lookup.withConsultationNumber.label=Select if you want proof of your check (for UK VAT-registered businesses only)
+vatcheck.lookup.requester.label=Enter your own UK VAT number
+vatcheck.lookup.requester.hint=We need this so we can give you a reference number
+vatcheck.lookup.button=Search
+
+# lookup form errors
+error.target.required=[PLEASE SUPPLY A VAT NUMBER!!]
+error.target.invalid=[PLEASE SUPPLY A VALID VAT NUMBER!!]
+error.requester.required=[PLEASE SUPPLY YOUR OWN VAT NUMBER!!]
+error.requester.invalid=[YOUR OWN VAT NUMBER ISN'T VALID!!]
+
+# results
+
+vatcheck.result.invalidVatNo=Invalid UK VAT number
+vatcheck.result.p=There are no results for '<b>{0}</b>'

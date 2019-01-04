@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.Lookup
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
 import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.Future
@@ -39,18 +39,22 @@ class VatRegCoLookupController @Inject()(
   import VatRegCoLookupController.form
 
   def start: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(start()))
+    Future.successful(Ok(views.html.vatregisteredcompaniesfrontend.start_page()))
   }
 
   def lookupForm: Action[AnyContent] = Action.async {implicit request =>
     Future.successful(Ok(lookup(form)))
   }
 
-  def submit = Action.async { implicit request =>
+  def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => BadRequest(lookup(errors)),
-      lookup => connector.lookup(lookup) map { x =>
-        ???
+      errors => Future(BadRequest(lookup(errors))),
+      lookup => connector.lookup(lookup) flatMap  {
+        case Some(response: LookupResponse) if response.target.isEmpty =>
+          Future.successful(Ok(invalid_vat_number(response, lookup.target)))
+        case Some(response: LookupResponse) =>
+          Future.successful(Ok(confirmation(response))) // TODO confirmation page
+//        case _ => Future(BadRequest(NotFound)) // TODO error page
       }
     )
   }
@@ -60,6 +64,14 @@ class VatRegCoLookupController @Inject()(
 object VatRegCoLookupController {
 
   import uk.gov.voa.play.form.ConditionalMappings._
+
+  val form: Form[Lookup] = Form(
+    mapping(
+      "target" -> mandatoryVatNumber("target"),
+      "withConsultationNumber" -> boolean,
+      "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
+    )(Lookup.apply)(Lookup.unapply)
+  )
 
   private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>
     c1.apply(v) match {
@@ -75,19 +87,13 @@ object VatRegCoLookupController {
 
   private def vatNumberConstraint(key: String): Constraint[String] = Constraint {
     case a if !a.matches("^[0-9]{9}|[0-9]{12}$") => Invalid(s"error.$key.invalid")
+    case _ => Valid
   }
 
   private def mandatoryVatNumber(key: String): Mapping[String] = {
     text.transform[String](_.trim, s => s).verifying(combine(required(key),vatNumberConstraint(key)))
   }
 
-  val form: Form[Lookup] = Form(
-    mapping(
-      "target" -> mandatoryVatNumber("target"),
-      "withConsultationNumber" -> boolean,
-      "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
-    )(Lookup.apply)(Lookup.unapply)
-  )
 
 }
 
