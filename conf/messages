@@ -32,4 +32,6 @@ error.requester.invalid=[YOUR OWN VAT NUMBER ISN'T VALID!!]
 # results
 
 vatcheck.result.invalidVatNo=Invalid UK VAT number
-vatcheck.result.p=There are no results for '<b>{0}</b>'
+vatcheck.result.validVatNo=Valid UK VAT number
+vatcheck.result.processingDate=this is some {0}
+vatcheck.result.p=There are no results for <b class="bold">‘{0}’</b>

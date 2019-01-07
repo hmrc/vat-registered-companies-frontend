@@ -21,7 +21,7 @@
 
 @(lookup: LookupResponse)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("vatcheck.lookup.heading")) {
+@main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
 
 
 

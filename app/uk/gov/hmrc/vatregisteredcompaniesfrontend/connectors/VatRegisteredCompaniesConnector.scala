@@ -22,7 +22,7 @@ import play.api.Mode.Mode
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,9 +41,9 @@ class VatRegisteredCompaniesConnector @Inject()(
   def lookup(lookup: Lookup)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {
     case a: Lookup if a.requester.nonEmpty =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target}/${a.requester.getOrElse("")}").map(Some(_))
+      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.getOrElse("")}").map(Some(_))
     case a =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target}").map(Some(_))
+      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}").map(Some(_))
   }
 
 

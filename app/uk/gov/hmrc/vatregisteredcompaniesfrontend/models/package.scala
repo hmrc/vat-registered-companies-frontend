@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 package object models {
 
@@ -24,5 +25,14 @@ package object models {
   type VatNumber = String
   type ConsultationNumber = String
   type ProcessingDate = LocalDateTime
+
+  /* removes "GB" from the VatNumber, used by requests to the BE only */
+  implicit class VatNumberPimped(val self: VatNumber) {
+    def clean: CompanyName = self.replace("GB", "")
+  }
+
+  implicit class ProcessingDatePimped(val self: ProcessingDate) {
+    override def toString: String = self.format(DateTimeFormatter.ofPattern("h:mma"))
+  }
 
 }

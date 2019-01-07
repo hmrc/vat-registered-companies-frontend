@@ -19,12 +19,28 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.vatregisteredcompaniesfrontend.helpers._
 
+@import java.time.LocalDateTime
+@import java.time.format.DateTimeFormatter
 @(lookup: LookupResponse, target: VatNumber)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+
+@*d MMMM YYYY 'at' hh:mm a*@
+
+
+@date_time_format(time: LocalDateTime) =  @{
+    to_lower_am_pm(time.format(DateTimeFormatter.ofPattern("d MMMM YYYY 'at' hh:mm a 'GMT'")))
+}
+@to_lower_am_pm(time: String) = @{
+    ".*[A,P]{1}M.*".r.replaceAllIn(time, x => s"$x".toLowerCase)
+}
+
 
 @main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
 
     <h1>@Messages("vatcheck.result.invalidVatNo")</h1>
 
-    <p class="body-text">@Html(Messages("vatcheck.result.p", "foo"))</p>
+    <p class="body-text">@Html(Messages("vatcheck.result.p", target))</p>
+
+    <p class="small">@Messages("vatcheck.result.processingDate", date_time_format(lookup.processingDate))</p>
 
 }
