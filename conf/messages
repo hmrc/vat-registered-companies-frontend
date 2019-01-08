@@ -2,6 +2,8 @@
 vatcheck.common.title=Check a UK VAT number
 vatcheck.common.alpha=ALPHA
 vatcheck.common.alpha-info=<span>This is a new service – your <a href="{0}">feedback</a> will help us to improve it.</span>
+vatcheck.print=Print this page
+vatcheck.searchAgain=Search again
 
 # comment errors
 vatcheck.common.errorSummary=[WHAT!!]
@@ -30,8 +32,12 @@ error.requester.required=[PLEASE SUPPLY YOUR OWN VAT NUMBER!!]
 error.requester.invalid=[YOUR OWN VAT NUMBER ISN'T VALID!!]
 
 # results
-
 vatcheck.result.invalidVatNo=Invalid UK VAT number
 vatcheck.result.validVatNo=Valid UK VAT number
-vatcheck.result.processingDate=this is some {0}
-vatcheck.result.p=There are no results for <b class="bold">‘{0}’</b>
+vatcheck.result.processingDate=Search completed on {0}
+vatcheck.result.invalid.p=There are no results for <b class="bold">‘{0}’</b>
+vatcheck.result.valid.p=Vat number <b class="bold">{0}</b>
+vatcheck.result.business-address-heading=Registered business address
+vatcheck.result.proof.heading=Proof of check
+vatcheck.result.proof.ref-no-heading=Your reference number
+vatcheck.result.proof.vat-no-heading=Your business’s VAT number

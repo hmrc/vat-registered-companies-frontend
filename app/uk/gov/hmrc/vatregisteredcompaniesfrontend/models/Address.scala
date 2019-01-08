@@ -26,7 +26,19 @@ case class Address(
   line5: Option[String],
   postcode: Option[String],
   countryCode: String
-)
+) {
+  def lines: List[String] = {
+    line1 +: List(
+      line2,
+      line3,
+      line4,
+      line5,
+      postcode
+    ).collect { case Some(str) =>
+      str
+    } :+ "United Kingdom" // TODO check this
+  }
+}
 
 object Address {
   implicit val addressFormat: OFormat[Address] =

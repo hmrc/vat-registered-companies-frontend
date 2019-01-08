@@ -22,7 +22,58 @@
 @(lookup: LookupResponse)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
+    @lookup.target.map { t =>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <div class="govuk-box-highlight">
+                    <h1 class="heading-xlarge">@Messages("vatcheck.result.validVatNo")</h1>
+                        <p class="font-large">
+                            @t.name
+                            <br/>
+                            @Html(Messages("vatcheck.result.valid.p", t.vatNumber))
+                        </p>
+                </div>
+                <dl>
+                    <dt>
+                        <h2 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h2>
+                    </dt>
+                    <dd>
+                        @t.address.lines.map { line =>
+                        @line
+                        <br/>
+                        }
+                    </dd>
+                </dl>
 
-
-
+                <h2 class="heading-medium">@Messages("vatcheck.result.proof.heading")</h2>
+                @if(lookup.requester.nonEmpty) {
+                    @lookup.consultationNumber.map { no =>
+                        <dl>
+                            <dt>
+                            <h2 class="heading-small">@Messages("vatcheck.result.proof.ref-no-heading")</h2>
+                            </dt>
+                            <dd>
+                                @no
+                            </dd>
+                        </dl>
+                    }
+                    @lookup.requester.map { vatNo =>
+                        <dl>
+                            <dt>
+                            <h2 class="heading-small">@Messages("vatcheck.result.proof.vat-no-heading")</h2>
+                            </dt>
+                            <dd>
+                                @vatNo
+                            </dd>
+                        </dl>
+                    }
+                } else {
+                    <p>TODO - need to sort out the BE</p>
+                }
+                @processing_date(lookup.processingDate)
+                @print_this_page()
+                @search_again()
+            </div>
+        </div>
+    }
 }
