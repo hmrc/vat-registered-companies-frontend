@@ -36,7 +36,7 @@ case class Address(
       postcode
     ).collect { case Some(str) =>
       str
-    } :+ "United Kingdom" // TODO check this
+    } :+ "United Kingdom" // TODO check that hard coding UK is ok 
   }
 }
 
