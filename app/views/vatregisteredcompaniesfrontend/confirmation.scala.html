@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.vatregisteredcompaniesfrontend.helpers._
 
-@(lookup: LookupResponse)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
     @lookup.target.map { t =>
@@ -44,31 +44,32 @@
                         }
                     </dd>
                 </dl>
-
-                <h2 class="heading-medium">@Messages("vatcheck.result.proof.heading")</h2>
-                @if(lookup.requester.nonEmpty) {
-                    @lookup.consultationNumber.map { no =>
-                        <dl>
-                            <dt>
-                            <h2 class="heading-small">@Messages("vatcheck.result.proof.ref-no-heading")</h2>
-                            </dt>
-                            <dd>
+                @if(withConsultationNumber) {
+                    <h2 class="heading-medium">@Messages("vatcheck.result.proof.heading")</h2>
+                    @if(lookup.requester.nonEmpty) {
+                        @lookup.consultationNumber.map { no =>
+                            <dl>
+                                <dt>
+                                    <h2 class="heading-small">@Messages("vatcheck.result.proof.ref-no-heading")</h2>
+                                </dt>
+                                <dd class="body-text">
                                 @no
-                            </dd>
-                        </dl>
-                    }
-                    @lookup.requester.map { vatNo =>
-                        <dl>
-                            <dt>
-                            <h2 class="heading-small">@Messages("vatcheck.result.proof.vat-no-heading")</h2>
-                            </dt>
-                            <dd>
+                                </dd>
+                            </dl>
+                        }
+                        @lookup.requester.map { vatNo =>
+                            <dl>
+                                <dt>
+                                    <h2 class="heading-small">@Messages("vatcheck.result.proof.vat-no-heading")</h2>
+                                </dt>
+                                <dd class="body-text">
                                 @vatNo
-                            </dd>
-                        </dl>
+                                </dd>
+                            </dl>
+                        }
+                    } else {
+                        <p>TODO - need to sort out the BE</p>
                     }
-                } else {
-                    <p>TODO - need to sort out the BE</p>
                 }
                 @processing_date(lookup.processingDate)
                 @print_this_page()

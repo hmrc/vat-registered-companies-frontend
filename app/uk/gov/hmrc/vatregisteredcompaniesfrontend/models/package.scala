@@ -28,7 +28,7 @@ package object models {
 
   /* removes "GB" from the VatNumber, used by requests to the BE only */
   implicit class VatNumberPimped(val self: VatNumber) {
-    def clean: CompanyName = self.replace("GB", "")
+    def clean: VatNumber = self.replace("GB", "")
   }
 
   implicit class ProcessingDatePimped(val self: ProcessingDate) {
