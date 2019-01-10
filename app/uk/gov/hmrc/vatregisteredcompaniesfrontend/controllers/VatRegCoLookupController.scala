@@ -54,11 +54,9 @@ class VatRegCoLookupController @Inject()(
           Future.successful(Ok(invalid_vat_number(response, lookup.target)))
         case Some(response: LookupResponse) =>
           Future.successful(Ok(confirmation(response, lookup.withConsultationNumber)))
-//        case _ => Future(BadRequest(NotFound)) // TODO error page
       }
     )
   }
-
 }
 
 object VatRegCoLookupController {
@@ -95,7 +93,6 @@ object VatRegCoLookupController {
   private def mandatoryVatNumber(key: String): Mapping[String] = {
     text.transform[String](_.trim, s => s).verifying(combine(required(key),vatNumberConstraint(key)))
   }
-
 
 }
 
