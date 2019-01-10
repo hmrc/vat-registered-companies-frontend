@@ -20,24 +20,46 @@
 
 @main_template(Messages("vatcheck.start.heading")) {
 
-    <h1 class="heading-xlarge">@Messages("vatcheck.start.heading")</h1>
-    <div class="form-group">
-        <p>@Messages("vatcheck.start.p1")</p>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-xlarge">@Messages("vatcheck.start.heading")</h1>
+            <div class="form-group">
+                <p>@Messages("vatcheck.start.p1")</p>
 
 
-        <p>@Messages("vatcheck.start.p2")</p>
+                <p>@Messages("vatcheck.start.p2")</p>
 
-        @Html(Messages("vatcheck.start.ul"))
+                @Html(Messages("vatcheck.start.ul"))
 
-        <p>@Html(Messages("vatcheck.start.p3", "welsh-url"))</p>
+                <p>@Html(Messages("vatcheck.start.p3", "welsh-url"))</p>
+            </div>
+            <a
+                href="enter-vat-details"
+                role="button"
+                draggable="false"
+                class="button button-start">
+                    @Messages("vatcheck.start.button")
+            </a>
+            <h2 class="heading-medium">@Messages("vatcheck.start.before.heading")</h2>
+            <p class="body-text">@Messages("vatcheck.start.before.p1")</p>
+            <p class="body-text">@Html(Messages("vatcheck.start.before.p2"))</p>
+        </div>
+        <div class="column-one-third">
+            <aside class="app-related-items" role="complementary">
+                <h2 class="heading-medium" id="subsection-title">
+                    Related content
+                </h2>
+                <nav role="navigation" aria-labelledby="subsection-title">
+                    <ul class="list font-size-16">
+                        <li>
+                            <a href="https://www.gov.uk/report-vat-fraud">
+                                Report VAT fraud
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+        </div>
     </div>
-    <a
-        href="enter-vat-details"
-        role="button"
-        draggable="false"
-        class="button button-start">
-            @Messages("vatcheck.start.button")
-    </a>
-
 
 }

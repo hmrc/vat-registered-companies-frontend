@@ -14,8 +14,13 @@ vatcheck.start.heading=Check a UK VAT number
 vatcheck.start.p1=Use this service to check if a UK VAT registration number is valid.
 vatcheck.start.p2=If it is a valid VAT number, you can also:
 vatcheck.start.ul=<ul  class="list list-bullet"><li>find out the name and registered address of the business</li><li>get a reference number to prove the date and time you checked the VAT number - you'll need your own UK VAT number to do this</li></ul>
-vatcheck.start.p3=This service is also available in Welsh (<a href="{0}">Cymraeg</a>).
+vatcheck.start.p3=This service is also available in (<a href="{0}">Welsh (Cymraeg)</a>).
 vatcheck.start.button=Start
+vatcheck.start.before.heading=Before you start
+vatcheck.start.before.p1=You'll need your own UK VAT number if you want proof of your check.
+vatcheck.start.before.p2=You can also check a UK VAT number by calling the \
+  <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/vat-enquiries">VAT helpline</a>.
+
 
 # lookup form content
 vatcheck.lookup.heading=What is the UK VAT number you want to check?
@@ -41,3 +46,5 @@ vatcheck.result.business-address-heading=Registered business address
 vatcheck.result.proof.heading=Proof of check
 vatcheck.result.proof.ref-no-heading=Your reference number
 vatcheck.result.proof.vat-no-heading=Your business’s VAT number
+vatcheck.result.proof.invalid-requester.p1=Your own UK VAT number was not valid. We cannot give you a proof of your check.
+vatcheck.result.proof.invalid-requester.p2=Check your own UK VAT number and <a href="enter-vat-details">try again</a>.

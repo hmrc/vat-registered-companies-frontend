@@ -68,7 +68,14 @@
                             </dl>
                         }
                     } else {
-                        <p>TODO - need to sort out the BE</p>
+                        <div class="panel panel-border-wide">
+                            <p class="body-text">
+                                @Messages("vatcheck.result.proof.invalid-requester.p1")
+                            </p>
+                            <p class="body-text">
+                                @Html(Messages("vatcheck.result.proof.invalid-requester.p2"))
+                            </p>
+                        </div>
                     }
                 }
                 @processing_date(lookup.processingDate)

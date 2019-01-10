@@ -53,7 +53,7 @@ class VatRegCoLookupController @Inject()(
         case Some(response: LookupResponse) if response.target.isEmpty =>
           Future.successful(Ok(invalid_vat_number(response, lookup.target)))
         case Some(response: LookupResponse) =>
-          Future.successful(Ok(confirmation(response, lookup.withConsultationNumber))) // TODO confirmation page
+          Future.successful(Ok(confirmation(response, lookup.withConsultationNumber)))
 //        case _ => Future(BadRequest(NotFound)) // TODO error page
       }
     )

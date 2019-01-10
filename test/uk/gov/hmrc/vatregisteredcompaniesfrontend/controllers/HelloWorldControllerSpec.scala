@@ -25,7 +25,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-
+// TODO port this and delete this and the HelloWorldController & view
 class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
   val fakeRequest = FakeRequest("GET", "/")
 

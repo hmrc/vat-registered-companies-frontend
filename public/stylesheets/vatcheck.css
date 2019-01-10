@@ -1,3 +1,20 @@
+.u-align--right {
+  text-align: right;
+}
+
+aside ul.font-size-16 li, .translate {
+  font-size: 16px;
+}
+
+.app-related-items {
+  border-top: 10px solid #005ea5;
+  padding-top: 10px;
+}
+
+.heading-xlarge, aside .heading-medium {
+  margin-top: 0;
+}
+
 .vat-no-entry {
   max-width: 230px;
   width: 230px;
