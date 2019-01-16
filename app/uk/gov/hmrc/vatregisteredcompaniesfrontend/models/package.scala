@@ -27,11 +27,11 @@ package object models {
   type ProcessingDate = LocalDateTime
 
   /* removes "GB" from the VatNumber, used by requests to the BE only */
-  implicit class VatNumberPimped(val self: VatNumber) {
+  implicit class RichVatNumber(val self: VatNumber) {
     def clean: VatNumber = self.replace("GB", "")
   }
 
-  implicit class ProcessingDatePimped(val self: ProcessingDate) {
+  implicit class RichProcessingDate(val self: ProcessingDate) {
     override def toString: String = self.format(DateTimeFormatter.ofPattern("h:mma"))
   }
 

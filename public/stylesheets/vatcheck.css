@@ -1,3 +1,7 @@
+.govuk-body {
+  margin-bottom: 20px;
+}
+
 .u-align--right {
   text-align: right;
 }

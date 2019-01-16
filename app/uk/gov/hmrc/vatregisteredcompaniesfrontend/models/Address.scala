@@ -36,11 +36,9 @@ case class Address(
       postcode
     ).collect { case Some(str) =>
       str
-    } :+ "United Kingdom"
+    } :+ countryCode
   }
 }
-/*TODO the country shouldn't be hard coded. Other services use a json file to map code to name, but this may not be safe */
-
 
 object Address {
   implicit val addressFormat: OFormat[Address] =

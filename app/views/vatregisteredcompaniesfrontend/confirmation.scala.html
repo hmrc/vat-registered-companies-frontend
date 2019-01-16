@@ -30,14 +30,15 @@
                         <p class="font-large">
                             @t.name
                             <br/>
-                            @Html(Messages("vatcheck.result.valid.p", t.vatNumber))
+                            @Messages("vatcheck.result.valid.p")
+                            <b class="bold">@t.vatNumber</b>
                         </p>
                 </div>
                 <dl>
                     <dt>
                         <h2 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h2>
                     </dt>
-                    <dd>
+                    <dd class="govuk-body">
                         @t.address.lines.map { line =>
                         @line
                         <br/>
@@ -73,7 +74,11 @@
                                 @Messages("vatcheck.result.proof.invalid-requester.p1")
                             </p>
                             <p class="body-text">
-                                @Html(Messages("vatcheck.result.proof.invalid-requester.p2"))
+                                @Messages("vatcheck.result.proof.invalid-requester.p2")
+                                    <a href="enter-vat-details">
+                                        @Messages("vatcheck.result.proof.invalid-requester.p2.link")
+                                    </a>
+                                @Messages("vatcheck.common.fullstop")
                             </p>
                         </div>
                     }

@@ -25,7 +25,14 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-xlarge">@Messages("vatcheck.result.invalidVatNo")</h1>
-            <p class="lede">@Html(Messages("vatcheck.result.invalid.p", target))</p>
+            <p class="lede">
+                @Messages("vatcheck.result.invalid.p")
+                <b class="bold">
+                    @Messages("vatcheck.common.open.apostrophie")
+                    @target
+                    @Messages("vatcheck.common.close.apostrophie")
+                </b>
+            </p>
             @processing_date(lookup.processingDate)
             @print_this_page()
             @search_again()

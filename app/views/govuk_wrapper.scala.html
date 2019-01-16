@@ -71,7 +71,13 @@
     <div class="phase-banner" style="text-align: left">
         <p>
             <strong class="phase-tag">@Messages("vatcheck.common.alpha")</strong>
-            @Html(Messages("vatcheck.common.alpha-info", appConfig.betaFeedbackUrlAuth))
+            <span>
+                @Messages("vatcheck.common.alpha-info.p1")
+                <a href="@appConfig.betaFeedbackUrlNoAuth">
+                    @Messages("vatcheck.common.alpha-info.link")
+                </a>
+                @Messages("vatcheck.common.alpha-info.p2")
+            </span>
         </p>
     </div>
 }

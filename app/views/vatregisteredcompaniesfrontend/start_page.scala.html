@@ -29,9 +29,16 @@
 
                 <p>@Messages("vatcheck.start.p2")</p>
 
-                @Html(Messages("vatcheck.start.ul"))
+                <ul  class="list list-bullet">
+                    <li>@Messages("vatcheck.start.ul.li1")</li>
+                    <li>@Messages("vatcheck.start.ul.li2")</li>
+                </ul>
 
-                <p>@Html(Messages("vatcheck.start.p3", "welsh-url"))</p>
+                <p>
+                @Messages("vatcheck.start.p3")
+                    <a href="welsh-url">@Messages("vatcheck.start.p3.link")</a>
+                    @Messages("vatcheck.common.fullstop")
+                </p>
             </div>
             <a
                 href="enter-vat-details"
@@ -42,7 +49,13 @@
             </a>
             <h2 class="heading-medium">@Messages("vatcheck.start.before.heading")</h2>
             <p class="body-text">@Messages("vatcheck.start.before.p1")</p>
-            <p class="body-text">@Html(Messages("vatcheck.start.before.p2"))</p>
+            <p class="body-text">
+                @Messages("vatcheck.start.before.p2")
+                <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/vat-enquiries">
+                    @Messages("vatcheck.start.before.p2.link")
+                </a>
+                @Messages("vatcheck.common.fullstop")
+            </p>
         </div>
         <div class="column-one-third">
             <aside class="app-related-items" role="complementary">
