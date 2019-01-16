@@ -1,0 +1,92 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.vatregisteredcompaniesfrontend.helpers._
+
+@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
+    @lookup.target.map { t =>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <div class="govuk-box-highlight">
+                    <h1 class="heading-xlarge">@Messages("vatcheck.result.validVatNo")</h1>
+                        <p class="font-large">
+                            @t.name
+                            <br/>
+                            @Messages("vatcheck.result.valid.p")
+                            <b class="bold">@t.vatNumber</b>
+                        </p>
+                </div>
+                <dl>
+                    <dt>
+                        <h2 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h2>
+                    </dt>
+                    <dd class="govuk-body">
+                        @t.address.lines.map { line =>
+                        @line
+                        <br/>
+                        }
+                    </dd>
+                </dl>
+                @if(withConsultationNumber) {
+                    <h2 class="heading-medium">@Messages("vatcheck.result.proof.heading")</h2>
+                    @if(lookup.requester.nonEmpty) {
+                        @lookup.consultationNumber.map { no =>
+                            <dl>
+                                <dt>
+                                    <h2 class="heading-small">@Messages("vatcheck.result.proof.ref-no-heading")</h2>
+                                </dt>
+                                <dd class="body-text">
+                                @no
+                                </dd>
+                            </dl>
+                        }
+                        @lookup.requester.map { vatNo =>
+                            <dl>
+                                <dt>
+                                    <h2 class="heading-small">@Messages("vatcheck.result.proof.vat-no-heading")</h2>
+                                </dt>
+                                <dd class="body-text">
+                                @vatNo
+                                </dd>
+                            </dl>
+                        }
+                    } else {
+                        <div class="panel panel-border-wide">
+                            <p class="body-text">
+                                @Messages("vatcheck.result.proof.invalid-requester.p1")
+                            </p>
+                            <p class="body-text">
+                                @Messages("vatcheck.result.proof.invalid-requester.p2")
+                                    <a href="enter-vat-details">
+                                        @Messages("vatcheck.result.proof.invalid-requester.p2.link")
+                                    </a>
+                                @Messages("vatcheck.common.fullstop")
+                            </p>
+                        </div>
+                    }
+                }
+                @processing_date(lookup.processingDate)
+                @print_this_page()
+                @search_again()
+            </div>
+        </div>
+    }
+}

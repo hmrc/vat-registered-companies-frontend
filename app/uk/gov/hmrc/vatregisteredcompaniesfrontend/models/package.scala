@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
+package uk.gov.hmrc.vatregisteredcompaniesfrontend
 
-import javax.inject.{Inject, Singleton}
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-import play.api.mvc._
+package object models {
 
-import scala.concurrent.Future
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+  type CompanyName = String
+  type VatNumber = String
+  type ConsultationNumber = String
+  type ProcessingDate = LocalDateTime
 
-@Singleton
-class HelloWorld @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+  /* removes "GB" from the VatNumber, used by requests to the BE only */
+  implicit class RichVatNumber(val self: VatNumber) {
+    def clean: VatNumber = self.replace("GB", "")
+  }
 
-  val helloWorld = Action.async { implicit request =>
-    Future.successful(Ok(views.html.hello_world()))
+  implicit class RichProcessingDate(val self: ProcessingDate) {
+    override def toString: String = self.format(DateTimeFormatter.ofPattern("h:mma"))
   }
 
 }

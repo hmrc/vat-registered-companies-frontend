@@ -1,0 +1,60 @@
+# common content
+vatcheck.common.title=Check a UK VAT number
+vatcheck.common.alpha=ALPHA
+vatcheck.common.alpha-info.p1=This is a new service – your 
+vatcheck.common.alpha-info.link=feedback
+vatcheck.common.alpha-info.p2= will help us to improve it.
+vatcheck.common.fullstop=.
+vatcheck.common.open.apostrophie=‘
+vatcheck.common.close.apostrophie=’
+vatcheck.print=Print this page
+vatcheck.searchAgain=Search again
+
+# comment errors
+vatcheck.common.errorSummary=[WHAT!!]
+
+
+# start page content
+vatcheck.start.heading=Check a UK VAT number
+vatcheck.start.p1=Use this service to check if a UK VAT registration number is valid.
+vatcheck.start.p2=If it is a valid VAT number, you can also:
+vatcheck.start.ul.li1=find out the name and registered address of the business
+vatcheck.start.ul.li2=get a reference number to prove the date and time you checked the VAT number - \
+  you’ll need your own UK VAT number to do this
+vatcheck.start.p3=This service is also available in 
+vatcheck.start.p3.link=Welsh (Cymraeg)
+vatcheck.start.button=Start
+vatcheck.start.before.heading=Before you start
+vatcheck.start.before.p1=You’ll need your own UK VAT number if you want proof of your check.
+vatcheck.start.before.p2=You can also check a UK VAT number by calling the
+vatcheck.start.before.p2.link=VAT helpline
+
+
+# lookup form content
+vatcheck.lookup.heading=What is the UK VAT number you want to check?
+vatcheck.lookup.target.hint=This is 9 or 12 numbers, sometimes with ‘GB’ at the start, like 123456789 or GB123456789
+vatcheck.lookup.withConsultationNumber.label=Select if you want proof of your check \
+  (for UK VAT-registered businesses only)
+vatcheck.lookup.requester.label=Enter your own UK VAT number
+vatcheck.lookup.requester.hint=We need this so we can give you a reference number
+vatcheck.lookup.button=Search
+
+# lookup form errors
+error.target.required=[PLEASE SUPPLY A VAT NUMBER!!]
+error.target.invalid=[PLEASE SUPPLY A VALID VAT NUMBER!!]
+error.requester.required=[PLEASE SUPPLY YOUR OWN VAT NUMBER!!]
+error.requester.invalid=[YOUR OWN VAT NUMBER ISN'T VALID!!]
+
+# results
+vatcheck.result.invalidVatNo=Invalid UK VAT number
+vatcheck.result.validVatNo=Valid UK VAT number
+vatcheck.result.processingDate=Search completed on {0}
+vatcheck.result.invalid.p=There are no results for
+vatcheck.result.valid.p=Vat number 
+vatcheck.result.business-address-heading=Registered business address
+vatcheck.result.proof.heading=Proof of check
+vatcheck.result.proof.ref-no-heading=Your reference number
+vatcheck.result.proof.vat-no-heading=Your business’s VAT number
+vatcheck.result.proof.invalid-requester.p1=Your own UK VAT number was not valid. We cannot give you a proof of your check.
+vatcheck.result.proof.invalid-requester.p2=Check your own UK VAT number and .
+vatcheck.result.proof.invalid-requester.p2.link=try again

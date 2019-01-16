@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
+package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.mvc._
+import javax.inject.Inject
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-@Singleton
-class HelloWorld @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class TestController @Inject()(
+  connector: TestConnector
+) extends FrontendController {
 
-  val helloWorld = Action.async { implicit request =>
-    Future.successful(Ok(views.html.hello_world()))
+  def triggerDataImport: Action[AnyContent] = Action.async { implicit request =>
+    connector.trigger("trigger-mdg-data-post") flatMap (_ =>
+      Future.successful(Ok("data import successful")))
+  }
+
+  def triggerDataUpdate: Action[AnyContent] = Action.async { implicit request =>
+    connector.trigger("trigger-mdg-data-update") flatMap (_ =>
+      Future.successful(Ok("data update successful")))
   }
 
 }

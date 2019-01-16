@@ -14,15 +14,33 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
+package uk.gov.hmrc.vatregisteredcompaniesfrontend.models
 
-import javax.inject.Inject
-import play.api.i18n.MessagesApi
-import play.api.mvc.Request
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import play.api.libs.json.{Json, OFormat}
 
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    views.html.error_template(pageTitle, heading, message)
+case class Address(
+  line1: String,
+  line2: Option[String],
+  line3: Option[String],
+  line4: Option[String],
+  line5: Option[String],
+  postcode: Option[String],
+  countryCode: String
+) {
+  def lines: List[String] = {
+    line1 +: List(
+      line2,
+      line3,
+      line4,
+      line5,
+      postcode
+    ).collect { case Some(str) =>
+      str
+    } :+ countryCode
+  }
+}
+
+object Address {
+  implicit val addressFormat: OFormat[Address] =
+    Json.format[Address]
 }
