@@ -69,8 +69,10 @@ object VatRegCoLookupController {
     mapping(
       "target" -> mandatoryVatNumber("target"),
       "withConsultationNumber" -> boolean,
-      "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumberAndNotEqual("requester", "target"))
+      "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
     )(Lookup.apply)(Lookup.unapply)
+      .verifying("foo", lookup => lookup.target != lookup.requester.getOrElse("")) // TODO put the message in, and check with Ian and James if this is the correct behaviour
+
   )
 
   private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>
@@ -91,22 +93,7 @@ object VatRegCoLookupController {
   }
 
   private def mandatoryVatNumber(key: String): Mapping[String] = {
-    println(s"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY $key")
     text.transform[String](_.trim, s => s).verifying(combine(required(key),vatNumberConstraint(key)))
-  }
-
-  private def notEqual(key: String, other: String): Constraint[String] = {
-    println(s"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX $key $other")
-    Constraint {
-      case a if key == other => println(s"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ $a");Invalid("error.$key.same-as-other")
-      case b => println(s"VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV $b");Valid
-    }
-  }
-
-  private def mandatoryVatNumberAndNotEqual(key: String, other: String): Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(
-      combine(required(key),combine(vatNumberConstraint(key), notEqual(key, other)))
-    )
   }
 
 }
