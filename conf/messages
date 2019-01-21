@@ -44,6 +44,7 @@ error.target.required=Enter the UK VAT number you want to check
 error.target.invalid=Enter the UK VAT number you want to check in the correct format
 error.requester.required=Enter your own UK VAT number
 error.requester.invalid=Enter your own UK VAT number in the correct format
+error.requester-and-target-same=Your own UK VAT number must be different to the UK VAT number you want to check
 
 # results
 vatcheck.result.invalidVatNo=Invalid UK VAT number

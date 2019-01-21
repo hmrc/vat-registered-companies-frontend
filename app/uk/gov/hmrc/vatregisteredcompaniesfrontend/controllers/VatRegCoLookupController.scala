@@ -71,8 +71,9 @@ object VatRegCoLookupController {
       "withConsultationNumber" -> boolean,
       "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
     )(Lookup.apply)(Lookup.unapply)
-      .verifying("foo", lookup => lookup.target != lookup.requester.getOrElse("")) // TODO put the message in, and check with Ian and James if this is the correct behaviour
-
+      // this is commented as 1) the business logic for the validation may not be sensible and 2) we couldn't get the
+      // input fields to highlight.
+//      .verifying("error.requester-and-target-same", lookup => lookup.target != lookup.requester.getOrElse(""))
   )
 
   private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>
