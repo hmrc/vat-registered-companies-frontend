@@ -10,7 +10,7 @@ vatcheck.common.close.apostrophie=’
 vatcheck.print=Print this page
 vatcheck.searchAgain=Search again
 
-# comment errors
+# common errors
 vatcheck.common.errorSummary=There is a problem
 
 
