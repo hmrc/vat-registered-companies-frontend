@@ -10,8 +10,8 @@ vatcheck.common.close.apostrophie=’
 vatcheck.print=Print this page
 vatcheck.searchAgain=Search again
 
-# comment errors
-vatcheck.common.errorSummary=[WHAT!!]
+# common errors
+vatcheck.common.errorSummary=There is a problem
 
 
 # start page content
@@ -40,10 +40,11 @@ vatcheck.lookup.requester.hint=We need this so we can give you a reference numbe
 vatcheck.lookup.button=Search
 
 # lookup form errors
-error.target.required=[PLEASE SUPPLY A VAT NUMBER!!]
-error.target.invalid=[PLEASE SUPPLY A VALID VAT NUMBER!!]
-error.requester.required=[PLEASE SUPPLY YOUR OWN VAT NUMBER!!]
-error.requester.invalid=[YOUR OWN VAT NUMBER ISN'T VALID!!]
+error.target.required=Enter the UK VAT number you want to check
+error.target.invalid=Enter the UK VAT number you want to check in the correct format
+error.requester.required=Enter your own UK VAT number
+error.requester.invalid=Enter your own UK VAT number in the correct format
+error.requester-and-target-same=Your own UK VAT number must be different to the UK VAT number you want to check
 
 # results
 vatcheck.result.invalidVatNo=Invalid UK VAT number
@@ -56,5 +57,5 @@ vatcheck.result.proof.heading=Proof of check
 vatcheck.result.proof.ref-no-heading=Your reference number
 vatcheck.result.proof.vat-no-heading=Your business’s VAT number
 vatcheck.result.proof.invalid-requester.p1=Your own UK VAT number was not valid. We cannot give you a proof of your check.
-vatcheck.result.proof.invalid-requester.p2=Check your own UK VAT number and .
+vatcheck.result.proof.invalid-requester.p2=Check your own UK VAT number and 
 vatcheck.result.proof.invalid-requester.p2.link=try again
