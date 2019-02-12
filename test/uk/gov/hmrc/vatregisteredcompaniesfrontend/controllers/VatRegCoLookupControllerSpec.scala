@@ -44,15 +44,13 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
   val appConfig = new AppConfig(configuration, env)
 
 
-  val vfhyjfgyjg = new VatRegisteredCompaniesConnector(
+  val mockVatRegCompaniesConnector = new VatRegisteredCompaniesConnector(
     null,
     env,
     configuration)
 
 
-
-
-  val controller = new VatRegCoLookupController(messageApi,vfhyjfgyjg, appConfig)
+  val controller = new VatRegCoLookupController(messageApi, mockVatRegCompaniesConnector, appConfig)
 
   "VatRegCoLookup Controller" must {
 

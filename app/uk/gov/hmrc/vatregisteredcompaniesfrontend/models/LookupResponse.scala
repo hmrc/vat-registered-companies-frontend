@@ -18,31 +18,15 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.models
 
 import java.time.{LocalDateTime, ZoneId}
 
-import play.api.libs.json._
+import play.api.libs.json.{Json, OFormat}
 
 case class LookupResponse(
-  target: Option[VatRegisteredCompany],
-  requester: Option[VatNumber] = None,
-  consultationNumber: Option[ConsultationNumber] = None,
-  processingDate: ProcessingDate = LocalDateTime.now(ZoneId.of("Europe/London"))
-)
+                           target: Option[VatRegisteredCompany],
+                           requester: Option[VatNumber] = None,
+                           consultationNumber: Option[ConsultationNumber] = None,
+                           processingDate: ProcessingDate = LocalDateTime.now(ZoneId.of("Europe/London"))
+                         )
 
 object LookupResponse {
-  //implicit val lookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
-
-   implicit val lookupResponseFormat: Format[LookupResponse] = new Format[LookupResponse] {
-    override def writes(o: LookupResponse): JsValue = Json.obj("target" -> o.target, "requester" -> o.requester, "consultationNumber" -> o.consultationNumber, "processingDate" -> o.processingDate)
-
-    override def reads(json: JsValue): JsResult[LookupResponse] = {
-      for {
-        target <- (json \ "target").validate[VatRegisteredCompany]
-        requester <- (json \ "requester").validate[VatNumber]
-        consultationNumber <- (json \ "requester").validate[VatNumber]
-        processingDate <- (json \ "requester").validate[ProcessingDate]
-      } yield {
-        LookupResponse(Some(target), Some(requester), Some(consultationNumber), processingDate )
-      }
-    }
-  }
-
+  implicit val lookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
 }
