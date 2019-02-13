@@ -27,10 +27,10 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse
 import scala.concurrent.{ExecutionContext, Future}
 
 class VatRegisteredCompaniesConnector @Inject()(
-  http: HttpClient,
-  environment: Environment,
-  configuration: Configuration
-) extends ServicesConfig {
+                                                 http: HttpClient,
+                                                 environment: Environment,
+                                                 configuration: Configuration
+                                               ) extends ServicesConfig {
 
 
   lazy val url: String = s"${baseUrl("vat-registered-companies")}/vat-registered-companies"
@@ -39,7 +39,7 @@ class VatRegisteredCompaniesConnector @Inject()(
   override protected def runModeConfiguration: Configuration = configuration
 
   def lookup(lookup: Lookup)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {
+            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {
     case a: Lookup if a.requester.nonEmpty =>
       http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.getOrElse("")}").map(Some(_))
     case a =>

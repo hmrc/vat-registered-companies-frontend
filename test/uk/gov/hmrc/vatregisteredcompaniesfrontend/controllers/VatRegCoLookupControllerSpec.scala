@@ -16,22 +16,25 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
+import java.time.{LocalDateTime, ZoneId}
 
-import com.sun.istack.internal.NotNull
-import javax.inject.Inject
-import org.scalatest.{Matchers, MustMatchers, WordSpec}
+import org.mockito.ArgumentMatchers.{any, eq => matching}
+import org.mockito.Mockito.when
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.{Configuration, DefaultApplication, Environment}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
+import utils.TestWiring
 
-class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite  {
+import scala.collection.immutable.Stream.Empty
+import scala.concurrent.{ExecutionContext, Future}
+
+class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
 
   val fakeRequest = FakeRequest("GET", "/")
@@ -40,17 +43,10 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
   val configuration = Configuration.load(env)
 
 
-  val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
+  val messagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   val appConfig = new AppConfig(configuration, env)
 
-
-  val mockVatRegCompaniesConnector = new VatRegisteredCompaniesConnector(
-    null,
-    env,
-    configuration)
-
-
-  val controller = new VatRegCoLookupController(messageApi, mockVatRegCompaniesConnector, appConfig)
+  val controller = new VatRegCoLookupController(messagesApi, mockAuthConnector, appConfig)
 
   "VatRegCoLookup Controller" must {
 
@@ -68,13 +64,70 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
 
-      contentAsString(result) should  include(messageApi("vatcheck.lookup.target.hint"))
-      contentAsString(result) should  include(messageApi("vatcheck.lookup.withConsultationNumber.label"))
-      contentAsString(result) should  include(messageApi("vatcheck.lookup.requester.label"))
-      contentAsString(result) should  include(messageApi("vatcheck.lookup.requester.hint"))
+      contentAsString(result) should  include(messagesApi("vatcheck.lookup.target.hint"))
+      contentAsString(result) should  include(messagesApi("vatcheck.lookup.withConsultationNumber.label"))
+      contentAsString(result) should  include(messagesApi("vatcheck.lookup.requester.label"))
+      contentAsString(result) should  include(messagesApi("vatcheck.lookup.requester.hint"))
 
 
     }
+
+
+    "return OK and get lookupResponse object for a POST" in {
+
+      val testVatNumber = new VatNumber("GB987654321")
+      val requesterVatNo = Some(new VatNumber("GB999999999999"))
+      val boolValue = true
+      val vatRegCompany =  VatRegisteredCompany(
+                                       new CompanyName("XYZ Exports"),
+                                        new VatNumber("GB987654321"),
+                                       Address("33 HopeGreen", None, None, None, None, None, "UK")
+                                     )
+
+      val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
+      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+      val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
+
+
+      when(mockAuthConnector.lookup(lookupObj)(any(), any())).thenReturn {
+       Future.successful(Some(lookupResponseObj))
+      }
+
+      val result = controller.submit()(request)
+
+      status(result) shouldBe Status.OK
+
+    }
+
+    "return OK and get invliad lookupResponse object for a POST" in {
+
+      val testVatNumber = new VatNumber("GB987654321")
+      val requesterVatNo = Some(new VatNumber("GB999999999999"))
+      val boolValue = true
+      val vatRegCompany =  VatRegisteredCompany(
+        new CompanyName("XYZ Exports"),
+        new VatNumber("GB987654321"),
+        Address("33 HopeGreen", None, None, None, None, None, "UK")
+      )
+
+      val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
+      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+      val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
+
+
+      when(mockAuthConnector.lookup(lookupObj)(any(), any())).thenReturn {
+        Future.successful(Some(lookupResponseObj))
+      }
+
+      val result = controller.submit()(request)
+
+      status(result) shouldBe Status.OK
+
+    }
+
+
+
+
   }
 
 
