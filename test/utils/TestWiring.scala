@@ -16,24 +16,14 @@
 
 package utils
 
-import java.io.File
-import java.time.{LocalDateTime, ZoneId}
 
-import com.softwaremill.macwire._
-import org.mockito.ArgumentMatchers.{any, anyString, anyBoolean}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
-import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.defaultContext
-import play.api.test.FakeRequest
-import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Address, CompanyName, ConsultationNumber, Lookup, LookupResponse, VatNumber, VatRegisteredCompany}
 
 import scala.concurrent.{ExecutionContext, Future}
 
