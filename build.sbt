@@ -6,12 +6,25 @@ val appName = "vat-registered-companies-frontend"
 
 PlayKeys.playDefaultPort := 8730
 
+lazy val scoverageSettings = {
+  import scoverage.ScoverageKeys
+  Seq(
+    // Semicolon-separated list of regexs matching classes to exclude
+    ScoverageKeys.coverageExcludedPackages := "<empty>;views.*;prod.*;uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.*;.*models.*;.*test.*",
+    ScoverageKeys.coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;",
+    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageHighlighting := true
+  )
+}
+
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(
     majorVersion                     := 0,
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test
+    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
+    scoverageSettings
   )
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)

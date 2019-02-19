@@ -20,7 +20,7 @@ import java.time.{LocalDateTime, ZoneId}
 
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -28,13 +28,14 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, DefaultApplication, Environment}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import utils.TestWiring
 
 import scala.collection.immutable.Stream.Empty
 import scala.concurrent.{ExecutionContext, Future}
 
-class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring with BeforeAndAfterEach {
 
 
   val fakeRequest = FakeRequest("GET", "/")
@@ -115,13 +116,70 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
       val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
 
 
-      when(mockAuthConnector.lookup(lookupObj)(any(), any())).thenReturn {
+      when(mockAuthConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {
         Future.successful(Some(lookupResponseObj))
       }
 
       val result = controller.submit()(request)
 
       status(result) shouldBe Status.OK
+
+    }
+
+    "return OK and get invalid Reg No for a POST" in {
+
+      val testVatNumber = new VatNumber("GB987654321")
+      val requesterVatNo = Some(new VatNumber("GB999999999999"))
+      val boolValue = true
+      val vatRegCompany =  VatRegisteredCompany(
+        new CompanyName("XYZ Exports"),
+        new VatNumber("GB987654321"),
+        Address("33 HopeGreen", None, None, None, None, None, "UK")
+      )
+
+      val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
+      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+      val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
+
+
+      when(mockAuthConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {
+        Future.successful(Some(lookupResponseObj))
+      }
+
+      val result = controller.submit()(request)
+
+      status(result) shouldBe Status.OK
+
+      contentAsString(result) should  include(messagesApi("vatcheck.result.invalidVatNo"))
+
+    }
+
+
+    "return BadRequest Exception for an invalid input" in {
+
+      val testVatNumber = new VatNumber("GB987654321")
+      val requesterVatNo = Some(new VatNumber("GB999999999999"))
+      val boolValue = true
+      val vatRegCompany =  VatRegisteredCompany(
+        new CompanyName("XYZ Exports"),
+        new VatNumber("GB987654321"),
+        Address("33 HopeGreen", None, None, None, None, None, "UK")
+      )
+
+      val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
+      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+      val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
+
+
+      when(mockAuthConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {
+        Future.successful(Some(lookupResponseObj))
+      }
+
+      val result = controller.submit()(request)
+
+      status(result) shouldBe Status.OK
+
+      contentAsString(result) should  include(messagesApi("vatcheck.result.invalidVatNo"))
 
     }
 
