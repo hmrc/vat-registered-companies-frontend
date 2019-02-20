@@ -31,10 +31,10 @@ import views.html.vatregisteredcompaniesfrontend._
 import scala.concurrent.Future
 
 class VatRegCoLookupController @Inject()(
-  val messagesApi: MessagesApi,
-  connector: VatRegisteredCompaniesConnector,
-  implicit val config: AppConfig
-) extends FrontendController with I18nSupport {
+                                          val messagesApi: MessagesApi,
+                                          connector: VatRegisteredCompaniesConnector,
+                                          implicit val config: AppConfig
+                                        ) extends FrontendController with I18nSupport {
 
   import VatRegCoLookupController.form
 
@@ -71,9 +71,9 @@ object VatRegCoLookupController {
       "withConsultationNumber" -> boolean,
       "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
     )(Lookup.apply)(Lookup.unapply)
-      // this is commented as 1) the business logic for the validation may not be sensible and 2) we couldn't get the
-      // input fields to highlight.
-//      .verifying("error.requester-and-target-same", lookup => lookup.target != lookup.requester.getOrElse(""))
+    // this is commented as 1) the business logic for the validation may not be sensible and 2) we couldn't get the
+    // input fields to highlight.
+    //      .verifying("error.requester-and-target-same", lookup => lookup.target != lookup.requester.getOrElse(""))
   )
 
   private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>

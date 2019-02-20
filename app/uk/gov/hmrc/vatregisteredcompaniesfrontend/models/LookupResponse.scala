@@ -21,11 +21,11 @@ import java.time.{LocalDateTime, ZoneId}
 import play.api.libs.json.{Json, OFormat}
 
 case class LookupResponse(
-  target: Option[VatRegisteredCompany],
-  requester: Option[VatNumber] = None,
-  consultationNumber: Option[ConsultationNumber] = None,
-  processingDate: ProcessingDate = LocalDateTime.now(ZoneId.of("Europe/London"))
-)
+                           target: Option[VatRegisteredCompany],
+                           requester: Option[VatNumber] = None,
+                           consultationNumber: Option[ConsultationNumber] = None,
+                           processingDate: ProcessingDate = LocalDateTime.now(ZoneId.of("Europe/London"))
+                         )
 
 object LookupResponse {
   implicit val lookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
