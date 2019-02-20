@@ -98,33 +98,9 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
     }
 
-    "return OK and get invliad lookupResponse object for a POST" in {
-
-      val testVatNumber = new VatNumber("GB987654321")
-      val requesterVatNo = Some(new VatNumber("GB999999999999"))
-      val boolValue = true
-      val vatRegCompany =  VatRegisteredCompany(
-        new CompanyName("XYZ Exports"),
-        new VatNumber("GB987654321"),
-        Address("33 HopeGreen", None, None, None, None, None, "UK")
-      )
-
-      val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
-      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
-      val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
 
 
-      when(mockAuthConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {
-        Future.successful(Some(lookupResponseObj))
-      }
-
-      val result = controller.submit()(request)
-
-      status(result) shouldBe Status.OK
-
-    }
-
-    "return OK and get invalid Reg No for a POST" in {
+    "return OK and get invalid Reg No for a non-existing VAT No for a POST" in {
 
       val testVatNumber = new VatNumber("GB987654321")
       val requesterVatNo = Some(new VatNumber("GB999999999999"))
@@ -152,37 +128,29 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
     }
 
+    "return BadRequest Exception for an empty VAT RegNo input" in {
 
-    "return BadRequest Exception for an invalid input" in {
-
-      val testVatNumber = new VatNumber("GB987654321")
+      val testVatNumber = new VatNumber("")
       val requesterVatNo = Some(new VatNumber("GB999999999999"))
       val boolValue = true
-      val vatRegCompany =  VatRegisteredCompany(
-        new CompanyName("XYZ Exports"),
-        new VatNumber("GB987654321"),
-        Address("33 HopeGreen", None, None, None, None, None, "UK")
-      )
-
-      val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
       val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
-      val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
-
-
-      when(mockAuthConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {
-        Future.successful(Some(lookupResponseObj))
-      }
-
       val result = controller.submit()(request)
 
-      status(result) shouldBe Status.OK
-
-      contentAsString(result) should  include(messagesApi("vatcheck.result.invalidVatNo"))
+      status(result) shouldBe Status.BAD_REQUEST
 
     }
 
+    "return BadRequest Exception for an invalid VAT RegNo input" in {
 
+      val testVatNumber = new VatNumber("InvalidVAT-HT6754")
+      val requesterVatNo = Some(new VatNumber("GB999999999999"))
+      val boolValue = true
+      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+      val result = controller.submit()(request)
 
+      status(result) shouldBe Status.BAD_REQUEST
+
+    }
 
   }
 
