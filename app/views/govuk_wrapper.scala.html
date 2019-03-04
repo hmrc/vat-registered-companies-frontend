@@ -41,6 +41,17 @@
       linkElem = Some(linksElement),
       headScripts = None)
     <meta name="format-detection" content="telephone=no" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=@Some(appConfig.analyticsToken)"></script>
+    <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '@Some(appConfig.analyticsToken)');
+    </script>
+
 }
 
 @headerNavLinks = {}

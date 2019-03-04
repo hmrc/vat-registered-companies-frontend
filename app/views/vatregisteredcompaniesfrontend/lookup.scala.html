@@ -54,7 +54,8 @@
                             name="@lookupForm("withConsultationNumber").name"
                             value="true"
                             @if(lookupForm("withConsultationNumber").value.contains("true")) { checked="checked" }
-                            type="checkbox">
+                            type="checkbox"
+                            onclick="gtag('event', 'What is the VAT number you want to check', {'event_category':'check - select', 'event_label':'Select if you want proof of your check (for UK VAT-registered businesses only)'});">
                             <label for="@lookupForm("withConsultationNumber").name">
                                 @Messages("vatcheck.lookup.withConsultationNumber.label")
                             </label>
