@@ -16,11 +16,10 @@
 
 @(withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages)
 
-<div class="form-group">
-    <a href="enter-vat-details"
-       role="button"
-       draggable="false"
-       class="govuk-button"
-       onclick="ga('send', 'event', 'link - click', 'Valid UK VAT number', 'Search again');"
-       >@Messages("vatcheck.searchAgain")</a>
-</div>
+@*TODO turn this into Messages*@
+
+@if(withConsultationNumber) {
+    "Valid UK VAT number with proof"
+} else {
+    "Valid UK VAT number"
+}

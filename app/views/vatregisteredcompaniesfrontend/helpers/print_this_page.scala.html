@@ -14,10 +14,16 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages)
+@(withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages)
+
+@eventAction = @{ if(withConsultationNumber) {"Valid UK VAT number with proof"} else {"Valid UK VAT number"} }
 
 <div class="form-group">
-    <p><a href="javascript:window.print()">@Messages("vatcheck.print")</a></p>
+  <p>
+    <a href="javascript:window.print()"
+      onclick="ga('send', 'event', 'link - click', '@eventAction', 'Print or save this page');"
+       >@Messages("vatcheck.print")</a>
+  </p>
 </div>
 
 
