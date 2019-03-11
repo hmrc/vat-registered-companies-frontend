@@ -41,7 +41,7 @@ class VatRegisteredCompaniesConnector @Inject()(
   def lookup(lookup: Lookup)
             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {
     case a: Lookup if a.requester.nonEmpty =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.getOrElse("")}").map(Some(_))
+      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.fold("")(_.clean)}").map(Some(_))
     case a =>
       http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}").map(Some(_))
   }
