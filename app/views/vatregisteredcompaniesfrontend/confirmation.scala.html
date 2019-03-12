@@ -25,61 +25,51 @@
     @lookup.target.map { t =>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <div class="govuk-box-highlight">
-                    <h1 class="heading-xlarge">@Messages("vatcheck.result.validVatNo")</h1>
-                        <p class="font-large">
-                            @t.name
-                            <br/>
-                            @Messages("vatcheck.result.valid.p")
-                            <b class="bold">@t.vatNumber</b>
-                        </p>
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">@Messages("vatcheck.result.validVatNo")</h1>
+                        <div class="govuk-panel__body">
+                            <p class="p-no-margin">@Messages("vatcheck.result.valid.vat-no")
+                                <b class="bold">@t.vatNumber</b></p>
+                            @lookup.consultationNumber.map { no =>
+                            <p class="p-no-margin">
+                                @Messages("vatcheck.result.valid.check-ref")
+                                <b class="bold">@no</b>
+                            </p>
+                            }
+                        </div>
                 </div>
-                <dl>
-                    <dt>
-                        <h2 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h2>
-                    </dt>
-                    <dd class="govuk-body">
-                        @t.address.lines.map { line =>
-                        @line
-                        <br/>
-                        }
-                    </dd>
-                </dl>
-                @if(withConsultationNumber) {
-                    <h2 class="heading-medium">@Messages("vatcheck.result.proof.heading")</h2>
-                    @if(lookup.requester.nonEmpty) {
-                        @lookup.consultationNumber.map { no =>
-                            <dl>
-                                <dt>
-                                    <h2 class="heading-small">@Messages("vatcheck.result.proof.ref-no-heading")</h2>
-                                </dt>
-                                <dd class="body-text">
-                                @no
-                                </dd>
-                            </dl>
-                        }
-                        @lookup.requester.map { vatNo =>
-                            <dl>
-                                <dt>
-                                    <h2 class="heading-small">@Messages("vatcheck.result.proof.vat-no-heading")</h2>
-                                </dt>
-                                <dd class="body-text">
-                                @vatNo
-                                </dd>
-                            </dl>
-                        }
-                    } else {
-                        <div class="panel panel-border-wide">
-                            <p class="body-text">
-                                @Messages("vatcheck.result.proof.invalid-requester.p1")
-                            </p>
-                            <p class="body-text">
-                                @Messages("vatcheck.result.proof.invalid-requester.p2")
-                                <a href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.lookupForm">@Messages("vatcheck.result.proof.invalid-requester.p2.link")</a>@Messages("vatcheck.common.fullstop")
-                            </p>
+                <div class="govuk-grid-row">
+                    @if(withConsultationNumber && lookup.requester.isEmpty) {
+                        <div class="govuk-inset-text">
+                            <p class="p-no-margin">@Messages("vatcheck.result.proof.invalid-requester.p1")</p>
                         </div>
                     }
-                }
+                    <h2 class="govuk-heading-m grid-heading">@Messages("vatcheck.result.reg-details")</h2>
+                    <dl>
+                        <dt>
+                            <h2 class="heading-small">@Messages("vatcheck.result.business-name")</h2>
+                        </dt>
+                        <dd class="govuk-body">
+                            @t.name
+                        </dd>
+                        <dt>
+                            <h2 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h2>
+                        </dt>
+                        <dd class="govuk-body">
+                            @t.address.lines.map { line =>
+                            @line
+                            <br/>
+                            }
+                        </dd>
+                    </dl>
+                    @if(withConsultationNumber) {
+                        @lookup.requester.map { vatNo =>
+                          <p>@Messages("vatcheck.result.proof.vat-no-heading")
+                              <b class="bold">@vatNo</b>
+                          </p>
+                        }
+                    }
+                </div>
                 @processing_date(lookup.processingDate)
                 @print_this_page()
                 @search_again()
