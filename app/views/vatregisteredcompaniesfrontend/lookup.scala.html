@@ -20,7 +20,7 @@
 
 @(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(Messages("vatcheck.lookup.heading")) {
+@main_template(s"${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}") {
     <div class="grid-row">
         <div class="column-two-thirds">
 
@@ -37,7 +37,7 @@
                                 </label>
                             </h1>
                         </legend>
-                        <span class="govuk-hint">
+                        <span id="@{lookupForm("target").name}-hint" class="govuk-hint">
                             @Messages("vatcheck.lookup.target.hint")
                         </span>
                             @lookupForm("target").errors.map { error =>
@@ -51,51 +51,51 @@
                         value="@lookupForm("target").value"
                         type="text">
                     </div>
-                @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
+                    @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                     <div class="form-group govuk-form-group--error">
-                }
-                <div class="form-group no-margin-bottom">
-                    <div class="govuk-checkboxes__item multiple-choice" data-target="requester">
-                        <input class="govuk-checkboxes__input @if(lookupForm("withConsultationNumber").hasErrors) {form-control-error}"
-                        id="@lookupForm("withConsultationNumber").name"
-                        name="@lookupForm("withConsultationNumber").name"
-                        value="true"
-                        @if(lookupForm("withConsultationNumber").value.contains("true")) { checked="checked" }
-                        type="checkbox"
-                        onclick="ga('send', 'event', 'check - select', 'What is the VAT number you want to check', 'Select if you want proof of your check (for UK VAT-registered businesses only)');">
-                        <label class="govuk-checkboxes__label"
-                        for="@lookupForm("withConsultationNumber").name">
-                            @Messages("vatcheck.lookup.withConsultationNumber.label")
-                        </label>
-                    </div>
-                </div>
-                    <div class="govuk-checkboxes__conditional js-hidden" id="requester">
-                        <div class="form-group">
-                            <label for="@lookupForm("requester").name">
-                                @Messages("vatcheck.lookup.requester.label")
-                                <span class="govuk-hint">
-                                    @Messages("vatcheck.lookup.requester.hint")
-                                </span>
-                                @lookupForm("requester").errors.map { error =>
-                                    <span class="error-message" data-journey="search-page:error:@lookupForm("requester").name">
-                                    @Messages(error.message, error.args: _*)
+                    }
+                        <div class="form-group no-margin-bottom">
+                            <div class="govuk-checkboxes__item multiple-choice" data-target="requester-div">
+                                <input class="govuk-checkboxes__input @if(lookupForm("withConsultationNumber").hasErrors) {form-control-error}"
+                                id="@lookupForm("withConsultationNumber").name"
+                                name="@lookupForm("withConsultationNumber").name"
+                                value="true"
+                                @if(lookupForm("withConsultationNumber").value.contains("true")) { checked="checked" }
+                                type="checkbox"
+                                onclick="ga('send', 'event', 'check - select', 'What is the VAT number you want to check', 'Select if you want proof of your check (for UK VAT-registered businesses only)');">
+                                <label class="govuk-checkboxes__label"
+                                for="@lookupForm("withConsultationNumber").name">
+                                    @Messages("vatcheck.lookup.withConsultationNumber.label")
+                                </label>
+                            </div>
+                        </div>
+                        <div class="govuk-checkboxes__conditional js-hidden" id="requester-div">
+                            <div class="form-group">
+                                <label for="@lookupForm("requester").name">
+                                    @Messages("vatcheck.lookup.requester.label")
+                                    <span class="govuk-hint">
+                                        @Messages("vatcheck.lookup.requester.hint")
                                     </span>
-                                }
-                            </label>
-                            <input class="vat-no-entry form-control @if(lookupForm("requester").hasErrors) {form-control-error}"
-                            id="@lookupForm("requester").name"
-                            name="@lookupForm("requester").name"
-                            value="@lookupForm("requester").value"
-                            type="text">
+                                    @lookupForm("requester").errors.map { error =>
+                                        <span class="error-message" data-journey="search-page:error:@lookupForm("requester").name">
+                                        @Messages(error.message, error.args: _*)
+                                        </span>
+                                    }
+                                </label>
+                                <input class="vat-no-entry form-control @if(lookupForm("requester").hasErrors) {form-control-error}"
+                                id="@lookupForm("requester").name"
+                                name="@lookupForm("requester").name"
+                                value="@lookupForm("requester").value"
+                                type="text">
+                            </div>
                         </div>
+                    @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                     </div>
-                @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
-                        </div>
-                }
-                <button onclick="ga('send', 'event', 'button - click', '@Messages("vatcheck.lookup.heading")', 'Search');" class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
-            }
+                    }
                 </fieldset>
+                <button onclick="ga('send', 'event', 'button - click', '@Messages("vatcheck.lookup.heading")', 'Search');" class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
             </div>
+            }
         </div>
     </div>
 }
