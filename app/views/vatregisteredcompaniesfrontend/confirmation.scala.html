@@ -20,7 +20,7 @@
 @import views.html.vatregisteredcompaniesfrontend.helpers._
 @import play.api.Application
 
-@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig, application: Application)
+@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
     @lookup.target.map { t =>

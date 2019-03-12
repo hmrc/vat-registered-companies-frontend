@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{LookupResponse,VatNumber}
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.vatregisteredcompaniesfrontend.helpers._
+@import play.api.Application
 
 @(lookup: LookupResponse, target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 

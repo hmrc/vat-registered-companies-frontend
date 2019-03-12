@@ -17,6 +17,8 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
+
+import play.api.Application
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
@@ -25,16 +27,14 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
 import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.Future
 
-class VatRegCoLookupController @Inject()(
-                                          val messagesApi: MessagesApi,
-                                          connector: VatRegisteredCompaniesConnector,
-                                          implicit val config: AppConfig
-                                        ) extends FrontendController with I18nSupport {
+class VatRegCoLookupController @Inject()(val messagesApi: MessagesApi,
+                                          connector: VatRegisteredCompaniesConnector
+                                        )(implicit val config: AppConfig) extends FrontendController with I18nSupport {
 
   import VatRegCoLookupController.form
 
@@ -42,16 +42,32 @@ class VatRegCoLookupController @Inject()(
     Future.successful(Ok(lookup(form)))
   }
 
-  def submit: Action[AnyContent] = Action.async { implicit request =>
+  def submit: Action[AnyContent] = Action { implicit request =>
     form.bindFromRequest().fold(
-      errors => Future(BadRequest(lookup(errors))),
-      lookup => connector.lookup(lookup) flatMap  {
-        case Some(response: LookupResponse) if response.target.isEmpty =>
-          Future.successful(Ok(invalid_vat_number(response, lookup.target, lookup.withConsultationNumber)))
-        case Some(response: LookupResponse) =>
-          Future.successful(Ok(confirmation(response, lookup.withConsultationNumber)))
-      }
+      errors =>
+        BadRequest(lookup(errors)),
+      lookup =>
+        Redirect(routes.VatRegCoLookupController.complete(
+          lookup.target,
+          lookup.withConsultationNumber,
+          lookup.requester
+        )
+      )
     )
+  }
+
+  def complete(
+    target: VatNumber,
+    withConsultationNumber: Boolean,
+    requester: Option[VatNumber]
+   ): Action[AnyContent] = Action.async { implicit request =>
+    val l = Lookup(target, withConsultationNumber, requester)
+    connector.lookup(l) map  {
+      case Some(response: LookupResponse) if response.target.isEmpty =>
+        Ok(invalid_vat_number(response, l.target, l.withConsultationNumber))
+      case Some(response: LookupResponse) =>
+        Ok(confirmation(response, l.withConsultationNumber))
+    }
   }
 }
 
