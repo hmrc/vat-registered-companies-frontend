@@ -92,7 +92,7 @@
                 @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                         </div>
                 }
-                <button class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
+                <button onclick="ga('send', 'event', 'button - click', '@Messages("vatcheck.lookup.heading")', 'Search');" class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
             }
                 </fieldset>
             </div>
