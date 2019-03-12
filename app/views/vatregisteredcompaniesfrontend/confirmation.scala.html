@@ -33,7 +33,7 @@
                             @lookup.consultationNumber.map { no =>
                             <p class="p-no-margin">
                                 @Messages("vatcheck.result.valid.check-ref")
-                                <b class="bold">@no</b>
+                                <b class="bold consultation-number">@no</b>
                             </p>
                             }
                         </div>
@@ -71,8 +71,8 @@
                     }
                 </div>
                 @processing_date(lookup.processingDate)
-                @print_this_page()
-                @search_again()
+                @print_this_page(withConsultationNumber)
+                @search_again(withConsultationNumber)
                 @exit_survey()
             </div>
         </div>

@@ -38,8 +38,8 @@
                 <p>@Messages("vatcheck.result.invalid.no-proof")</p>
             }
             @processing_date(lookup.processingDate)
-            @print_this_page()
-            @search_again()
+            @print_this_page(false, false)
+            @search_again(false, false)
             @exit_survey()
         </div>
     </div>

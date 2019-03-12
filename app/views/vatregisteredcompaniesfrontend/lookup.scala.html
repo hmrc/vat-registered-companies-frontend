@@ -51,9 +51,9 @@
                         value="@lookupForm("target").value"
                         type="text">
                     </div>
-            @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
-                <div class="form-group govuk-form-group--error">
-            }
+                @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
+                    <div class="form-group govuk-form-group--error">
+                }
                 <div class="form-group no-margin-bottom">
                     <div class="govuk-checkboxes__item multiple-choice" data-target="requester">
                         <input class="govuk-checkboxes__input @if(lookupForm("withConsultationNumber").hasErrors) {form-control-error}"
@@ -62,7 +62,7 @@
                         value="true"
                         @if(lookupForm("withConsultationNumber").value.contains("true")) { checked="checked" }
                         type="checkbox"
-                        onclick="gtag('event', 'What is the VAT number you want to check', {'event_category':'check - select', 'event_label':'Select if you want proof of your check (for UK VAT-registered businesses only)'});">
+                        onclick="ga('send', 'event', 'check - select', 'What is the VAT number you want to check', 'Select if you want proof of your check (for UK VAT-registered businesses only)');">
                         <label class="govuk-checkboxes__label"
                         for="@lookupForm("withConsultationNumber").name">
                             @Messages("vatcheck.lookup.withConsultationNumber.label")
@@ -92,7 +92,7 @@
                 @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                         </div>
                 }
-                <button class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
+                <button onclick="ga('send', 'event', 'button - click', '@Messages("vatcheck.lookup.heading")', 'Search');" class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
             }
                 </fieldset>
             </div>
