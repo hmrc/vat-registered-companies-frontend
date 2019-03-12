@@ -38,10 +38,6 @@ class VatRegCoLookupController @Inject()(
 
   import VatRegCoLookupController.form
 
-  def start: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.vatregisteredcompaniesfrontend.start_page()))
-  }
-
   def lookupForm: Action[AnyContent] = Action.async {implicit request =>
     Future.successful(Ok(lookup(form)))
   }
@@ -51,7 +47,7 @@ class VatRegCoLookupController @Inject()(
       errors => Future(BadRequest(lookup(errors))),
       lookup => connector.lookup(lookup) flatMap  {
         case Some(response: LookupResponse) if response.target.isEmpty =>
-          Future.successful(Ok(invalid_vat_number(response, lookup.target)))
+          Future.successful(Ok(invalid_vat_number(response, lookup.target, lookup.withConsultationNumber)))
         case Some(response: LookupResponse) =>
           Future.successful(Ok(confirmation(response, lookup.withConsultationNumber)))
       }

@@ -32,7 +32,7 @@ class LanguageSwitchController @Inject()(override implicit val messagesApi: Mess
 
   def langToCall(lang: String): String => Call = appConfig.routeToSwitchLanguage
 
-  override protected def fallbackURL: String = routes.VatRegCoLookupController.start().url
+  override protected def fallbackURL: String = routes.VatRegCoLookupController.lookupForm().url
 
   override protected def mode: Mode = environment.mode
 

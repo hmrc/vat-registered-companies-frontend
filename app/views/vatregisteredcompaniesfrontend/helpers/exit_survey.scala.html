@@ -16,9 +16,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-<div class="form-group">
-    <p>
-        <a href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.ExitSurveyController.exitSurvey">@Messages("vatcheck.exitsurvey.link.copy")</a>
-        @Messages("vatcheck.exitsurvey.time")
-    </p>
-</div>
+<p>
+    <a href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.ExitSurveyController.exitSurvey">@Messages("vatcheck.exitsurvey.link.copy")</a>
+    @Messages("vatcheck.exitsurvey.time")
+</p>
