@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.vatregisteredcompaniesfrontend.helpers._
 
-@(lookup: LookupResponse, target: VatNumber)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(lookup: LookupResponse, target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
     <div class="grid-row">
@@ -33,9 +33,14 @@
                     @Messages("vatcheck.common.close.apostrophie")
                 </b>
             </p>
+            <p>@Messages("vatcheck.result.invalid.no-match")</p>
+            @if(withConsultationNumber){
+                <p>@Messages("vatcheck.result.invalid.no-proof")</p>
+            }
             @processing_date(lookup.processingDate)
             @print_this_page(false, false)
             @search_again(false, false)
+            @exit_survey()
         </div>
     </div>
 }

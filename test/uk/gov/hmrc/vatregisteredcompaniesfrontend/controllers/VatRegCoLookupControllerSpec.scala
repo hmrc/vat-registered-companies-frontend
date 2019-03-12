@@ -49,14 +49,6 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
   "VatRegCoLookup Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller.start(fakeRequest)
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-    }
-
-
     "return OK and lookup form for a GET" in {
       val result = controller.lookupForm(fakeRequest)
 
@@ -70,7 +62,6 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
 
     }
-
 
     "return OK and get lookupResponse object for a POST" in {
 
@@ -97,8 +88,6 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
       status(result) shouldBe Status.OK
 
     }
-
-
 
     "return OK and get invalid Reg No for a non-existing VAT No for a POST" in {
 
