@@ -20,7 +20,7 @@
 
 @(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(s"${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}") {
+@main_template(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}") {
     <div class="grid-row">
         <div class="column-two-thirds">
 

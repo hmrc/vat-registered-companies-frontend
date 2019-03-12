@@ -21,7 +21,7 @@
 
 @(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
+@main_template(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}") {
     @lookup.target.map { t =>
         <div class="grid-row">
             <div class="column-two-thirds">
