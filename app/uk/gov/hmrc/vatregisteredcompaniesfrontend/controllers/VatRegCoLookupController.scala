@@ -32,9 +32,11 @@ import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.Future
 
-class VatRegCoLookupController @Inject()(val messagesApi: MessagesApi,
-                                          connector: VatRegisteredCompaniesConnector
-                                        )(implicit val config: AppConfig) extends FrontendController with I18nSupport {
+class VatRegCoLookupController @Inject()(
+                                          val messagesApi: MessagesApi,
+                                          connector: VatRegisteredCompaniesConnector,
+                                          implicit val config: AppConfig
+                                        ) extends FrontendController with I18nSupport {
 
   import VatRegCoLookupController.form
 
