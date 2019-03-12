@@ -21,7 +21,7 @@
 
 @(lookup: LookupResponse, target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.lookup.heading")}") {
+@main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}") {
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-xlarge">@Messages("vatcheck.result.invalidVatNo")</h1>
