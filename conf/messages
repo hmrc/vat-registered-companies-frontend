@@ -59,3 +59,6 @@ vatcheck.result.proof.vat-no-heading=Your business’s VAT number
 vatcheck.result.proof.invalid-requester.p1=Your own UK VAT number was not valid. We cannot give you a proof of your check.
 vatcheck.result.proof.invalid-requester.p2=Check your own UK VAT number and 
 vatcheck.result.proof.invalid-requester.p2.link=try again
+
+vatcheck.exitsurvey.link.copy=What did you think of this service?
+vatcheck.exitsurvey.time=(takes 30 seconds)

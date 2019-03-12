@@ -20,5 +20,12 @@ window.onload = function() {
         });
     }
 
+    if(document.getElementById('exit-survey')) {
+        document.getElementById('exit-survey').addEventListener('click', function() {
+            ga('send', 'event', 'link-click', document.title, 'What did you think of this service');
+        });
+    }
+
+
 }
 
