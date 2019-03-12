@@ -17,24 +17,27 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
+
 import play.api.Mode.Mode
-import play.api.{Environment, Configuration}
+import play.api.{Configuration, Environment}
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.mvc.Call
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.config.RunMode
-import uk.gov.hmrc.play.language.LanguageController
+import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-class LanguageSwitchController @Inject()(override implicit val messagesApi: MessagesApi, conf: Configuration, environment: Environment, appConfig: AppConfig)
+class LanguageSwitchController @Inject()(
+                                          override implicit val messagesApi: MessagesApi,
+                                          configuration: Configuration,
+                                          environment: Environment,
+                                          appConfig: AppConfig)
   extends LanguageController with RunMode {
 
   override def languageMap: Map[String, Lang] = appConfig.languageMap
-
-  def langToCall(lang: String): String => Call = appConfig.routeToSwitchLanguage
 
   override protected def fallbackURL: String = routes.VatRegCoLookupController.lookupForm().url
 
   override protected def mode: Mode = environment.mode
 
-  override protected def runModeConfiguration: Configuration = conf
+  override protected def runModeConfiguration: Configuration = configuration
 }
