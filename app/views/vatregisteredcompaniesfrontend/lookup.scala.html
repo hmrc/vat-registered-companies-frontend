@@ -73,7 +73,7 @@
                             <div class="form-group">
                                 <label for="@lookupForm("requester").name">
                                     @Messages("vatcheck.lookup.requester.label")
-                                    <span class="govuk-hint">
+                                    <span id="@{lookupForm("requester").name}-hint" class="govuk-hint">
                                         @Messages("vatcheck.lookup.requester.hint")
                                     </span>
                                     @lookupForm("requester").errors.map { error =>
