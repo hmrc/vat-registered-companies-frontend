@@ -53,6 +53,8 @@ class VatRegCoLookupController @Inject()(
       }
     )
   }
+
+  
 }
 
 object VatRegCoLookupController {
