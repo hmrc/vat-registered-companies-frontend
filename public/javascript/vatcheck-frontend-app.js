@@ -11,3 +11,14 @@ if (document.addEventListener) {
         showHide()
     })
 }
+
+window.onload = function() {
+
+    if(document.getElementById('get-help-action')) {
+        document.getElementById('get-help-action').addEventListener('click', function() {
+            ga('send', 'event', 'link-click', document.title, 'Get help with this page');
+        });
+    }
+
+}
+

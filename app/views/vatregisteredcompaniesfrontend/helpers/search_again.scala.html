@@ -14,13 +14,17 @@
  * limitations under the License.
  *@
 
-@(withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages)
+@(withConsultationNumber: Boolean, validVatNumber: Boolean = true)(implicit request: Request[_], messages: Messages)
+
+@valid = @{if (validVatNumber) {"Valid"} else {"Invalid"} }
+@eventAction = @{ if(withConsultationNumber) {"UK VAT number with proof"} else {"UK VAT number"} }
+
 
 <div class="form-group">
     <a href="enter-vat-details"
        role="button"
        draggable="false"
        class="govuk-button"
-       onclick="ga('send', 'event', 'link - click', 'Valid UK VAT number', 'Search again');"
+       onclick="ga('send', 'event', 'link - click', '@valid @eventAction', 'Search again');"
        >@Messages("vatcheck.searchAgain")</a>
 </div>

@@ -34,6 +34,9 @@
                     data-focuses="@error.key">
                     @Messages(error.message.split("[|]"), error.args: _*)
                     </a>
+                    <script type="text/javascript">
+                        ga('send', 'event', 'error - field', '@Messages("vatcheck.lookup.heading")', '@Messages(error.message.split("[|]"), error.args: _*)');
+                    </script>
                 </li>
             }
         </ul>
