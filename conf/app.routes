@@ -4,7 +4,7 @@ GET        /assets/*file                        controllers.Assets.at(path="/pub
 GET        /enter-vat-details                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.lookupForm
 POST       /enter-vat-details                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.submit
 
-GET        /:target/complete                    uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.complete(target: String, withConsultationNumber: Boolean, requester: Option[String])
+GET        /complete/:target                    uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.complete(target: String, withConsultationNumber: Boolean, requester: Option[String])
 GET        /language/:lang                      uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
 GET        /feedback                            uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.ExitSurveyController.exitSurvey

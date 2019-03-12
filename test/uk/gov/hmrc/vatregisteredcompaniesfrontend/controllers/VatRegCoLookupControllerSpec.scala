@@ -85,7 +85,7 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
       val result = controller.submit()(request)
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
 
     }
 
@@ -111,9 +111,9 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
       val result = controller.submit()(request)
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
 
-      contentAsString(result) should  include(messagesApi("vatcheck.result.invalidVatNo"))
+      redirectLocation(result).get shouldBe "/check-vat-number/GB987654321/complete?withConsultationNumber=true&requester=GB999999999999"
 
     }
 
