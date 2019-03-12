@@ -42,7 +42,6 @@ vatcheck.result.valid.check-ref=Your proof of check reference
 vatcheck.result.reg-details=VAT registration details
 vatcheck.result.business-name=Registered business name
 vatcheck.result.business-address-heading=Registered business address
-vatcheck.result.proof.ref-no-heading=Your reference number
 vatcheck.result.proof.vat-no-heading=Your UK VAT number:
 vatcheck.result.proof.vat-no={}
 vatcheck.result.proof.invalid-requester.p1=Your own UK VAT number was not valid. We cannot give you a proof of \
