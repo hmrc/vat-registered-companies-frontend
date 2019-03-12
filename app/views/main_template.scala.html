@@ -15,16 +15,19 @@
  *@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import play.api.Application
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.LanguageSwitchController
 @(title: String,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
-  form: Option[Form[_]] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
+  form: Option[Form[_]] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig, application: Application)
 
 @import uk.gov.hmrc.play.views.html.layouts
 
+@lc = @{Application.instanceCache[LanguageSwitchController].apply(application)}
 
 @serviceInfoContent = {}
 
