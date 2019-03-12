@@ -45,23 +45,13 @@
                         </div>
                     }
                     <h2 class="govuk-heading-m grid-heading">@Messages("vatcheck.result.reg-details")</h2>
-                    <dl>
-                        <dt>
-                            <h3 class="heading-small">@Messages("vatcheck.result.business-name")</h3>
-                        </dt>
-                        <dd class="govuk-body">
-                            @t.name
-                        </dd>
-                        <dt>
-                            <h3 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h3>
-                        </dt>
-                        <dd class="govuk-body">
-                            @t.address.lines.map { line =>
-                            @line
-                            <br/>
-                            }
-                        </dd>
-                    </dl>
+                    <h3 class="heading-small">@Messages("vatcheck.result.business-name")</h3>
+                    <p>@t.name</p>
+                    <h3 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h3>
+                    <p>@t.address.lines.map { line =>
+                        @line
+                        <br/>
+                    }</p>
                     @if(withConsultationNumber) {
                         @lookup.requester.map { vatNo =>
                           <p>@Messages("vatcheck.result.proof.vat-no-heading")
