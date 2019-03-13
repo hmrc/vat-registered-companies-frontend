@@ -49,7 +49,8 @@
                         id="@lookupForm("target").name"
                         name="@lookupForm("target").name"
                         value="@lookupForm("target").value"
-                        type="text">
+                        type="text"
+                        aria-describedby="@{lookupForm("target").name}-hint">
                     </div>
                     @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                     <div class="form-group govuk-form-group--error">
@@ -73,16 +74,16 @@
                             <div class="form-group">
                                 <label for="@lookupForm("requester").name">
                                     @Messages("vatcheck.lookup.requester.label")
-                                    <span id="@{lookupForm("requester").name}-hint" class="govuk-hint">
-                                        @Messages("vatcheck.lookup.requester.hint")
-                                    </span>
                                     @lookupForm("requester").errors.map { error =>
                                         <span class="error-message" data-journey="search-page:error:@lookupForm("requester").name">
                                         @Messages(error.message, error.args: _*)
                                         </span>
                                     }
                                 </label>
-                                <input class="vat-no-entry form-control @if(lookupForm("requester").hasErrors) {form-control-error}"
+                                <span id="@{lookupForm("requester").name}-hint" class="govuk-hint">
+                                @Messages("vatcheck.lookup.requester.hint")
+                                </span>
+                                <input aria-describedby="@{lookupForm("requester").name}-hint" class="vat-no-entry form-control @if(lookupForm("requester").hasErrors) {form-control-error}"
                                 id="@lookupForm("requester").name"
                                 name="@lookupForm("requester").name"
                                 value="@lookupForm("requester").value"

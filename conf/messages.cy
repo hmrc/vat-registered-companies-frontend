@@ -1,5 +1,6 @@
 # common content
 vatcheck.common.title=Gwirio rhif TAW yn y DU
+vatcheck.common.page.title=Gwirio rhif TAW yn y DU - GOV.UK
 vatcheck.common.alpha=ALPHA
 # Not found
 vatcheck.common.alpha-info.p1=This is a new service – your 
