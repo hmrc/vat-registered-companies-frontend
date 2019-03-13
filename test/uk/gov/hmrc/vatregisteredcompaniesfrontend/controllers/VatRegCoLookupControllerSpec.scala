@@ -113,7 +113,7 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
       status(result) shouldBe Status.SEE_OTHER
 
-      redirectLocation(result).get shouldBe "/check-vat-number/GB987654321/complete?withConsultationNumber=true&requester=GB999999999999"
+      redirectLocation(result).get shouldBe "/check-vat-number/GB987654321/unknown/requester/GB999999999999"
 
     }
 

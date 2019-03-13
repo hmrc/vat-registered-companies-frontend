@@ -18,8 +18,11 @@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{LookupResponse,VatNumber}
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.vatregisteredcompaniesfrontend.helpers._
+@import java.time.{LocalDateTime, ZoneId}
 
-@(lookup: LookupResponse, target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.ProcessingDate
+@(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}") {
     <div class="grid-row">
@@ -37,7 +40,7 @@
             @if(withConsultationNumber){
                 <p>@Messages("vatcheck.result.invalid.no-proof")</p>
             }
-            @processing_date(lookup.processingDate)
+            @processing_date(LocalDateTime.now(ZoneId.of("Europe/London")))
             @print_this_page(false, false)
             @search_again(false, false)
             @exit_survey()
