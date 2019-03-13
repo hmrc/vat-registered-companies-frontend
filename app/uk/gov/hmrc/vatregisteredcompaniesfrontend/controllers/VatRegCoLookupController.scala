@@ -17,7 +17,6 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
-
 import play.api.Application
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -44,29 +43,69 @@ class VatRegCoLookupController @Inject()(
     Future.successful(Ok(lookup(form)))
   }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
+  def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
-      errors =>
-        BadRequest(lookup(errors)),
-      lookup =>
-        Redirect(routes.VatRegCoLookupController.complete(
-          lookup.target,
-          lookup.withConsultationNumber,
-          lookup.requester
-        )
-      )
+      errors => Future(BadRequest(lookup(errors))),
+      lookup => connector.lookup(lookup) flatMap  {
+        case Some(response: LookupResponse) if response.target.isEmpty & lookup.withConsultationNumber =>
+          Future.successful(
+            Redirect(routes.VatRegCoLookupController.unknownWithConsultationNumber(
+              lookup.target,
+              lookup.requester.getOrElse("")
+            ))
+          )
+        case Some(response: LookupResponse) if response.target.isEmpty =>
+          Future.successful(
+            Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber(
+              lookup.target
+            ))
+          )
+        case Some(response: LookupResponse) if lookup.withConsultationNumber =>
+          Future.successful(
+            Redirect(routes.VatRegCoLookupController.knownWithConsultationNumber(
+              lookup.target,
+              lookup.requester.getOrElse("")
+            ))
+          )
+        case Some(response: LookupResponse) =>
+          Future.successful(
+            Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber(
+              lookup.target
+            ))
+          )
+      }
     )
   }
 
-  def complete(
+  def unknownWithConsultationNumber(
     target: VatNumber,
-    withConsultationNumber: Boolean,
-    requester: Option[VatNumber]
+    requester: VatNumber
+  ): Action[AnyContent] = Action { implicit request =>
+    Ok(invalid_vat_number(target, true))
+  }
+
+  def unknownWithoutConsultationNumber(
+    target: VatNumber
+  ): Action[AnyContent] = Action { implicit request =>
+    Ok(invalid_vat_number(target, false))
+  }
+
+  def knownWithConsultationNumber(
+    target: VatNumber,
+    requester: VatNumber
    ): Action[AnyContent] = Action.async { implicit request =>
-    val l = Lookup(target, withConsultationNumber, requester)
+    val l = Lookup(target, true, Some(requester))
     connector.lookup(l) map  {
-      case Some(response: LookupResponse) if response.target.isEmpty =>
-        Ok(invalid_vat_number(response, l.target, l.withConsultationNumber))
+      case Some(response: LookupResponse) =>
+        Ok(confirmation(response, l.withConsultationNumber))
+    }
+  }
+
+  def knownWithoutConsultationNumber(
+    target: VatNumber
+   ): Action[AnyContent] = Action.async { implicit request =>
+    val l = Lookup(target, false, None)
+    connector.lookup(l) map  {
       case Some(response: LookupResponse) =>
         Ok(confirmation(response, l.withConsultationNumber))
     }
