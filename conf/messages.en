@@ -2,6 +2,7 @@
 vatcheck.common.title=Check a UK VAT number
 vatcheck.common.page.title=Check a UK VAT number - GOV.UK
 vatcheck.common.alpha=ALPHA
+vatcheck.common.beta=BETA
 vatcheck.common.alpha-info.p1=This is a new service – your 
 vatcheck.common.alpha-info.link=feedback
 vatcheck.common.alpha-info.p2= will help us to improve it.
