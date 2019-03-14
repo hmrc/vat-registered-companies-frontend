@@ -31,6 +31,7 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
+import views.html.error_template
 import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.Future
@@ -110,8 +111,8 @@ class VatRegCoLookupController @Inject()(
     target: VatNumber,
     requester: VatNumber
   ): Action[AnyContent] = Action.async { implicit request =>
-    request.session.get("uuid").fold(Future.successful(Ok(invalid_vat_number(target, true)))) { sessionId =>
-
+    request.session.get("uuid").fold(Future.successful(Ok(error_template))) { sessionId =>
+      // TODO try a for comprehension and an optionT
       println(s"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX $sessionId")
       cache.get[Lookup](sessionId, "foobar").map { x =>
         println(s"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ $x")
