@@ -1,14 +1,11 @@
 # common content
 vatcheck.common.title=Gwirio rhif TAW yn y DU
 vatcheck.common.page.title=Gwirio rhif TAW yn y DU - GOV.UK
-vatcheck.common.alpha=ALPHA
-# Not found
-vatcheck.common.alpha-info.p1=This is a new service – your 
-# Not found
-vatcheck.common.alpha-info.link=feedback
-# Not found
-vatcheck.common.alpha-info.p2= will help us to improve it.
-# Not found
+vatcheck.common.alpha=ALFFA
+vatcheck.common.beta=BETA
+vatcheck.common.alpha-info.p1=Gwasanaeth newydd yw hwn – bydd eich
+vatcheck.common.alpha-info.link=adborth
+vatcheck.common.alpha-info.p2= yn ein helpu i’w wella.
 vatcheck.common.fullstop=.
 vatcheck.common.open.apostrophie=‘
 vatcheck.common.close.apostrophie=’
@@ -16,8 +13,7 @@ vatcheck.print=Argraffu neu gadw’r dudalen hon
 vatcheck.searchAgain=Chwilio eto
 
 # common errors
-vatcheck.common.errorSummary=There is a problem
-# Not found
+vatcheck.common.errorSummary=Mae problem wedi codi
 
 # lookup form content
 vatcheck.lookup.heading=Beth yw’r rhif TAW yn y DU yr hoffech ei wirio?
@@ -44,8 +40,8 @@ vatcheck.result.invalid.no-match=Nid yw hwn yn cyd-fynd â rhif TAW unrhyw fusne
   gyfer TAW yn y DU.
 vatcheck.result.invalid.no-proof=Dim ond ar gyfer rhif TAW yn y DU sy’n ddilys y gallwn roi cyfeirnod i chi \
   fel prawf o’ch gwiriad.
-vatcheck.result.valid.vat-no=Rhif TAW 
-vatcheck.result.valid.check-ref=Eich cyfeirnod sy’n profi’ch gwiriad 
+vatcheck.result.valid.vat-no=Rhif TAW
+vatcheck.result.valid.check-ref=Eich cyfeirnod sy’n profi’ch gwiriad
 vatcheck.result.reg-details=Manylion cofrestru TAW
 vatcheck.result.business-name=Enw’r busnes cofrestredig
 vatcheck.result.business-address-heading=Cyfeiriad y busnes cofrestredig
@@ -55,5 +51,18 @@ vatcheck.result.proof.invalid-requester.p1=Nid oedd eich rhif TAW eich hun yn dd
   prawf o’ch gwiriad i chi. Gwiriwch eich rhif TAW eich hun a rhowch gynnig arall arni.
 
 vatcheck.exitsurvey.link.copy=Beth yw’ch barn am y gwasanaeth hwn?
-# Not found
 vatcheck.exitsurvey.time=(Mae’n cymryd 30 eiliad)
+
+# months
+vatcheck.month.1=Ionawr
+vatcheck.month.2=Chwefror
+vatcheck.month.3=Mawrth
+vatcheck.month.4=Ebrill
+vatcheck.month.5=Mai
+vatcheck.month.6=Mehefin
+vatcheck.month.7=Gorffennaf
+vatcheck.month.8=Awst
+vatcheck.month.9=Medi
+vatcheck.month.10=Hydref
+vatcheck.month.11=Tachwedd
+vatcheck.month.12=Rhagfyr
