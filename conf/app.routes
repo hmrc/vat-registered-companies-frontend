@@ -9,6 +9,7 @@ GET        /:target/unknown                           uk.gov.hmrc.vatregisteredc
 
 GET        /:target/known/requester/:requester        uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithConsultationNumber(target: String, requester: String)
 GET        /:target/known                             uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithoutConsultationNumber(target: String)
+
 GET        /language/:lang                            uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
 GET        /feedback                                  uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.ExitSurveyController.exitSurvey

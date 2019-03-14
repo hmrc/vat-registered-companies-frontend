@@ -17,10 +17,10 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.mvc.Call
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes
 
@@ -37,6 +37,9 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
+  lazy val sessionCacheDomain: String = loadConfig("microservice.services.session-cache.domain")
+  lazy val keyStoreUrl: String = baseUrl("keystore")
+  lazy val keyStoreSource: String = loadConfig("appName")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"

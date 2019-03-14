@@ -16,63 +16,92 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
+import cats.implicits._
+import cats.data.{EitherT, RWST}
+import cats.{Monoid, Order}
 import javax.inject.Inject
 import play.api.Application
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.Future
 
 class VatRegCoLookupController @Inject()(
-                                          val messagesApi: MessagesApi,
-                                          connector: VatRegisteredCompaniesConnector,
-                                          implicit val config: AppConfig
-                                        ) extends FrontendController with I18nSupport {
+  val messagesApi: MessagesApi,
+  connector: VatRegisteredCompaniesConnector,
+  cache: SessionCacheService,
+  implicit val config: AppConfig
+) extends FrontendController with I18nSupport {
 
   import VatRegCoLookupController.form
 
-  def lookupForm: Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Ok(lookup(form)))
+  def lookupForm: Action[AnyContent] = Action.async { implicit request =>
+    request.session.get("uuid").fold {
+          Redirect(routes.VatRegCoLookupController.lookupForm()).withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
+    } { sessionId =>
+      Future.successful(Ok(lookup(form)))
+    }
   }
+
+  def cacheLookup(sessionId: String, response: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.put[Lookup](sessionId, "foobar", response)
 
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookup(errors))),
-      lookup => connector.lookup(lookup) flatMap  {
-        case Some(response: LookupResponse) if response.target.isEmpty & lookup.withConsultationNumber =>
-          Future.successful(
-            Redirect(routes.VatRegCoLookupController.unknownWithConsultationNumber(
-              lookup.target,
-              lookup.requester.getOrElse("")
-            ))
-          )
-        case Some(response: LookupResponse) if response.target.isEmpty =>
-          Future.successful(
-            Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber(
-              lookup.target
-            ))
-          )
-        case Some(response: LookupResponse) if lookup.withConsultationNumber =>
-          Future.successful(
-            Redirect(routes.VatRegCoLookupController.knownWithConsultationNumber(
-              lookup.target,
-              lookup.requester.getOrElse("")
-            ))
-          )
-        case Some(response: LookupResponse) =>
-          Future.successful(
-            Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber(
-              lookup.target
-            ))
-          )
+      lookup => connector.lookup(lookup) flatMap  { x =>
+        request.session.get("uuid").fold {
+          val id = java.util.UUID.randomUUID.toString
+          println(s"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY $id")
+          Redirect(routes.VatRegCoLookupController.submit()).withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
+        } { sessionId =>
+          cacheLookup(sessionId, lookup)
+          x match {
+            case Some(response: LookupResponse)
+              if response.target.isEmpty & lookup.withConsultationNumber
+            =>
+
+              Future.successful(
+                Redirect(routes.VatRegCoLookupController.unknownWithConsultationNumber(
+                  lookup.target,
+                  lookup.requester.getOrElse("")
+                ))
+              )
+            case Some(response: LookupResponse)
+              if response.target.isEmpty
+            =>
+              Future.successful(
+                Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber(
+                  lookup.target
+                ))
+              )
+            case Some(response: LookupResponse)
+              if lookup.withConsultationNumber
+            =>
+              Future.successful(
+                Redirect(routes.VatRegCoLookupController.knownWithConsultationNumber(
+                  lookup.target,
+                  lookup.requester.getOrElse("")
+                ))
+              )
+            case Some(response: LookupResponse)
+            =>
+              Future.successful(
+                Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber(
+                  lookup.target
+                ))
+              )
+          }
+        }
       }
     )
   }
@@ -80,8 +109,16 @@ class VatRegCoLookupController @Inject()(
   def unknownWithConsultationNumber(
     target: VatNumber,
     requester: VatNumber
-  ): Action[AnyContent] = Action { implicit request =>
-    Ok(invalid_vat_number(target, true))
+  ): Action[AnyContent] = Action.async { implicit request =>
+    request.session.get("uuid").fold(Future.successful(Ok(invalid_vat_number(target, true)))) { sessionId =>
+
+      println(s"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX $sessionId")
+      cache.get[Lookup](sessionId, "foobar").map { x =>
+        println(s"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ $x")
+        Ok(invalid_vat_number(target, true))
+      }
+//      Ok(invalid_vat_number(target, true))
+    }
   }
 
   def unknownWithoutConsultationNumber(
