@@ -4,11 +4,12 @@ GET        /assets/*file                              controllers.Assets.at(path
 GET        /enter-vat-details                         uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.lookupForm
 POST       /enter-vat-details                         uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.submit
 
-GET        /:target/unknown/requester/:requester      uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithConsultationNumber(target: String, requester: String)
-GET        /:target/unknown                           uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithoutConsultationNumber(target: String)
+GET        /unknown/requester/known                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithValidConsultationNumber
+GET        /unknown/requester/unknown                 uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithInvalidConsultationNumber
+GET        /unknown                                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithoutConsultationNumber
 
-GET        /:target/known/requester/:requester        uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithConsultationNumber(target: String, requester: String)
-GET        /:target/known                             uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithoutConsultationNumber(target: String)
+GET        /known/requester/                          uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithConsultationNumber
+GET        /known                                     uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithoutConsultationNumber
 
 GET        /language/:lang                            uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.LanguageSwitchController.switchToLanguage(lang: String)
 

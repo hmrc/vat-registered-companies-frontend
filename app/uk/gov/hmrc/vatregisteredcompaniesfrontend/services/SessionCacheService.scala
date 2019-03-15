@@ -19,15 +19,14 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.services
 import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.OFormat
-import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
-import uk.gov.hmrc.http.cache.client.HttpCaching
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.{HttpCaching, SessionCache}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionCacheService @Inject()(appConfig: AppConfig, httpClient: HttpClient) extends HttpCaching {
+class SessionCacheService @Inject()(appConfig: AppConfig, httpClient: HttpClient) extends SessionCache {
 
   override def defaultSource: String = appConfig.keyStoreSource
 
@@ -36,9 +35,6 @@ class SessionCacheService @Inject()(appConfig: AppConfig, httpClient: HttpClient
   override def domain: String = appConfig.sessionCacheDomain
 
   override def http: HttpClient = httpClient
-
-
-  // TODO not sure we want to cache a Map
 
   def get[A](cacheId:String, id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, format: OFormat[A]): Future[Option[A]] = {
     fetchAndGetEntry[A](defaultSource, cacheId, id).recover {

@@ -16,20 +16,19 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
+import cats.data.OptionT
 import cats.implicits._
-import cats.data.{EitherT, RWST}
-import cats.{Monoid, Order}
 import javax.inject.Inject
-import play.api.Application
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.libs.json.OFormat
+import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import views.html.error_template
 import views.html.vatregisteredcompaniesfrontend._
@@ -53,8 +52,14 @@ class VatRegCoLookupController @Inject()(
     }
   }
 
-  def cacheLookup(sessionId: String, response: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.put[Lookup](sessionId, "foobar", response)
+  val lookupCacheId = "lookupCache"
+  val responseCacheId = "responseCache"
+
+  def cacheLookup(sessionId: String, lookup: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.put[Lookup](sessionId, lookupCacheId, lookup)
+
+  def cacheResponse(sessionId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.put[LookupResponse](sessionId, responseCacheId, response)
 
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
@@ -62,44 +67,45 @@ class VatRegCoLookupController @Inject()(
       lookup => connector.lookup(lookup) flatMap  { x =>
         request.session.get("uuid").fold {
           val id = java.util.UUID.randomUUID.toString
-          println(s"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY $id")
           Redirect(routes.VatRegCoLookupController.submit()).withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
         } { sessionId =>
           cacheLookup(sessionId, lookup)
           x match {
             case Some(response: LookupResponse)
+              if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty
+            =>
+              println(s"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ${response.requester}")
+              cacheResponse(sessionId, response)
+              Future.successful(
+                Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber())
+              )
+            case Some(response: LookupResponse)
               if response.target.isEmpty & lookup.withConsultationNumber
             =>
-
+              println(s"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY ${response.requester}")
+              cacheResponse(sessionId, response)
               Future.successful(
-                Redirect(routes.VatRegCoLookupController.unknownWithConsultationNumber(
-                  lookup.target,
-                  lookup.requester.getOrElse("")
-                ))
+                Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber())
               )
             case Some(response: LookupResponse)
               if response.target.isEmpty
             =>
+              cacheResponse(sessionId, response)
               Future.successful(
-                Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber(
-                  lookup.target
-                ))
+                Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber())
               )
             case Some(response: LookupResponse)
               if lookup.withConsultationNumber
             =>
+              cacheResponse(sessionId, response)
               Future.successful(
-                Redirect(routes.VatRegCoLookupController.knownWithConsultationNumber(
-                  lookup.target,
-                  lookup.requester.getOrElse("")
-                ))
+                Redirect(routes.VatRegCoLookupController.knownWithConsultationNumber())
               )
             case Some(response: LookupResponse)
             =>
+              cacheResponse(sessionId, response)
               Future.successful(
-                Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber(
-                  lookup.target
-                ))
+                Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber())
               )
           }
         }
@@ -107,47 +113,59 @@ class VatRegCoLookupController @Inject()(
     )
   }
 
-  def unknownWithConsultationNumber(
-    target: VatNumber,
-    requester: VatNumber
-  ): Action[AnyContent] = Action.async { implicit request =>
-    request.session.get("uuid").fold(Future.successful(Ok(error_template))) { sessionId =>
-      // TODO try a for comprehension and an optionT
-      println(s"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX $sessionId")
-      cache.get[Lookup](sessionId, "foobar").map { x =>
-        println(s"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ $x")
-        Ok(invalid_vat_number(target, true))
-      }
-//      Ok(invalid_vat_number(target, true))
+  def errorPage(implicit request: Request[AnyContent]) = Ok(error_template("foo", "bar", "foobar")) // TODO log an error
+
+  // TODO see if we can get this to work with the below
+  def getFromCache[A](id: String)(implicit request: Request[AnyContent], format: OFormat[A]): OptionT[Future, A] = for {
+    sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
+    lookup   <- OptionT(cache.get[A](sessionId, id))
+  } yield lookup
+
+  def getLookupResponseFromCache(implicit request: Request[AnyContent]): OptionT[Future, LookupResponse] = for {
+    sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
+    lookup   <- OptionT(cache.get[LookupResponse](sessionId, responseCacheId))
+  } yield lookup
+
+  def getLookupFromCache(implicit request: Request[AnyContent]): OptionT[Future, Lookup] = for {
+    sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
+    lookup   <- OptionT(cache.get[Lookup](sessionId, lookupCacheId))
+  } yield lookup
+
+  private def unknown(implicit request: Request[AnyContent]) =
+    getLookupFromCache.fold(errorPage) { x =>
+      Ok(invalid_vat_number(x.target, x.withConsultationNumber))
+    }
+
+  private def known(implicit request: Request[AnyContent]) = {
+    val x = for {
+      l <- getLookupFromCache
+      r <- getLookupResponseFromCache
+    } yield (l, r)
+    x.fold(errorPage) { x =>
+      Ok(confirmation(x._2, x._1.withConsultationNumber))
     }
   }
 
-  def unknownWithoutConsultationNumber(
-    target: VatNumber
-  ): Action[AnyContent] = Action { implicit request =>
-    Ok(invalid_vat_number(target, false))
+  def unknownWithInvalidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+    unknown
   }
 
-  def knownWithConsultationNumber(
-    target: VatNumber,
-    requester: VatNumber
-   ): Action[AnyContent] = Action.async { implicit request =>
-    val l = Lookup(target, true, Some(requester))
-    connector.lookup(l) map  {
-      case Some(response: LookupResponse) =>
-        Ok(confirmation(response, l.withConsultationNumber))
-    }
+  def unknownWithValidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+    unknown
   }
 
-  def knownWithoutConsultationNumber(
-    target: VatNumber
-   ): Action[AnyContent] = Action.async { implicit request =>
-    val l = Lookup(target, false, None)
-    connector.lookup(l) map  {
-      case Some(response: LookupResponse) =>
-        Ok(confirmation(response, l.withConsultationNumber))
-    }
+  def unknownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+    unknown
   }
+
+  def knownWithConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+    known
+  }
+
+  def knownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+    known
+  }
+
 }
 
 object VatRegCoLookupController {
