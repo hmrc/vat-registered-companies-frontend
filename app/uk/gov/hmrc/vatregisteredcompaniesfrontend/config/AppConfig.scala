@@ -24,6 +24,8 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes
 
+import scala.concurrent.duration.Duration
+
 @Singleton
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
   override protected def mode: Mode = environment.mode
@@ -37,9 +39,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
   lazy val feedbackSurveyUrl: String = loadConfig("microservice.services.feedback-survey.url")
-  lazy val sessionCacheDomain: String = loadConfig("microservice.services.session-cache.domain")
-  lazy val keyStoreUrl: String = baseUrl("keystore")
-  lazy val keyStoreSource: String = loadConfig("appName")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
@@ -53,5 +52,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val languageTranslationEnabled: Boolean =
     runModeConfiguration.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
+
+  val mongoSessionExpireAfter: Duration = getDuration("mongodb.session.expireAfter")
 
 }

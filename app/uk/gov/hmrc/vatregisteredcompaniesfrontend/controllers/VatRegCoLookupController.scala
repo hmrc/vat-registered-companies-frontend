@@ -23,14 +23,12 @@ import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.OFormat
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
-import views.html.error_template
 import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.Future
@@ -45,9 +43,10 @@ class VatRegCoLookupController @Inject()(
   import VatRegCoLookupController.form
 
   def lookupForm: Action[AnyContent] = Action.async { implicit request =>
-    request.session.get("uuid").fold {
-          Redirect(routes.VatRegCoLookupController.lookupForm()).withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
-    } { sessionId =>
+    cache.sessionUuid(request).fold {
+          Redirect(routes.VatRegCoLookupController.lookupForm())
+            .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
+    } { _ =>
       Future.successful(Ok(lookup(form)))
     }
   }
@@ -65,16 +64,16 @@ class VatRegCoLookupController @Inject()(
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookup(errors))),
       lookup => connector.lookup(lookup) flatMap  { x =>
-        request.session.get("uuid").fold {
+        cache.sessionUuid(request).fold {
           val id = java.util.UUID.randomUUID.toString
-          Redirect(routes.VatRegCoLookupController.submit()).withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
+          Redirect(routes.VatRegCoLookupController.submit())
+            .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
         } { sessionId =>
           cacheLookup(sessionId, lookup)
           x match {
             case Some(response: LookupResponse)
               if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty
             =>
-              println(s"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ${response.requester}")
               cacheResponse(sessionId, response)
               Future.successful(
                 Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber())
@@ -82,7 +81,6 @@ class VatRegCoLookupController @Inject()(
             case Some(response: LookupResponse)
               if response.target.isEmpty & lookup.withConsultationNumber
             =>
-              println(s"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY ${response.requester}")
               cacheResponse(sessionId, response)
               Future.successful(
                 Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber())
@@ -95,11 +93,18 @@ class VatRegCoLookupController @Inject()(
                 Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber())
               )
             case Some(response: LookupResponse)
+              if lookup.withConsultationNumber & response.requester.nonEmpty
+            =>
+              cacheResponse(sessionId, response)
+              Future.successful(
+                Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber())
+              )
+            case Some(response: LookupResponse)
               if lookup.withConsultationNumber
             =>
               cacheResponse(sessionId, response)
               Future.successful(
-                Redirect(routes.VatRegCoLookupController.knownWithConsultationNumber())
+                Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber())
               )
             case Some(response: LookupResponse)
             =>
@@ -113,14 +118,6 @@ class VatRegCoLookupController @Inject()(
     )
   }
 
-  def errorPage(implicit request: Request[AnyContent]) = Ok(error_template("foo", "bar", "foobar")) // TODO log an error
-
-  // TODO see if we can get this to work with the below
-  def getFromCache[A](id: String)(implicit request: Request[AnyContent], format: OFormat[A]): OptionT[Future, A] = for {
-    sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
-    lookup   <- OptionT(cache.get[A](sessionId, id))
-  } yield lookup
-
   def getLookupResponseFromCache(implicit request: Request[AnyContent]): OptionT[Future, LookupResponse] = for {
     sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
     lookup   <- OptionT(cache.get[LookupResponse](sessionId, responseCacheId))
@@ -132,7 +129,7 @@ class VatRegCoLookupController @Inject()(
   } yield lookup
 
   private def unknown(implicit request: Request[AnyContent]) =
-    getLookupFromCache.fold(errorPage) { x =>
+    getLookupFromCache.fold(throw new IllegalStateException("unable to retrieve cached data")) { x =>
       Ok(invalid_vat_number(x.target, x.withConsultationNumber))
     }
 
@@ -141,7 +138,7 @@ class VatRegCoLookupController @Inject()(
       l <- getLookupFromCache
       r <- getLookupResponseFromCache
     } yield (l, r)
-    x.fold(errorPage) { x =>
+    x.fold(throw new IllegalStateException("unable to retrieve cached data")) { x =>
       Ok(confirmation(x._2, x._1.withConsultationNumber))
     }
   }
@@ -158,7 +155,11 @@ class VatRegCoLookupController @Inject()(
     unknown
   }
 
-  def knownWithConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def knownWithValidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+    known
+  }
+
+  def knownWithInvalidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
     known
   }
 
@@ -180,9 +181,6 @@ object VatRegCoLookupController {
       "withConsultationNumber" -> boolean,
       "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
     )(Lookup.apply)(Lookup.unapply)
-    // this is commented as 1) the business logic for the validation may not be sensible and 2) we couldn't get the
-    // input fields to highlight.
-    //      .verifying("error.requester-and-target-same", lookup => lookup.target != lookup.requester.getOrElse(""))
   )
 
   private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>
