@@ -129,7 +129,7 @@ class VatRegCoLookupController @Inject()(
   } yield lookup
 
   private def unknown(implicit request: Request[AnyContent]) =
-    getLookupFromCache.fold(throw new IllegalStateException("unable to retrieve cached data")) { x =>
+    getLookupFromCache.fold(Redirect(routes.VatRegCoLookupController.lookupForm())) { x =>
       Ok(invalid_vat_number(x.target, x.withConsultationNumber))
     }
 
@@ -138,7 +138,7 @@ class VatRegCoLookupController @Inject()(
       l <- getLookupFromCache
       r <- getLookupResponseFromCache
     } yield (l, r)
-    x.fold(throw new IllegalStateException("unable to retrieve cached data")) { x =>
+    x.fold(Redirect(routes.VatRegCoLookupController.lookupForm())) { x =>
       Ok(confirmation(x._2, x._1.withConsultationNumber))
     }
   }
