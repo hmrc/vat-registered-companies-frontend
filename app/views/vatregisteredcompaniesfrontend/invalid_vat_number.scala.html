@@ -31,9 +31,8 @@
             <p class="lede">
                 @Messages("vatcheck.result.invalid.p")
                 <b class="bold">
-                    @Messages("vatcheck.common.open.apostrophie")
-                    @target
-                    @Messages("vatcheck.common.close.apostrophie")
+                    @*Messages have to be on same line to prevent unwanted white space*@
+                    @Messages("vatcheck.common.open.apostrophie")@target@Messages("vatcheck.common.close.apostrophie")@Messages("vatcheck.common.fullstop")
                 </b>
             </p>
             <p>@Messages("vatcheck.result.invalid.no-match")</p>
