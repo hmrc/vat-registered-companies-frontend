@@ -11,7 +11,7 @@
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
-GET        /check-vat-number/test-only/trigger-mdg-data-post    uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test.TestController.triggerDataImport
-GET        /check-vat-number/test-only/trigger-mdg-data-update  uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test.TestController.triggerDataUpdate
+GET        /check-vat-number/test-only/trigger-mdg-data-post/:seed    uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test.TestController.triggerDataImport(seed: String)
+GET        /check-vat-number/test-only/trigger-mdg-data-update        uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test.TestController.triggerDataUpdate
 
 
