@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
@@ -81,7 +81,7 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
                                      )
 
       val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
-      val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
+      val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
 
       when(mockAuthConnector.lookup(any())(any(), any())).thenReturn {
@@ -111,7 +111,7 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
           "target" -> testVatNumber,
           "withConsultationNumber" -> boolValue.toString,
           "requester" -> requesterVatNo.getOrElse(""))
-      val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), LocalDateTime.now(ZoneId.of("Europe/London") ))
+      val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
 
       when(mockAuthConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {

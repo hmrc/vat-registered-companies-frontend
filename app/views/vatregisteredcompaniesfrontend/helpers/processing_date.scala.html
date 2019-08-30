@@ -18,10 +18,16 @@
 @import java.time.LocalDateTime
 @import java.time.format.DateTimeFormatter
 
+@import java.time.zone.ZoneRulesProvider
 @(processingDate: ProcessingDate)(implicit request: Request[_], messages: Messages)
 
-@date_time_format(time: LocalDateTime) =  @{
-to_lower_am_pm(time.format(DateTimeFormatter.ofPattern("d MMMM YYYY 'at' h:mm a 'GMT'")))
+@date_time_format(time: ProcessingDate) =  @{
+ val rules = ZoneRulesProvider.getRules("Europe/London", true)
+ if (rules.isDaylightSavings(time.toInstant)) {
+  to_lower_am_pm(time.format(DateTimeFormatter.ofPattern("d MMMM YYYY 'at' h:mm a 'BST'")))
+ } else {
+  to_lower_am_pm(time.format(DateTimeFormatter.ofPattern("d MMMM YYYY 'at' h:mm a O")))
+ }
 }
 @to_lower_am_pm(time: String) = @{
 "(.*)( {1}[A,P]{1}M{1} {1})(.*)".r.replaceAllIn(time, x => s"${x.group(1)}${x.group(2).toLowerCase}${x.group(3)}")
