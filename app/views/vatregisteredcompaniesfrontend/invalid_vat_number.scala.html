@@ -14,14 +14,11 @@
  * limitations under the License.
  *@
 
+@import java.time.{LocalDateTime, ZoneId}
+
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{LookupResponse,VatNumber}
-@import uk.gov.hmrc.play.views.html.helpers._
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.VatNumber
 @import views.html.vatregisteredcompaniesfrontend.helpers._
-@import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
-
-
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.ProcessingDate
 @(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 @main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}") {
@@ -37,7 +34,7 @@
             @if(withConsultationNumber){
                 <p>@Messages("vatcheck.result.invalid.no-proof")</p>
             }
-            @processing_date(ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
+            @processing_date(LocalDateTime.now.atZone(ZoneId.of("Europe/London")))
             @print_this_page(false, false)
             @search_again(false, false)
             @exit_survey()
