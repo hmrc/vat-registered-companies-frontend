@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.ProcessingDate
-@import java.time.LocalDateTime
 @import java.time.format.DateTimeFormatter
-
 @import java.time.zone.ZoneRulesProvider
+
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.ProcessingDate
 @(processingDate: ProcessingDate)(implicit request: Request[_], messages: Messages)
+
 
 @date_time_format(time: ProcessingDate) =  @{
  val rules = ZoneRulesProvider.getRules("Europe/London", true)
