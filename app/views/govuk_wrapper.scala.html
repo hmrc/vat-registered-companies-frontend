@@ -79,7 +79,16 @@
 }
 
 @footerTop = {}
-@footerLinks = {}
+@footerLinks = {
+    <li>
+        <a href='@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.AccessibilityStatementController.showAccessibilityStatement()'
+        data-sso="false"
+        data-journey-click="footer:Click:Accessibility"
+        target="_blank">
+        @Messages("footer.links.accessibility.text")
+        </a>
+    </li>
+}
 
 @betaBanner = {
     <div class="phase-banner" style="text-align: left">
@@ -130,4 +139,4 @@
       sidebar = sidebar)
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links(additionalLinks = Some(footerLinks))), nav = true)(content)
