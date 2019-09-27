@@ -68,9 +68,9 @@ vatcheck.month.11=Tachwedd
 vatcheck.month.12=Rhagfyr
 
 # Accessibility
-footer.links.accessibility.text=Accessibility
+footer.links.accessibility.text=Datganiad
 accessibility.statement.title=Datganiad hygyrchedd ar gyfer gwirio rhif TAW yn y DU
-accessibility.statement.h1=Accessibility statement for check a UK VAT number
+accessibility.statement.h1=Datganiad hygyrchedd ar gyfer gwirio rhif TAW yn y DU
 accessibility.statement.intro.p1=Mae’r datganiad hygyrchedd hwn yn esbonio pa mor hygyrch yw’r gwasanaeth hwn, beth i’w wneud os ydych yn cael anhawster i’w ddefnyddio, a sut i roi gwybod am broblemau hygyrchedd gyda’r gwasanaeth.
 accessibility.statement.intro.p2=Mae’r gwasanaeth hwn yn rhan o wefan ehangach GOV.UK. Mae<a href="https://www.gov.uk/help/accessibility">accessibility statement</a> ar wahân ar gyfer prif wefan GOV.UK.
 accessibility.statement.intro.p3=Mae’r dudalen hon ond yn cynnwys gwybodaeth am wasanaeth gwirio rhif TAW yn y DU, sydd ar gael yn <a href="https://www.tax.service.gov.uk/disguised-remuneration/">www.tax.service.gov.uk/check-vat-number/language/cymraeg</a>
