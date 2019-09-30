@@ -16,27 +16,31 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-
-import scala.concurrent.Future
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{SEE_OTHER, status}
+import play.api.test.Helpers.{status, _}
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+import utils.TestWiring
+
+import scala.concurrent.Future
 
 
-class ExitSurveyControllerSpec extends BaseSpec {
-  private implicit lazy val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
-  lazy val exitSurveyController: ExitSurveyController = app.injector.instanceOf[ExitSurveyController]
+class ExitSurveyControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+  private val env: Environment = Environment.simple()
+  private val configuration: Configuration = Configuration.load(env)
+
+  implicit val appConfig: AppConfig = new AppConfig(configuration, env)
+  private val controller = new ExitSurveyController()
+  private val fakeRequest = FakeRequest("GET", "/")
 
   "ExitSurveyController" should {
     "return 303 SEE_OTHER" in {
-      val result: Future[Result] = exitSurveyController.exitSurvey.apply(
-        FakeRequest(
-          routes.ExitSurveyController.exitSurvey()
-        )
-      )
-
-      status(result) should be(SEE_OTHER)
+      val result: Future[Result] = controller.exitSurvey(fakeRequest)
+      status(result) shouldBe Status.SEE_OTHER
     }
   }
 

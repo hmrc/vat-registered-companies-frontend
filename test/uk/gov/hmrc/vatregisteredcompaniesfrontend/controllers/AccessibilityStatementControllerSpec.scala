@@ -16,41 +16,40 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
-import org.scalatest._
-import play.api.Configuration
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import play.api.i18n.{Lang, MessagesApi, Messages}
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status
+import play.api.i18n._
 import play.api.mvc.Result
-import play.api.Environment
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{OK, contentAsString, status}
+import play.api.test.Helpers.{contentAsString, contentType, status, _}
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+import utils.TestWiring
 
 import scala.concurrent.Future
 
-class AccessibilityStatementControllerSpec extends BaseSpec {
+class AccessibilityStatementControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
-  val env: Environment = Environment.simple()
-  val configuration: Configuration = Configuration.load(env)
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  val fakeRequest = FakeRequest("GET", "/")
+  val env = Environment.simple()
 
-  private implicit val messages: Messages = messagesApi.preferred(Seq.empty[Lang])
-  private implicit lazy val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
+  implicit val configuration = Configuration.load(env)
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  implicit val appConfig = new AppConfig(configuration, env)
 
-  lazy val accessibilityStatementController: AccessibilityStatementController =
-    app.injector.instanceOf[AccessibilityStatementController]
-
+  val messagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
+  val controller = new AccessibilityStatementController(messagesApi, env)
 
   "showAccessibilityStatement" should {
 
     "return 200 OK" in {
-      val result: Future[Result] =
-        accessibilityStatementController.showAccessibilityStatement.apply(
-          FakeRequest(
-            routes.AccessibilityStatementController.showAccessibilityStatement()
-          )
-        )
+      val result: Future[Result] = controller.showAccessibilityStatement(fakeRequest)
 
-      status(result) should be(OK)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+
       contentAsString(result) should include(messagesApi("accessibility.statement.h1"))
       contentAsString(result) should include(messagesApi("accessibility.statement.intro.p1"))
       contentAsString(result) should include(messagesApi("accessibility.statement.using.heading"))
