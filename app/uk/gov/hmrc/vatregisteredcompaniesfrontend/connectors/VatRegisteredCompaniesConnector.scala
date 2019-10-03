@@ -18,25 +18,25 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors
 
 import javax.inject.Inject
 import play.api.{Configuration, Environment}
-import play.api.Mode.Mode
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class VatRegisteredCompaniesConnector @Inject()(
-                                                 http: HttpClient,
-                                                 environment: Environment,
-                                                 configuration: Configuration
-                                               ) extends ServicesConfig {
+  http: HttpClient,
+  environment: Environment,
+  configuration: Configuration,
+  servicesConfig: ServicesConfig
+) {
 
 
-  lazy val url: String = s"${baseUrl("vat-registered-companies")}/vat-registered-companies"
+  lazy val url: String = s"${servicesConfig.baseUrl("vat-registered-companies")}/vat-registered-companies"
 
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = configuration
+//  override protected def mode: Mode = environment.mode
+//  override protected def runModeConfiguration: Configuration = configuration
 
   def lookup(lookup: Lookup)
             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {

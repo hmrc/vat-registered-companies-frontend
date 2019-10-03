@@ -20,10 +20,10 @@
   mainClass: Option[String] = None,
   mainDataAttributes: Option[Html] = None,
   bodyClasses: Option[String] = None,
-  sidebar: Html = HtmlFormat.empty,
+  sidebar: Html = Html(""),
   contentHeader: Option[Html] = None,
-  mainContent: Html = HtmlFormat.empty,
-  serviceInfoContent: Html = HtmlFormat.empty,
+  mainContent: Html = Html(""),
+  serviceInfoContent: Html = Html(""),
   scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}

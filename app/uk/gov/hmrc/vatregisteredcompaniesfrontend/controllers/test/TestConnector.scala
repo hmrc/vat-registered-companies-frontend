@@ -17,29 +17,28 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test
 
 import javax.inject.Inject
-import play.api.Mode.Mode
+import play.api.libs.json.{Json, OFormat}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class TestConnector @Inject()(
   http: HttpClient,
   environment: Environment,
-  configuration: Configuration
-) extends ServicesConfig {
+  configuration: Configuration,
+  servicesConfig: ServicesConfig
+) {
 
-
-  private val backendUrl: String = baseUrl("vat-registered-companies")
+  private val backendUrl: String = servicesConfig.baseUrl("vat-registered-companies")
 
   def trigger(url: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
-    http.GET(s"$backendUrl/test-only/$url")
+    http.GET[HttpResponse](s"$backendUrl/test-only/$url")
 
   def trigger(url: String, param: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
-    http.GET(s"$backendUrl/test-only/$url/$param")
+    http.GET[HttpResponse](s"$backendUrl/test-only/$url/$param")
 
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = configuration
 }
