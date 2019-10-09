@@ -35,7 +35,5 @@ package object controllers {
   implicit val lang = Lang.defaultLang
   val sc: ServicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
   implicit val appConfig = new AppConfig(configuration, env, sc)
-
-
-
+  
 }
