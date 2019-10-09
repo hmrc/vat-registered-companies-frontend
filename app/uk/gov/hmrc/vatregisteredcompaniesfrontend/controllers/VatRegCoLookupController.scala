@@ -42,9 +42,6 @@ class VatRegCoLookupController @Inject()(
   mcc: MessagesControllerComponents
 )(implicit config: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  val foo = mcc.parsers
-  val bar: PlayBodyParsers = foo
-
   import VatRegCoLookupController.form
 
   def lookupForm: Action[AnyContent] = Action.async { implicit request =>
