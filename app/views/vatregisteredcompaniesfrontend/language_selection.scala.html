@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
+@import uk.gov.hmrc.urls.Link
 
-import javax.inject.Inject
-import play.api.mvc.ControllerComponents
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@(langMap: Map[String, Lang], langToCall: String => Call, customClass: Option[String] = None, appName: Option[String] = None)(implicit messages: Messages)
 
-class ExitSurveyController @Inject()
-(
-  cc: ControllerComponents
-)(
-  implicit val appConfig: AppConfig
-) extends BackendController(cc)  {
+<p class="@if(customClass.isDefined) {@customClass.get}">
 
-  def exitSurvey = Action { implicit request =>
-    Redirect(appConfig.feedbackSurveyUrl).withNewSession
-  }
+@langMap.map { case (key: String, value: Lang) =>
+    @if(messages.lang.code != value.code) {
+        @Html(s"""<a id="$key-switch" href="${langToCall(key)}" target="_self" data-sso="false">${key.capitalize}</a>""")
+    } else {
+        @key.capitalize
+    }
+
+    @if(key != langMap.last._1) {
+        @Html(" | ")
+    }
 
 }
+</p>

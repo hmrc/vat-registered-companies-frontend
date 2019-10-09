@@ -18,23 +18,18 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
 import play.api.Environment
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import play.api.Configuration
-import play.twirl.api.Html
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import views.html.vatregisteredcompaniesfrontend.accessibility_statement
 
-import scala.concurrent.Future
-
-class AccessibilityStatementController @Inject()(
-  val messagesApi: MessagesApi,
+class AccessibilityStatementController @Inject()
+(
+  mcc: MessagesControllerComponents,
   environment: Environment
 )(
-  implicit val configuration: Configuration,
   implicit val appConfig: AppConfig
-) extends FrontendController with I18nSupport {
+) extends FrontendController(mcc) {
 
   def showAccessibilityStatement: Action[AnyContent] = Action { implicit request =>
     Ok(accessibility_statement())

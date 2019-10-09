@@ -24,12 +24,8 @@ import org.mockito.Mockito.when
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import utils.TestWiring
@@ -38,17 +34,8 @@ import scala.concurrent.Future
 
 class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
-
-  val fakeRequest = FakeRequest("GET", "/")
-  val env = Environment.simple()
-  val configuration = Configuration.load(env)
-
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-  val messagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  implicit val appConfig = new AppConfig(configuration, env)
-
   val mockSessionCache = mock[SessionCacheService]
-  val controller = new VatRegCoLookupController(messagesApi, mockAuthConnector, mockSessionCache, appConfig)
+  val controller = new VatRegCoLookupController(mockAuthConnector, mockSessionCache, mcc)
 
   "VatRegCoLookup Controller" must {
 
@@ -65,7 +52,6 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
       contentAsString(result) should  include(messagesApi("vatcheck.lookup.withConsultationNumber.label"))
       contentAsString(result) should  include(messagesApi("vatcheck.lookup.requester.label"))
       contentAsString(result) should  include(messagesApi("vatcheck.lookup.requester.hint"))
-
 
     }
 
@@ -155,6 +141,5 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
     }
 
   }
-
 
 }

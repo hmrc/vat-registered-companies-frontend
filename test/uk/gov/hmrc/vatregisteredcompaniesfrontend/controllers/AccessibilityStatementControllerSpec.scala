@@ -32,15 +32,7 @@ import scala.concurrent.Future
 
 class AccessibilityStatementControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
-  val fakeRequest = FakeRequest("GET", "/")
-  val env = Environment.simple()
-
-  implicit val configuration = Configuration.load(env)
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-  implicit val appConfig = new AppConfig(configuration, env)
-
-  val messagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  val controller = new AccessibilityStatementController(messagesApi, env)
+  val controller = new AccessibilityStatementController(mcc, env)
 
   "showAccessibilityStatement" should {
 

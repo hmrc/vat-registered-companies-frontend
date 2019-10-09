@@ -18,27 +18,29 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import cats.data.OptionT
 import cats.implicits._
+import com.google.inject.Singleton
 import javax.inject.Inject
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.controller.{BaseController, FrontendBaseController, FrontendController}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import views.html.vatregisteredcompaniesfrontend._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class VatRegCoLookupController @Inject()(
-  val messagesApi: MessagesApi,
   connector: VatRegisteredCompaniesConnector,
   cache: SessionCacheService,
-  implicit val config: AppConfig
-) extends FrontendController with I18nSupport {
+  mcc: MessagesControllerComponents
+)(implicit config: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   import VatRegCoLookupController.form
 

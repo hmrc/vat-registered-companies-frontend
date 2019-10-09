@@ -30,12 +30,8 @@ import scala.concurrent.Future
 
 
 class ExitSurveyControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
-  private val env: Environment = Environment.simple()
-  private val configuration: Configuration = Configuration.load(env)
 
-  implicit val appConfig: AppConfig = new AppConfig(configuration, env)
-  private val controller = new ExitSurveyController()
-  private val fakeRequest = FakeRequest("GET", "/")
+  private val controller = new ExitSurveyController(cc)
 
   "ExitSurveyController" should {
     "return 303 SEE_OTHER" in {
