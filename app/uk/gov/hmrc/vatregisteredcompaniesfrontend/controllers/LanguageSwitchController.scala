@@ -17,28 +17,33 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment}
-import play.api.i18n.{Lang, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
-import uk.gov.hmrc.play.bootstrap.config.RunMode
-import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
+import play.api.Environment
+import play.api.i18n.{I18nSupport, Lang}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
 class LanguageSwitchController @Inject()(
-                                          override implicit val messagesApi: MessagesApi,
-                                          configuration: Configuration,
-                                          environment: Environment,
-                                          appConfig: AppConfig,
-                                          runMode: RunMode,
-  languageUtils: LanguageUtils)
-  extends LanguageController(configuration, languageUtils) {
+  messagesControllerComponents: MessagesControllerComponents,
+  val appConfig: AppConfig,
+  environment: Environment
+) extends FrontendController(messagesControllerComponents) with I18nSupport {
 
-  override def languageMap: Map[String, Lang] = appConfig.languageMap
+  def langToCall(lang: String): Call = routes.LanguageSwitchController.switchToLanguage(lang)
 
-  override protected def fallbackURL: String = routes.VatRegCoLookupController.lookupForm().url
+  def switchToLanguage(language: String): Action[AnyContent] = Action { implicit request =>
+    val enabled = appConfig.languageTranslationEnabled
+    val lang =
+      if (enabled) languageMap.getOrElse(language, LanguageUtils.getCurrentLang)
+      else Lang("en")
+    val redirectURL = request.headers.get(REFERER).getOrElse(fallbackURL)
+    Redirect(redirectURL)
+      .withLang(Lang.apply(lang.code))
+      .flashing(LanguageUtils.FlashWithSwitchIndicator)
+  }
 
-//  override protected def mode: Mode = environment.mode
-//
-//  override protected def runModeConfiguration: Configuration = configuration
+  def fallbackURL: String = routes.VatRegCoLookupController.lookupForm().url
+
+  def languageMap: Map[String, Lang] = appConfig.languageMap
 }

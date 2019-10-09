@@ -32,11 +32,7 @@ class VatRegisteredCompaniesConnector @Inject()(
   servicesConfig: ServicesConfig
 ) {
 
-
   lazy val url: String = s"${servicesConfig.baseUrl("vat-registered-companies")}/vat-registered-companies"
-
-//  override protected def mode: Mode = environment.mode
-//  override protected def runModeConfiguration: Configuration = configuration
 
   def lookup(lookup: Lookup)
             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {
@@ -45,6 +41,5 @@ class VatRegisteredCompaniesConnector @Inject()(
     case a =>
       http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}").map(Some(_))
   }
-
 
 }

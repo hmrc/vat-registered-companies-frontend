@@ -29,6 +29,7 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
+@import views.html.vatregisteredcompaniesfrontend.language_selection
 
 
 @linksElement = {
@@ -114,12 +115,11 @@
 @mainContentHeader = {
 
     @if(appConfig.languageTranslationEnabled) {
-        @views.html.language_selection(
+        @language_selection(
             appConfig.languageMap,
             appConfig.routeToSwitchLanguage,
             Some("translate u-align--right"))
     }
-
 
     @if(contentHeader.isDefined) {
         @uiLayouts.main_content_header(contentHeader = contentHeader.get)

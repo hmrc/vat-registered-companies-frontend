@@ -21,7 +21,9 @@ import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Mode}
+import uk.gov.hmrc.play.bootstrap.config.{ServicesConfig, RunMode}
+
 
 
 class ErrorHandlerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
@@ -33,8 +35,9 @@ class ErrorHandlerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
   val configuration = Configuration.load(env)
 
 
-  val messagesApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  val appConfig = new AppConfig(configuration, env)
+  val messagesApi = new DefaultMessagesApi()
+  val servicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Test))
+  val appConfig = new AppConfig(configuration, env, servicesConfig)
 
   val errHandler = new ErrorHandler( messagesApi = messagesApi, appConfig= appConfig)
 

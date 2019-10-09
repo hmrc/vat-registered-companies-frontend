@@ -17,12 +17,10 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test
 
 import javax.inject.Inject
-import play.api.libs.json.{Json, OFormat}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 

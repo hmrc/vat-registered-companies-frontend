@@ -17,7 +17,6 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import play.api.{Configuration, Environment}
@@ -31,8 +30,6 @@ class AppConfig @Inject()(
   val runModeConfiguration: Configuration,
   environment: Environment,
   servicesConfig: ServicesConfig) {
-
-//  protected def mode: Mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
