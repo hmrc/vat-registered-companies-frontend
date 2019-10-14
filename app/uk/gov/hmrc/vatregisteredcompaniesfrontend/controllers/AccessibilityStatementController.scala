@@ -31,7 +31,7 @@ class AccessibilityStatementController @Inject()
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc) {
 
-  def showAccessibilityStatement: Action[AnyContent] = Action { implicit request =>
-    Ok(accessibility_statement())
+  def showAccessibilityStatement(path: String): Action[AnyContent] = Action { implicit request =>
+    Ok(accessibility_statement(path))
   }
 }

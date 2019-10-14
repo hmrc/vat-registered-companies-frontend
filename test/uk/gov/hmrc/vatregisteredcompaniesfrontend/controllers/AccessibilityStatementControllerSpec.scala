@@ -19,13 +19,8 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.i18n._
 import play.api.mvc.Result
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, contentType, status, _}
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import utils.TestWiring
 
 import scala.concurrent.Future
@@ -37,11 +32,10 @@ class AccessibilityStatementControllerSpec extends WordSpec with Matchers with G
   "showAccessibilityStatement" should {
 
     "return 200 OK" in {
-      val result: Future[Result] = controller.showAccessibilityStatement(fakeRequest)
+      val result: Future[Result] = controller.showAccessibilityStatement("foo")(fakeRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-
       contentAsString(result) should include(messagesApi("accessibility.statement.h1"))
       contentAsString(result) should include(messagesApi("accessibility.statement.intro.p1"))
       contentAsString(result) should include(messagesApi("accessibility.statement.using.heading"))
