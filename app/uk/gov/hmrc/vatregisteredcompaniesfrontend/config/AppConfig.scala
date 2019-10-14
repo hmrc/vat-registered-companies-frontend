@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
+import java.net.URLEncoder.encode
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.Call
@@ -33,6 +35,7 @@ class AppConfig @Inject()(
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
+  private val encoding = "UTF-8"
   private val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = loadConfig("appName")
 
@@ -44,6 +47,10 @@ class AppConfig @Inject()(
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+
+  def contactAccessibilityHelpDeskLink(path: String): String = {
+    s"$contactHost/contact/accessibility?service=$contactFormServiceIdentifier&userAction=${encode(path, encoding)}"
+  }
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(path: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @views.html.main_template(title = Messages("accessibility.statement.title")) {
     <h1 class="heading-xlarge">@messages("accessibility.statement.h1")</h1>
@@ -51,8 +51,7 @@
     <p>@messages("accessibility.statement.accessible.p2")</p>
 
     <h2 class="govuk-heading-l">@messages("accessibility.statement.reporting.heading")</h2>
-    @*TODO Update email address*@
-    <p>@Html(messages("accessibility.statement.reporting.p1"))</p>
+    <p>@Html(messages("accessibility.statement.reporting.p1", appConfig.contactAccessibilityHelpDeskLink(path)))</p>
 
     <h2 class="govuk-heading-l">@messages("accessibility.statement.enforcement.heading")</h2>
     <p>@Html(messages("accessibility.statement.enforcement.p1"))</p>
