@@ -17,8 +17,11 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
 import java.net.URLEncoder.encode
+import java.time.ZonedDateTime
 
 import javax.inject.{Inject, Singleton}
+import play.Logger
+import play.api.data.format
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import play.api.{Configuration, Environment}
@@ -62,5 +65,23 @@ class AppConfig @Inject()(
     runModeConfiguration.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
 
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
+
+
+  // debug time
+  try {
+    import java.time._
+    import sys.process._
+    val logger = play.api.Logger("foo")
+    logger.info(s"ZonedDateTime.now.format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.format(java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}")
+    val osDate = "date".!!
+    val osDateUtc = "date --utc".!!
+    logger.info(s"osDate : ${osDate.trim}")
+    logger.info(s"osDateUTC: ${osDateUtc.trim}")
+  } catch {
+    case _: Throwable => ()
+  }
+
+
+
 
 }
