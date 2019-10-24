@@ -66,8 +66,4 @@ class AppConfig @Inject()(
 
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
 
-
-
-
-
 }
