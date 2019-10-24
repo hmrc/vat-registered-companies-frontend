@@ -168,6 +168,7 @@ class VatRegCoLookupController @Inject()(
   def knownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
     known
   }
+
 }
 
 object VatRegCoLookupController {
