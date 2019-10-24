@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import java.time.{LocalDateTime, ZoneId}
+@import java.time.{ZonedDateTime, ZoneId}
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.VatNumber
@@ -34,7 +34,7 @@
             @if(withConsultationNumber){
                 <p>@Messages("vatcheck.result.invalid.no-proof")</p>
             }
-            @processing_date(LocalDateTime.now.atZone(ZoneId.of("Europe/London")))
+            @processing_date(ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")))
             @print_this_page(false, false)
             @search_again(false, false)
             @exit_survey()
