@@ -39,8 +39,10 @@ class TestController @Inject()(
 
   def timeInfo : Action[AnyContent] = Action {
     import java.time._
+
     import sys.process._
     val logger = play.api.Logger("MACHINE_TIME_INFO")
+    logger.info(s"""ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")).format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")).format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}""")
     logger.info(s"ZonedDateTime.now.format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.format(java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}")
     val osDate = "date".!!
     val osDateUtc = "date --utc".!!
@@ -50,6 +52,8 @@ class TestController @Inject()(
     logger.info(s"java.time.Clock.systemDefaultZone is ${java.time.Clock.systemDefaultZone}")
     Ok(
       s"""|
+          |   ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")).format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")).format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}
+          |   ZonedDateTime.now.format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.format(java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}
           |   osDate : ${osDate.trim}
           |   osDateUtc:   ${osDateUtc.trim}
           |   System.currentTimeMillis is ${System.currentTimeMillis}
