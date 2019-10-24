@@ -16,4 +16,4 @@ GET        /language/:lang                            uk.gov.hmrc.vatregisteredc
 
 GET        /feedback                                  uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.ExitSurveyController.exitSurvey
 
-GET        /accessibility-statement:path                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.AccessibilityStatementController.showAccessibilityStatement(path: String)
+GET        /accessibility-statement:path              uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.AccessibilityStatementController.showAccessibilityStatement(path: String)

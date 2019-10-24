@@ -67,20 +67,6 @@ class AppConfig @Inject()(
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
 
 
-  // debug time
-  try {
-    import java.time._
-    import sys.process._
-    val logger = play.api.Logger("foo")
-    logger.info(s"ZonedDateTime.now.format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.format(java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}")
-    val osDate = "date".!!
-    val osDateUtc = "date --utc".!!
-    logger.info(s"osDate : ${osDate.trim}")
-    logger.info(s"osDateUTC: ${osDateUtc.trim}")
-  } catch {
-    case _: Throwable => ()
-  }
-
 
 
 
