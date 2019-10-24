@@ -37,4 +37,24 @@ class TestController @Inject()(
       Future.successful(Ok("data update successful")))
   }
 
+  def timeInfo : Action[AnyContent] = Action {
+    import java.time._
+    import sys.process._
+    val logger = play.api.Logger("MACHINE_TIME_INFO")
+    logger.info(s"ZonedDateTime.now.format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.format(java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}")
+    val osDate = "date".!!
+    val osDateUtc = "date --utc".!!
+    logger.info(s"osDate : ${osDate.trim}")
+    logger.info(s"osDateUTC: ${osDateUtc.trim}")
+    logger.info(s"System.currentTimeMillis is ${System.currentTimeMillis}")
+    logger.info(s"java.time.Clock.systemDefaultZone is ${java.time.Clock.systemDefaultZone}")
+    Ok(
+      s"""|
+          |   osDate : ${osDate.trim}
+          |   osDateUtc:   ${osDateUtc.trim}
+          |   System.currentTimeMillis is ${System.currentTimeMillis}
+          |   java.time.Clock.systemDefaultZone is ${java.time.Clock.systemDefaultZone}|
+          |
+      """.stripMargin)
+  }
 }

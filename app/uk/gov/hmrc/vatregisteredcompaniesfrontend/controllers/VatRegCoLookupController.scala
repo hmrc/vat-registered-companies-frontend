@@ -46,8 +46,8 @@ class VatRegCoLookupController @Inject()(
 
   def lookupForm: Action[AnyContent] = Action.async { implicit request =>
     cache.sessionUuid(request).fold {
-          Redirect(routes.VatRegCoLookupController.lookupForm())
-            .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
+      Redirect(routes.VatRegCoLookupController.lookupForm())
+        .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
     } { _ =>
       Future.successful(Ok(lookup(form)))
     }
@@ -65,7 +65,7 @@ class VatRegCoLookupController @Inject()(
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookup(errors))),
-      lookup => connector.lookup(lookup) flatMap  { x =>
+      lookup => connector.lookup(lookup) flatMap { x =>
         cache.sessionUuid(request).fold {
           val id = java.util.UUID.randomUUID.toString
           Redirect(routes.VatRegCoLookupController.submit())
@@ -122,12 +122,12 @@ class VatRegCoLookupController @Inject()(
 
   def getLookupResponseFromCache(implicit request: Request[AnyContent]): OptionT[Future, LookupResponse] = for {
     sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
-    lookup   <- OptionT(cache.get[LookupResponse](sessionId, responseCacheId))
+    lookup <- OptionT(cache.get[LookupResponse](sessionId, responseCacheId))
   } yield lookup
 
   def getLookupFromCache(implicit request: Request[AnyContent]): OptionT[Future, Lookup] = for {
     sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
-    lookup   <- OptionT(cache.get[Lookup](sessionId, lookupCacheId))
+    lookup <- OptionT(cache.get[Lookup](sessionId, lookupCacheId))
   } yield lookup
 
   private def unknown(implicit request: Request[AnyContent]) =
@@ -167,27 +167,6 @@ class VatRegCoLookupController @Inject()(
 
   def knownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
     known
-  }
-
-  def timeInfo : Action[AnyContent] = Action {
-    import java.time._
-    import sys.process._
-    val logger = play.api.Logger("MACHINE_TIME_INFO")
-    logger.info(s"ZonedDateTime.now.format(format.DateTimeFormatter.ISO_ZONED_DATE_TIME) is: ${ZonedDateTime.now.format(java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME)}")
-    val osDate = "date".!!
-    val osDateUtc = "date --utc".!!
-    logger.info(s"osDate : ${osDate.trim}")
-    logger.info(s"osDateUTC: ${osDateUtc.trim}")
-    logger.info(s"System.currentTimeMillis is ${System.currentTimeMillis}")
-    logger.info(s"java.time.Clock.systemDefaultZone is ${java.time.Clock.systemDefaultZone}")
-    Ok(
-      s"""|
-          |   osDate : ${osDate.trim}
-          |   osDateUtc:   ${osDateUtc.trim}
-          |   System.currentTimeMillis is ${System.currentTimeMillis}
-          |   java.time.Clock.systemDefaultZone is ${java.time.Clock.systemDefaultZone}|
-          |
-      """.stripMargin)
   }
 
 }
