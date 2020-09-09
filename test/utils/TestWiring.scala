@@ -38,7 +38,7 @@ trait TestWiring extends MockitoSugar {
 
   implicit val ec: ExecutionContext = defaultContext
 
-  lazy val mockAuthConnector: VatRegisteredCompaniesConnector = {
+  lazy val mockVatRegCoConnector: VatRegisteredCompaniesConnector = {
     val mymock = mock[VatRegisteredCompaniesConnector]
 
     when(mymock.lookup( any())(any(), any())).thenReturn(Future.successful(Some((any()))))

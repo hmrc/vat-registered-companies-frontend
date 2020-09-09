@@ -71,49 +71,45 @@ class VatRegCoLookupController @Inject()(
           Redirect(routes.VatRegCoLookupController.submit())
             .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
         } { sessionId =>
-          cacheLookup(sessionId, lookup)
-          x match {
-            case Some(response: LookupResponse)
-              if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty
-            =>
-              cacheResponse(sessionId, response)
-              Future.successful(
-                Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber())
-              )
-            case Some(response: LookupResponse)
-              if response.target.isEmpty & lookup.withConsultationNumber
-            =>
-              cacheResponse(sessionId, response)
-              Future.successful(
-                Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber())
-              )
-            case Some(response: LookupResponse)
-              if response.target.isEmpty
-            =>
-              cacheResponse(sessionId, response)
-              Future.successful(
-                Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber())
-              )
-            case Some(response: LookupResponse)
-              if lookup.withConsultationNumber & response.requester.nonEmpty
-            =>
-              cacheResponse(sessionId, response)
-              Future.successful(
-                Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber())
-              )
-            case Some(response: LookupResponse)
-              if lookup.withConsultationNumber
-            =>
-              cacheResponse(sessionId, response)
-              Future.successful(
-                Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber())
-              )
-            case Some(response: LookupResponse)
-            =>
-              cacheResponse(sessionId, response)
-              Future.successful(
-                Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber())
-              )
+          cacheLookup(sessionId, lookup).flatMap{ _ =>
+            x match {
+              case Some(response: LookupResponse)
+                if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty
+              =>
+                cacheResponse(sessionId, response).map { _ =>
+                  Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber())
+                }
+              case Some(response: LookupResponse)
+                if response.target.isEmpty & lookup.withConsultationNumber
+              =>
+                cacheResponse(sessionId, response).map { _ =>
+                  Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber())
+                }
+              case Some(response: LookupResponse)
+                if response.target.isEmpty
+              =>
+                cacheResponse(sessionId, response).map { _ =>
+                  Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber())
+                }
+              case Some(response: LookupResponse)
+                if lookup.withConsultationNumber & response.requester.nonEmpty
+              =>
+                cacheResponse(sessionId, response).map { _ =>
+                  Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber())
+                }
+              case Some(response: LookupResponse)
+                if lookup.withConsultationNumber
+              =>
+                cacheResponse(sessionId, response).map { _ =>
+                  Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber())
+                }
+              case Some(response: LookupResponse)
+              =>
+                cacheResponse(sessionId, response).map{ _ =>
+                  Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber())
+                }
+              case _ => throw new MissingLookupResponseException
+            }
           }
         }
       }
@@ -168,6 +164,8 @@ class VatRegCoLookupController @Inject()(
   def knownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
     known
   }
+
+  class MissingLookupResponseException extends RuntimeException("no LookupResponse from VatRegisteredCompaniesConnector")
 
 }
 
