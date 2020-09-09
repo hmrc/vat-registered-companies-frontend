@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ trait TestWiring extends MockitoSugar {
 
   implicit val ec: ExecutionContext = defaultContext
 
-  lazy val mockAuthConnector: VatRegisteredCompaniesConnector = {
+  lazy val mockVatRegCoConnector: VatRegisteredCompaniesConnector = {
     val mymock = mock[VatRegisteredCompaniesConnector]
 
     when(mymock.lookup( any())(any(), any())).thenReturn(Future.successful(Some((any()))))
