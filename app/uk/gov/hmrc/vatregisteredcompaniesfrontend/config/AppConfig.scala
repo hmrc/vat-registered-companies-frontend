@@ -32,14 +32,16 @@ import scala.concurrent.duration.Duration
 
 @Singleton
 class AppConfig @Inject()(
-  val runModeConfiguration: Configuration,
+  val config: Configuration,
   environment: Environment,
   servicesConfig: ServicesConfig) {
 
-  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  private def loadConfig(key: String) = config.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+
+  val footerLinkItems: Seq[String] = config.getOptional[Seq[String]]("footerLinkItems").getOrElse(Seq())
 
   private val encoding = "UTF-8"
-  private val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
+  private val contactHost = config.getString(s"contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = loadConfig("appName")
 
   lazy val assetsPrefix: String = loadConfig(s"assets.url") + loadConfig(s"assets.version")
@@ -62,7 +64,7 @@ class AppConfig @Inject()(
   def routeToSwitchLanguage: String => Call = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 
   lazy val languageTranslationEnabled: Boolean =
-    runModeConfiguration.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
+    config.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
 
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
 

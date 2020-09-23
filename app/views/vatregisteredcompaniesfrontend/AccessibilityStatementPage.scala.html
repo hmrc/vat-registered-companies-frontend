@@ -16,9 +16,11 @@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
+@this(layout: Layout)
+
 @(path: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@views.html.main_template(title = Messages("accessibility.statement.title")) {
+@layout(pageTitle = Some(Messages("accessibility.statement.title"))) {
     <div class="column-two-thirds">
     <h1 class="heading-xlarge">@messages("accessibility.statement.h1")</h1>
     <p class="govuk-body-l">@messages("accessibility.statement.intro.p1")</p>

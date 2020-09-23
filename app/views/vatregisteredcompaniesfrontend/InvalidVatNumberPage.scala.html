@@ -19,9 +19,12 @@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.VatNumber
 @import views.html.vatregisteredcompaniesfrontend.helpers._
+
+@this(layout: Layout)
+
 @(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}") {
+@layout(pageTitle = Some(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}")) {
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-xlarge">@Messages("vatcheck.result.invalidVatNo")</h1>

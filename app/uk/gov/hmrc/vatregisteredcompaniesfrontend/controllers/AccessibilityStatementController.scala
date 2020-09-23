@@ -21,17 +21,18 @@ import play.api.Environment
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import views.html.vatregisteredcompaniesfrontend.accessibility_statement
+import views.html.vatregisteredcompaniesfrontend.AccessibilityStatementPage
 
 class AccessibilityStatementController @Inject()
 (
   mcc: MessagesControllerComponents,
-  environment: Environment
+  environment: Environment,
+  accessibilityStatementPage: AccessibilityStatementPage
 )(
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc) {
 
   def showAccessibilityStatement(path: String): Action[AnyContent] = Action { implicit request =>
-    Ok(accessibility_statement(path))
+    Ok(accessibilityStatementPage(path))
   }
 }

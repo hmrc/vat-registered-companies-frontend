@@ -14,44 +14,78 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers._
+@*//@import uk.gov.hmrc.play.views.html.helpers._*@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import views.html.vatregisteredcompaniesfrontend.helpers._
+@import views.html.vatregisteredcompaniesfrontend.components.InputText
+
+
+@this(
+    layout: Layout,
+    formHelper: FormWithCSRF,
+    errorTemplate: ErrorTemplate,
+    inputText: InputText
+)
 
 @(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@main_template(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}") {
-    <div class="grid-row">
-        <div class="column-two-thirds">
 
-            @error_summary(lookupForm)
+@layout(pageTitle = Some(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}")) {
+    @*<div class="grid-row">*@
+        @*<div class="column-two-thirds">*@
 
-            @form(uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.submit) {
-            <div>
-                <fieldset class="form-field-group">
-                    <div class="form-group @if(lookupForm("target").hasErrors) {govuk-form-group--error}">
-                        <legend>
-                            <h1 class="govuk-label-wrapper">
-                                <label class="govuk-label--xl" for="@lookupForm("target").name">
-                                    @Messages("vatcheck.lookup.heading")
-                                </label>
-                            </h1>
-                        </legend>
-                        <span id="@{lookupForm("target").name}-hint" class="govuk-hint">
-                            @Messages("vatcheck.lookup.target.hint")
-                        </span>
-                            @lookupForm("target").errors.map { error =>
-                                <span class="govuk-error-message" data-journey="search-page:error:@lookupForm("target").name">
-                                @Messages(error.message, error.args: _*)
-                                </span>
-                            }
-                        <input class="vat-no-entry form-control @if(lookupForm("target").hasErrors) {form-control-error}"
-                        id="@lookupForm("target").name"
-                        name="@lookupForm("target").name"
-                        value="@lookupForm("target").value"
-                        type="text"
-                        aria-describedby="@{lookupForm("target").name}-hint">
-                    </div>
+            @formHelper(uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.submit) {
+                @checkForm.errors.map { err =>
+                    @govukErrorSummary(ErrorSummary(
+                        errorList = Seq(
+                            ErrorLink(
+                                href = Some("#eori"),
+                                content = Text(s"${messages(err.message)}")
+                            )
+                        ),
+                        title = Text("There is a problem")
+                    ))
+                }
+            @*<div>*@
+                @*<fieldset class="form-field-group">*@
+                    @*<div class="form-group @if(lookupForm("target").hasErrors) {govuk-form-group--error}">*@
+                        @*<legend>*@
+                            @*<h1 class="govuk-heading-xl">*@
+                                @*<label class="govuk-label--xl" for="@lookupForm("target").name">*@
+                                    @*@Messages("vatcheck.lookup.heading")*@
+                                @*</label>*@
+                            @*</h1>*@
+                        @*</legend>*@
+                        @*<span id="@{lookupForm("target").name}-hint" class="govuk-hint">*@
+                            @*@Messages("vatcheck.lookup.target.hint")*@
+                        @*</span>*@
+                            @*@lookupForm("target").errors.map { error =>*@
+                                @*<span class="govuk-error-message" data-journey="search-page:error:@lookupForm("target").name">*@
+                                @*@Messages(error.message, error.args: _*)*@
+                                @*</span>*@
+                            @*}*@
+                        @*<input class="vat-no-entry form-control @if(lookupForm("target").hasErrors) {form-control-error}"*@
+                        @*id="@lookupForm("target").name"*@
+                        @*name="@lookupForm("target").name"*@
+                        @*value="@lookupForm("target").value"*@
+                        @*type="text"*@
+                        @*aria-describedby="@{lookupForm("target").name}-hint">*@
+                        @inputText(
+                                lookupForm,
+                                id = lookupForm("target").name,
+                                name = lookupForm("target").name,
+                                label = "vatcheck.lookup.heading",
+                                classes = Some("govuk-input--width-10"),
+                                isPageHeading = true,
+                                hint = Some(
+                                    Hint(
+                                        id = Some(lookupForm("target").name ++ "-hint"),
+                                        classes = "govuk-hint",
+                                        content = HtmlContent(messages("vatcheck.lookup.target.hint"))
+                                    )
+                                )
+                        )
+                    @*</div>*@
                     @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                     <div class="form-group govuk-form-group--error">
                     }
@@ -93,10 +127,10 @@
                     @if(lookupForm("requester").hasErrors || lookupForm("withConsultationNumber").hasErrors) {
                     </div>
                     }
-                </fieldset>
+                @*</fieldset>*@
                 <button onclick="ga('send', 'event', 'button - click', '@Messages("vatcheck.lookup.heading")', 'Search');" class="button" type="submit"> @Messages("vatcheck.lookup.button")</button>
-            </div>
+            @*</div>*@
             }
-        </div>
-    </div>
+        @*</div>*@
+    @*</div>*@
 }
