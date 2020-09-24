@@ -16,11 +16,15 @@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.views.FooterLinks
+@import views.html.vatregisteredcompaniesfrontend.components.Scripts
+
 @import uk.gov.hmrc.govukfrontend.views.Layouts
+
 
 @this(
         govukLayout: GovukLayout,
-        head: Head
+        head: Head,
+        scripts: Scripts
 )
 @(pageTitle: Option[String] = None,
         headBlock: Option[Html] = None,
@@ -32,5 +36,6 @@
     headBlock = Some(head(headBlock)),
     scriptsBlock = scriptsBlock,
     beforeContentBlock = None,
-    footerItems = FooterLinks()
+    footerItems = FooterLinks(),
+    bodyEndBlock = Some(scripts())
 )(contentBlock)
