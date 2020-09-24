@@ -1,5 +1,6 @@
 # common content
 vatcheck.common.title=Check a UK VAT number
+service.name=Check a UK VAT number
 vatcheck.common.page.title=Check a UK VAT number - GOV.UK
 vatcheck.common.alpha=ALPHA
 vatcheck.common.beta=BETA
