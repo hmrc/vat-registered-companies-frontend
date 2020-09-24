@@ -16,26 +16,36 @@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.views.FooterLinks
-@import views.html.vatregisteredcompaniesfrontend.components.Scripts
+@import views.html.vatregisteredcompaniesfrontend.components.{Scripts, GovBetaBanner}
 
 @import uk.gov.hmrc.govukfrontend.views.Layouts
 
 
 @this(
-        govukLayout: GovukLayout,
-        head: Head,
-        scripts: Scripts
+    govukLayout: GovukLayout,
+    head: Head,
+    scripts: Scripts,
+    govBetaBanner : GovBetaBanner,
+    govukPhaseBanner : GovukPhaseBanner,
+    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue
 )
 @(pageTitle: Option[String] = None,
         headBlock: Option[Html] = None,
-        scriptsBlock: Option[Html] = None
+        scriptsBlock: Option[Html] = None,
+        beforeContentBlock: Html = Html("")
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
+@content = {
+    @contentBlock
+    @hmrcReportTechnicalIssue(
+        ReportTechnicalIssue(appConfig.appName, Some(messages.lang.language))
+    )
+}
 @govukLayout(
     pageTitle = pageTitle,
     headBlock = Some(head(headBlock)),
     scriptsBlock = scriptsBlock,
-    beforeContentBlock = None,
+    beforeContentBlock = Some(beforeContentBlock),
     footerItems = FooterLinks(),
     bodyEndBlock = Some(scripts())
-)(contentBlock)
+)(content)

@@ -16,13 +16,17 @@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
+@import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
 @import views.html.vatregisteredcompaniesfrontend.helpers._
 
-@this(layout: Layout)
+@this(layout: Layout, beforeContent: BeforeContent)
 
 @(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@layout(pageTitle = Some(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}")) {
+@layout(
+    pageTitle = Some(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}"),
+    beforeContentBlock = beforeContent()
+) {
     @lookup.target.map { t =>
         <div class="grid-row">
             <div class="column-two-thirds">

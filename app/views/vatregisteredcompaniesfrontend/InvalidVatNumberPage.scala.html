@@ -19,28 +19,25 @@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.VatNumber
 @import views.html.vatregisteredcompaniesfrontend.helpers._
+@import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
 
-@this(layout: Layout)
+@this(layout: Layout, beforeContent: BeforeContent)
 
 @(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@layout(pageTitle = Some(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}")) {
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <h1 class="heading-xlarge">@Messages("vatcheck.result.invalidVatNo")</h1>
-            <p class="lede">
-                @Messages("vatcheck.result.invalid.p")
-                    @*Messages have to be on same line to prevent unwanted white space*@
-                @Messages("vatcheck.common.open.apostrophie")<b class="bold">@target</b>@Messages("vatcheck.common.close.apostrophie")@Messages("vatcheck.common.fullstop")
-            </p>
-            <p>@Messages("vatcheck.result.invalid.no-match")</p>
-            @if(withConsultationNumber){
-                <p>@Messages("vatcheck.result.invalid.no-proof")</p>
-            }
-            @processing_date(ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")))
-            @print_this_page(false, false)
-            @search_again(false, false)
-            @exit_survey()
-        </div>
-    </div>
+@layout(pageTitle = Some(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}"), beforeContentBlock = beforeContent()) {
+    <h1 class="govuk-heading-xl">@Messages("vatcheck.result.invalidVatNo")</h1>
+    <p class="govuk-body-l">
+        @Messages("vatcheck.result.invalid.p")
+            @*Messages have to be on same line to prevent unwanted white space*@
+        @Messages("vatcheck.common.open.apostrophie")<b class="bold">@target</b>@Messages("vatcheck.common.close.apostrophie")@Messages("vatcheck.common.fullstop")
+    </p>
+    <p class="govuk-body">@Messages("vatcheck.result.invalid.no-match")</p>
+    @if(withConsultationNumber){
+        <p class="govuk-body">@Messages("vatcheck.result.invalid.no-proof")</p>
+    }
+    @processing_date(ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")))
+    @print_this_page(false, false)
+    @search_again(false, false)
+    @exit_survey()
 }

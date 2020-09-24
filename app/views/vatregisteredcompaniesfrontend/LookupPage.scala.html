@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import views.html.vatregisteredcompaniesfrontend.helpers._
-@import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button}
+@import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button, BeforeContent}
 
 
 @this(
@@ -26,13 +26,16 @@
     inputText: InputText,
     govukErrorSummary: GovukErrorSummary,
     button: Button,
-    govukCheckboxes: GovukCheckboxes
+    govukCheckboxes: GovukCheckboxes,
+    beforeContent: BeforeContent
 )
 
 @(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
 
 
-@layout(pageTitle = Some(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}")) {
+@layout(pageTitle = Some(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}"),
+    beforeContentBlock = beforeContent()
+) {
 
     @formHelper(uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.submit) {
 

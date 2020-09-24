@@ -38,6 +38,8 @@ class AppConfig @Inject()(
 
   private def loadConfig(key: String) = config.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
+  lazy val appName: String = config.get[String]("appName")
+
   val footerLinkItems: Seq[String] = config.getOptional[Seq[String]]("footerLinkItems").getOrElse(Seq())
 
   private val encoding = "UTF-8"
