@@ -23,12 +23,19 @@
 
 @(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
 
-@panelContent(target: VatNumber, bar: Option[ConsultationNumber]) = @{
-    s"""<p>${Messages("vatcheck.result.valid.vat-no")}<b class="bold">$target</b></p>
-       |${bar.map { no =>
-        messages("vatcheck.result.valid.check-ref")
-        s"""<b class="bold consultation-number">$no</b>"""
-    }}""".stripMargin
+@panelContent(target: VatNumber, consultationNumber: Option[ConsultationNumber]) = @{
+
+    val no = consultationNumber.fold(""){x =>
+
+        s"""<p>
+        ${messages("vatcheck.result.valid.check-ref")}
+        <span class="govuk-!-font-weight-bold">$x</span>
+        </p>"""
+
+    }
+
+    s"""<p>${Messages("vatcheck.result.valid.vat-no")} <b class="bold">$target</b></p>
+       $no"""
 
 }
 
@@ -38,31 +45,15 @@
 ) {
     @lookup.target.map { t =>
 
+        @govukPanel(Panel(
+            title = Text(messages("vatcheck.result.validVatNo")),
+            content = HtmlContent(panelContent(t.vatNumber, lookup.consultationNumber))
+        ))
 
-
-        <div class="govuk-panel govuk-panel--confirmation">
-            <h1 class="govuk-panel__title">@Messages("vatcheck.result.validVatNo")</h1>
-                <div class="govuk-panel__body">
-                    <p>@Messages("vatcheck.result.valid.vat-no")
-                        <b class="bold">@t.vatNumber</b></p>
-                    @lookup.consultationNumber.map { no =>
-                    <p>
-                        @Messages("vatcheck.result.valid.check-ref")
-                        @*TODO ensure consultaion no cannot be spread onto two lines*@
-                        <b class="bold consultation-number">@no</b>
-                    </p>
-                    }
-                </div>
-        </div>
-
-    @govukPanel(Panel(
-        title = Text(messages("vatcheck.result.validVatNo")),
-        content = (HtmlContent(panelContent(t.vatNumber, lookup.consultationNumber)))
-    ))
         <div>
             @if(withConsultationNumber && lookup.requester.isEmpty) {
                 <div class="govuk-inset-text">
-                    <p class="p-no-margin">@Messages("vatcheck.result.proof.invalid-requester.p1")</p>
+                    <p>@Messages("vatcheck.result.proof.invalid-requester.p1")</p>
                 </div>
             }
             <h2 class="govuk-heading-m">@Messages("vatcheck.result.reg-details")</h2>
@@ -76,7 +67,7 @@
             @if(withConsultationNumber) {
                 @lookup.requester.map { vatNo =>
                   <p class="govuk-body">@Messages("vatcheck.result.proof.vat-no-heading")
-                      <b class="bold">@vatNo</b>
+                      <span class="govuk-!-font-weight-bold">@vatNo</span>
                   </p>
                 }
             }
