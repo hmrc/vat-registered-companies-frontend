@@ -178,22 +178,22 @@ aside ul.font-size-16 li, .translate {
   border-left: 4px solid #bfc1c3;
 }
 
-.govuk-error-message {
-  font-family: "nta",Arial,sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-weight: 700;
-  line-height: 1.25;
-  display: block;
-  margin-bottom: 15px;
-  clear: both;
-  color: #b10e1e;
-}
+/*.govuk-error-message {*/
+  /*font-family: "nta",Arial,sans-serif;*/
+  /*-webkit-font-smoothing: antialiased;*/
+  /*-moz-osx-font-smoothing: grayscale;*/
+  /*font-weight: 700;*/
+  /*line-height: 1.25;*/
+  /*display: block;*/
+  /*margin-bottom: 15px;*/
+  /*clear: both;*/
+  /*color: #b10e1e;*/
+/*}*/
 
-.govuk-form-group--error {
-  padding-left: 15px;
-  border-left: 5px solid #b10e1e;
-}
+/*.govuk-form-group--error {*/
+  /*padding-left: 15px;*/
+  /*border-left: 5px solid #b10e1e;*/
+/*}*/
 
 /*.govuk-panel {*/
   /*font-family: "nta", Arial, sans-serif;*/

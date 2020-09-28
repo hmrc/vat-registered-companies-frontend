@@ -54,13 +54,15 @@
             )
         }
 
+        <h1 class="govuk-heading-xl">@messages("vatcheck.lookup.heading")</h1>
+
         @inputText(
             lookupForm,
             id = lookupForm("target").name,
             name = lookupForm("target").name,
-            label = "vatcheck.lookup.heading",
+            label = "error.target.required", // TODO
             classes = Some("govuk-input--width-10"),
-            isPageHeading = true,
+            isPageHeading = false,
             hint = Some(
                 Hint(
                     id = Some(lookupForm("target").name ++ "-hint"),
