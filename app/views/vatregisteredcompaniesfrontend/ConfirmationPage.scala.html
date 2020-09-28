@@ -15,61 +15,75 @@
  *@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{LookupResponse, ConsultationNumber, VatNumber}
 @import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
 @import views.html.vatregisteredcompaniesfrontend.helpers._
 
-@this(layout: Layout, beforeContent: BeforeContent)
+@this(layout: Layout, beforeContent: BeforeContent, govukPanel : GovukPanel)
 
 @(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@panelContent(target: VatNumber, bar: Option[ConsultationNumber]) = @{
+    s"""<p>${Messages("vatcheck.result.valid.vat-no")}<b class="bold">$target</b></p>
+       |${bar.map { no =>
+        messages("vatcheck.result.valid.check-ref")
+        s"""<b class="bold consultation-number">$no</b>"""
+    }}""".stripMargin
+
+}
 
 @layout(
     pageTitle = Some(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}"),
     beforeContentBlock = beforeContent()
 ) {
     @lookup.target.map { t =>
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div class="govuk-panel govuk-panel--confirmation">
-                    <h1 class="govuk-panel__title">@Messages("vatcheck.result.validVatNo")</h1>
-                        <div class="govuk-panel__body">
-                            <p class="p-no-margin">@Messages("vatcheck.result.valid.vat-no")
-                                <b class="bold">@t.vatNumber</b></p>
-                            @lookup.consultationNumber.map { no =>
-                            <p class="p-no-margin">
-                                @Messages("vatcheck.result.valid.check-ref")
-                                <b class="bold consultation-number">@no</b>
-                            </p>
-                            }
-                        </div>
-                </div>
-                <div class="govuk-grid-row">
-                    @if(withConsultationNumber && lookup.requester.isEmpty) {
-                        <div class="govuk-inset-text">
-                            <p class="p-no-margin">@Messages("vatcheck.result.proof.invalid-requester.p1")</p>
-                        </div>
-                    }
-                    <h2 class="govuk-heading-m grid-heading">@Messages("vatcheck.result.reg-details")</h2>
-                    <h3 class="heading-small">@Messages("vatcheck.result.business-name")</h3>
-                    <p>@t.name</p>
-                    <h3 class="heading-small">@Messages("vatcheck.result.business-address-heading")</h3>
-                    <p>@t.address.lines.map { line =>
-                        @line
-                        <br/>
-                    }</p>
-                    @if(withConsultationNumber) {
-                        @lookup.requester.map { vatNo =>
-                          <p>@Messages("vatcheck.result.proof.vat-no-heading")
-                              <b class="bold">@vatNo</b>
-                          </p>
-                        }
+
+
+
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">@Messages("vatcheck.result.validVatNo")</h1>
+                <div class="govuk-panel__body">
+                    <p>@Messages("vatcheck.result.valid.vat-no")
+                        <b class="bold">@t.vatNumber</b></p>
+                    @lookup.consultationNumber.map { no =>
+                    <p>
+                        @Messages("vatcheck.result.valid.check-ref")
+                        @*TODO ensure consultaion no cannot be spread onto two lines*@
+                        <b class="bold consultation-number">@no</b>
+                    </p>
                     }
                 </div>
-                @processing_date(lookup.processingDate)
-                @print_this_page(withConsultationNumber)
-                @search_again(withConsultationNumber)
-                @exit_survey()
-            </div>
         </div>
+
+    @govukPanel(Panel(
+        title = Text(messages("vatcheck.result.validVatNo")),
+        content = (HtmlContent(panelContent(t.vatNumber, lookup.consultationNumber)))
+    ))
+        <div>
+            @if(withConsultationNumber && lookup.requester.isEmpty) {
+                <div class="govuk-inset-text">
+                    <p class="p-no-margin">@Messages("vatcheck.result.proof.invalid-requester.p1")</p>
+                </div>
+            }
+            <h2 class="govuk-heading-m">@Messages("vatcheck.result.reg-details")</h2>
+            <h3 class="govuk-heading-s">@Messages("vatcheck.result.business-name")</h3>
+            <p class="govuk-body">@t.name</p>
+            <h3 class="govuk-heading-s">@Messages("vatcheck.result.business-address-heading")</h3>
+            <p class="govuk-body">@t.address.lines.map { line =>
+                @line
+                <br/>
+            }</p>
+            @if(withConsultationNumber) {
+                @lookup.requester.map { vatNo =>
+                  <p class="govuk-body">@Messages("vatcheck.result.proof.vat-no-heading")
+                      <b class="bold">@vatNo</b>
+                  </p>
+                }
+            }
+        </div>
+        @processing_date(lookup.processingDate)
+        @print_this_page(withConsultationNumber)
+        @search_again(withConsultationNumber)
+        @exit_survey()
     }
 }
