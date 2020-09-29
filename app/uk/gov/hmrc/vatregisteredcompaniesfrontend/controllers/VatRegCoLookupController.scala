@@ -201,7 +201,7 @@ object VatRegCoLookupController {
   }
 
   private def mandatoryVatNumber(key: String): Mapping[String] = {
-    text.transform[String](_.trim, s => s).verifying(combine(required(key),vatNumberConstraint(key)))
+    text.transform[String](_.replace(" ", ""), s => s).verifying(combine(required(key),vatNumberConstraint(key)))
   }
 
 }
