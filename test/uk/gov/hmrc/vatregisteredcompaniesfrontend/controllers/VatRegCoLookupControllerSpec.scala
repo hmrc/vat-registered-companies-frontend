@@ -21,22 +21,17 @@ import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
-import utils.{BaseSpec, TestWiring}
+import utils.BaseSpec
 import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
 import scala.concurrent.Future
 
-class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring with BaseSpec {
-
-  override def fakeApplication() = new GuiceApplicationBuilder().disable[com.kenshoo.play.metrics.PlayModule].build()
+class VatRegCoLookupControllerSpec extends BaseSpec {
 
   val mockSessionCache = mock[SessionCacheService]
   val testVatNumber = new VatNumber("GB987654321")

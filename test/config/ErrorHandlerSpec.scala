@@ -17,29 +17,11 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
 
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.test.FakeRequest
-import play.api.{Configuration, Environment, Mode}
-import uk.gov.hmrc.play.bootstrap.config.{ServicesConfig, RunMode}
+import utils.BaseSpec
 
+class ErrorHandlerSpec extends BaseSpec {
 
-
-class ErrorHandlerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
-
-
-  val fakeRequest = FakeRequest("GET", "/")
-
-  val env = Environment.simple()
-  val configuration = Configuration.load(env)
-
-
-  val messagesApi = new DefaultMessagesApi()
-  val servicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Test))
-  val appConfig = new AppConfig(configuration, env, servicesConfig)
-
-  val errHandler = new ErrorHandler( messagesApi = messagesApi, appConfig= appConfig)
+  val errHandler = new ErrorHandler(errorTemplate, messagesApi = messagesApi, appConfig= appConfig)
 
   "ErrorHandler should" must {
 
@@ -47,12 +29,7 @@ class ErrorHandlerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
       val result = errHandler.standardErrorTemplate("samplePageTitle", "sampleHeading", "sampleMessage")(fakeRequest)
 
       result.body should include("samplePageTitle")
-
-
     }
-
-
   }
-
 
 }

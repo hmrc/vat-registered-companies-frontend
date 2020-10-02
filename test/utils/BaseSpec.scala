@@ -16,14 +16,35 @@
 
 package utils
 
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{Lang, MessagesApi}
+import play.api.{Application, Configuration, Environment, Mode}
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{ControllerComponents, MessagesControllerComponents}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.layouts.{govukLayout, govukTemplate}
-import uk.gov.hmrc.govukfrontend.views._
 import uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcReportTechnicalIssue
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import views.html.vatregisteredcompaniesfrontend.components.{BeforeContent, Button, GovBetaBanner, InputText, Scripts}
 import views.html.{ErrorTemplate, Head, Layout}
 
-trait BaseSpec {
+trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+
+  val env: Environment = Environment.simple()
+  val configuration: Configuration = Configuration.load(env)
+  val fakeRequest = FakeRequest("GET", "/")
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  val cc: ControllerComponents = play.api.test.Helpers.stubControllerComponents()
+  val mcc: MessagesControllerComponents = uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents()
+  val messagesApi: MessagesApi = mcc.messagesApi
+  implicit val lang: Lang = Lang.defaultLang
+  val sc: ServicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
+  implicit val appConfig: AppConfig = new AppConfig(configuration, env, sc)
+
   val govukTemplate = new govukTemplate(new GovukHeader, new GovukFooter, new GovukSkipLink)
   val govukPhaseBanner = new GovukPhaseBanner(new govukTag)
   val layout = new Layout(
@@ -43,4 +64,9 @@ trait BaseSpec {
   val govukCheckboxes = new GovukCheckboxes(new govukErrorMessage, new govukFieldset, new govukHint, new govukLabel)
   val beforeContent = new BeforeContent(new GovBetaBanner(govukPhaseBanner))
   val govukPanel = new GovukPanel
+
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder()
+      .disable[com.kenshoo.play.metrics.PlayModule]
+      .build()
 }
