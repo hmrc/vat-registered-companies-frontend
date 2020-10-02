@@ -29,12 +29,16 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import utils.TestWiring
+import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
 import scala.concurrent.Future
 
 class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
   val mockSessionCache = mock[SessionCacheService]
+//  val mockLookupPage = mock[LookupPage]
+//  val mockInvalidVatNumberPage = mock[InvalidVatNumberPage]
+//  val mockConfirmationPage = mock[ConfirmationPage]
   val testVatNumber = new VatNumber("GB987654321")
   val missingVatNumber = new VatNumber("")
   val invalidVatNumber = new VatNumber("InvalidVAT-HT6754")
@@ -47,7 +51,14 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
   )
   val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
 
-  val controller = new VatRegCoLookupController(mockVatRegCoConnector, mockSessionCache, mcc)
+  val controller = new VatRegCoLookupController(
+    mockVatRegCoConnector,
+    mockSessionCache,
+    mcc,
+    new LookupPage,
+    new InvalidVatNumberPage,
+    new ConfirmationPage
+  )
   when(mockSessionCache.sessionUuid(fakeRequest)).thenReturn(Some("foo"))
   when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
     Future.successful(true)
