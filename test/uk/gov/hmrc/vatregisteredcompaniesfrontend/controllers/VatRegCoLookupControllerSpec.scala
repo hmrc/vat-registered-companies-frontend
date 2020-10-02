@@ -24,21 +24,21 @@ import org.mockito.Mockito.when
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
-import utils.TestWiring
+import utils.{BaseSpec, TestWiring}
 import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
 import scala.concurrent.Future
 
-class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring with BaseSpec {
+
+  override def fakeApplication() = new GuiceApplicationBuilder().disable[com.kenshoo.play.metrics.PlayModule].build()
 
   val mockSessionCache = mock[SessionCacheService]
-//  val mockLookupPage = mock[LookupPage]
-//  val mockInvalidVatNumberPage = mock[InvalidVatNumberPage]
-//  val mockConfirmationPage = mock[ConfirmationPage]
   val testVatNumber = new VatNumber("GB987654321")
   val missingVatNumber = new VatNumber("")
   val invalidVatNumber = new VatNumber("InvalidVAT-HT6754")
@@ -55,9 +55,25 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
     mockVatRegCoConnector,
     mockSessionCache,
     mcc,
-    new LookupPage,
-    new InvalidVatNumberPage,
-    new ConfirmationPage
+    new LookupPage(
+      layout,
+      formHelper,
+      errorTemplate,
+      inputText,
+      govukErrorSummary,
+      button,
+      govukCheckboxes,
+      beforeContent
+    ),
+    new InvalidVatNumberPage(
+      layout,
+      beforeContent
+    ),
+    new ConfirmationPage(
+      layout,
+      beforeContent,
+      govukPanel
+    )
   )
   when(mockSessionCache.sessionUuid(fakeRequest)).thenReturn(Some("foo"))
   when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
@@ -87,8 +103,6 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
       val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
       val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
-
-
 
       when(mockVatRegCoConnector.lookup(any())(any(), any())).thenReturn {
        Future.successful(Some(lookupResponseObj))

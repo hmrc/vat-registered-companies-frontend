@@ -23,9 +23,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.views.helpers._
-import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button, BeforeContent}
-
 package object controllers {
 
   val env = Environment.simple()
@@ -38,14 +35,5 @@ package object controllers {
   implicit val lang = Lang.defaultLang
   val sc: ServicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
   implicit val appConfig = new AppConfig(configuration, env, sc)
-
-  val layout: Layout = ???
-  val formHelper: FormWithCSRF = ???
-  val errorTemplate: ErrorTemplate = ???
-  val inputText: InputText = ???
-  val govukErrorSummary: GovukErrorSummary = ???
-  val button: Button = ???
-  val govukCheckboxes: GovukCheckboxes = ???
-  val beforeContent: BeforeContent = ???
 
 }
