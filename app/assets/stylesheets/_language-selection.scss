@@ -4,6 +4,12 @@
   display: inline-block;
   float: right;
 
+  @media only screen and (max-width: 641px) {
+    display: block;
+    float: none;
+    text-align: right;
+  }
+
   &::after {
     content: "";
     display: table;

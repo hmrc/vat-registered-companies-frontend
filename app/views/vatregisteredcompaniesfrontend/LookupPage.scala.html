@@ -46,7 +46,8 @@
                     errorList = lookupForm.errors.map { err =>
                         ErrorLink(
                             href = Some(s"#${err.key}"),
-                            content = Text(s"${messages(err.message)}")
+                            content = Text(s"${messages(err.message)}"),
+                            attributes = Map("class" ->"govuk-link")
                         )
                     },
                     title = Text("There is a problem")
@@ -54,15 +55,13 @@
             )
         }
 
-        <h1 class="govuk-heading-xl">@messages("vatcheck.lookup.heading")</h1>
-
         @inputText(
             lookupForm,
             id = lookupForm("target").name,
             name = lookupForm("target").name,
-            label = "error.target.required", // TODO
+            label = "vatcheck.lookup.heading",
             classes = Some("govuk-input--width-10"),
-            isPageHeading = false,
+            isPageHeading = true,
             hint = Some(
                 Hint(
                     id = Some(lookupForm("target").name ++ "-hint"),
