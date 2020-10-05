@@ -16,22 +16,24 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
-//import org.scalatest.{Matchers, WordSpec}
-//import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-//import play.api.http.Status
-//import play.api.mvc.Result
-//import play.api.test.Helpers.{contentAsString, contentType, status, _}
-//import utils.TestWiring
-//
-//import scala.concurrent.Future
-//
-//class AccessibilityStatementControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
-//
-//  val controller = new AccessibilityStatementController(mcc, env)
-//
-//  "showAccessibilityStatement" should {
-//
-//    "return 200 OK" in {
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status
+import play.api.mvc.Result
+import play.api.test.Helpers.{contentAsString, contentType, status, _}
+import utils.{BaseSpec, TestWiring}
+
+import scala.concurrent.Future
+
+class AccessibilityStatementControllerSpec extends BaseSpec {
+
+  // TODO - not updating to use injected templates as moving to using accessibilty service (DST-330)
+
+//  val controller = new AccessibilityStatementController(mcc, env, ???)
+
+  "showAccessibilityStatement" should {
+    "return 200 OK" in (pending)
+//    {
 //      val result: Future[Result] = controller.showAccessibilityStatement("foo")(fakeRequest)
 //
 //      status(result) shouldBe Status.OK
@@ -41,6 +43,6 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 //      contentAsString(result) should include(messagesApi("accessibility.statement.using.heading"))
 //      contentAsString(result) should include(messagesApi("accessibility.statement.accessible.heading"))
 //    }
-//
-//  }
-//}
+
+  }
+}

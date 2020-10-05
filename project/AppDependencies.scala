@@ -7,10 +7,7 @@ object AppDependencies {
 
   val compile = Seq(
 
-//    "uk.gov.hmrc"             %% "govuk-template"                   % "5.42.0-play-26",
-//    "uk.gov.hmrc"             %% "play-ui"                          % "8.2.0-play-26",
     "uk.gov.hmrc"             %% "bootstrap-play-26"                % "1.16.0",
-//    "uk.gov.hmrc"             %% "bootstrap-frontend-play-27"    % "2.24.0",
     "uk.gov.hmrc"             %% "play-frontend-hmrc"            % "0.19.0-play-26",
     "uk.gov.hmrc"             %% "play-frontend-govuk"           % "0.50.0-play-26",
     "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.3.0-play-26",
@@ -21,7 +18,6 @@ object AppDependencies {
   )
 
   val test = Seq(
-//    "uk.gov.hmrc"               %% "bootstrap-test-play-27"   % "2.24.0"
     "org.scalatest"             %% "scalatest"                % "3.0.4"                 % "test",
     "org.jsoup"                 %  "jsoup"                    % "1.10.2"                % "test",
     "com.typesafe.play"         %% "play-test"                % current                 % "test",
