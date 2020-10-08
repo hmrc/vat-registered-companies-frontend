@@ -14,13 +14,10 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages)
+@this()
 
-<p class="govuk-body">
-    <a
-    target="_blank"
-    rel="noreferrer"
-    href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.ExitSurveyController.exitSurvey"
-    id="exit-survey">@Messages("vatcheck.exitsurvey.link.copy")</a>
-    @Messages("vatcheck.exitsurvey.time")
-</p>
+@(headBlock: Option[Html] = None)
+@headBlock
+<!--[if lte IE 8]><script src='@controllers.routes.Assets.at("javascripts/html5shiv.min.js")'></script><![endif]-->
+<!--[if lte IE 8]><link href='@controllers.routes.Assets.at("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+<!--[if gt IE 8]><!--><link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->

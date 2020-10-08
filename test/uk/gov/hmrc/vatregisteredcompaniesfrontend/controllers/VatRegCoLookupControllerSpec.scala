@@ -21,18 +21,17 @@ import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
-import utils.TestWiring
+import utils.BaseSpec
+import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
 import scala.concurrent.Future
 
-class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+class VatRegCoLookupControllerSpec extends BaseSpec {
 
   val mockSessionCache = mock[SessionCacheService]
   val testVatNumber = new VatNumber("GB987654321")
@@ -47,7 +46,30 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
   )
   val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
 
-  val controller = new VatRegCoLookupController(mockVatRegCoConnector, mockSessionCache, mcc)
+  val controller = new VatRegCoLookupController(
+    mockVatRegCoConnector,
+    mockSessionCache,
+    mcc,
+    new LookupPage(
+      layout,
+      formHelper,
+      errorTemplate,
+      inputText,
+      govukErrorSummary,
+      button,
+      govukCheckboxes,
+      beforeContent
+    ),
+    new InvalidVatNumberPage(
+      layout,
+      beforeContent
+    ),
+    new ConfirmationPage(
+      layout,
+      beforeContent,
+      govukPanel
+    )
+  )
   when(mockSessionCache.sessionUuid(fakeRequest)).thenReturn(Some("foo"))
   when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
     Future.successful(true)
@@ -76,8 +98,6 @@ class VatRegCoLookupControllerSpec extends WordSpec with Matchers with GuiceOneA
 
       val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
       val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
-
-
 
       when(mockVatRegCoConnector.lookup(any())(any(), any())).thenReturn {
        Future.successful(Some(lookupResponseObj))

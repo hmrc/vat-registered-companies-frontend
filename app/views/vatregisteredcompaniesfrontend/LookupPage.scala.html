@@ -1,0 +1,101 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import views.html.vatregisteredcompaniesfrontend.helpers._
+@import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button, BeforeContent}
+
+
+@this(
+    layout: Layout,
+    formHelper: FormWithCSRF,
+    errorTemplate: ErrorTemplate,
+    inputText: InputText,
+    govukErrorSummary: GovukErrorSummary,
+    button: Button,
+    govukCheckboxes: GovukCheckboxes,
+    beforeContent: BeforeContent
+)
+
+@(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+
+@layout(pageTitle = Some(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}"),
+    beforeContentBlock = beforeContent()
+) {
+
+    @formHelper(uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.submit) {
+
+
+        @if(lookupForm.hasErrors) {
+            @govukErrorSummary(
+                ErrorSummary(
+                    errorList = lookupForm.errors.map { err =>
+                        ErrorLink(
+                            href = Some(s"#${err.key}"),
+                            content = Text(s"${messages(err.message)}"),
+                            attributes = Map("class" ->"govuk-link")
+                        )
+                    },
+                    title = Text("There is a problem")
+                )
+            )
+        }
+
+        @inputText(
+            lookupForm,
+            id = lookupForm("target").name,
+            name = lookupForm("target").name,
+            label = "vatcheck.lookup.heading",
+            classes = Some("govuk-input--width-10"),
+            isPageHeading = true,
+            hint = Some(
+                Hint(
+                    id = Some(lookupForm("target").name ++ "-hint"),
+                    classes = "govuk-hint",
+                    content = HtmlContent(messages("vatcheck.lookup.target.hint"))
+                )
+            )
+        )
+
+        @govukCheckboxes(Checkboxes(
+            idPrefix = Some("withConsultationNumber"),
+            name = "withConsultationNumber",
+            items = Seq(
+                CheckboxItem(
+                    content = Text(Messages("vatcheck.lookup.withConsultationNumber.label")),
+                    value = "true",
+                    checked=lookupForm("withConsultationNumber").value.contains("true"),
+                    conditionalHtml = Some(inputText(
+                        lookupForm,
+                        id = lookupForm("requester").name,
+                        name = lookupForm("requester").name,
+                        label = messages("vatcheck.lookup.requester.label"),
+                        isPageHeading = false,
+                        classes = Some("govuk-input--width-10"),
+                        hint = Some(Hint(
+                            id = Some(lookupForm("requester").name ++ "-hint"),
+                            classes = "govuk-hint",
+                            content = HtmlContent(messages("vatcheck.lookup.requester.hint"))
+                        ))
+                    ))
+                )
+            )
+        ))
+
+        @button("vatcheck.lookup.button")
+    }
+}

@@ -39,7 +39,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class VatRegCoLookupController @Inject()(
   connector: VatRegisteredCompaniesConnector,
   cache: SessionCacheService,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  lookupPage: LookupPage,
+  invalidVatNumberPage: InvalidVatNumberPage,
+  confirmationPage: ConfirmationPage
 )(implicit config: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   import VatRegCoLookupController.form
@@ -49,7 +52,7 @@ class VatRegCoLookupController @Inject()(
       Redirect(routes.VatRegCoLookupController.lookupForm())
         .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
     } { _ =>
-      Future.successful(Ok(lookup(form)))
+      Future.successful(Ok(lookupPage(form)))
     }
   }
 
@@ -64,7 +67,7 @@ class VatRegCoLookupController @Inject()(
 
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
-      errors => Future(BadRequest(lookup(errors))),
+      errors => Future(BadRequest(lookupPage(errors))),
       lookup => connector.lookup(lookup) flatMap { x =>
         cache.sessionUuid(request).fold {
           val id = java.util.UUID.randomUUID.toString
@@ -128,7 +131,7 @@ class VatRegCoLookupController @Inject()(
 
   private def unknown(implicit request: Request[AnyContent]) =
     getLookupFromCache.fold(Redirect(routes.VatRegCoLookupController.lookupForm())) { x =>
-      Ok(invalid_vat_number(x.target, x.withConsultationNumber))
+      Ok(invalidVatNumberPage(x.target, x.withConsultationNumber))
     }
 
   private def known(implicit request: Request[AnyContent]) = {
@@ -137,7 +140,7 @@ class VatRegCoLookupController @Inject()(
       r <- getLookupResponseFromCache
     } yield (l, r)
     x.fold(Redirect(routes.VatRegCoLookupController.lookupForm())) { x =>
-      Ok(confirmation(x._2, x._1.withConsultationNumber))
+      Ok(confirmationPage(x._2, x._1.withConsultationNumber))
     }
   }
 

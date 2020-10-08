@@ -14,13 +14,8 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages)
+@this(govukButton: GovukButton)
 
-<p class="govuk-body">
-    <a
-    target="_blank"
-    rel="noreferrer"
-    href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.ExitSurveyController.exitSurvey"
-    id="exit-survey">@Messages("vatcheck.exitsurvey.link.copy")</a>
-    @Messages("vatcheck.exitsurvey.time")
-</p>
+@(msg: String)(implicit messages: Messages)
+
+@govukButton(Button(content = Text(messages(msg))))

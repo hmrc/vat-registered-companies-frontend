@@ -1,0 +1,43 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import java.time.{ZonedDateTime, ZoneId}
+
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.VatNumber
+@import views.html.vatregisteredcompaniesfrontend.helpers._
+@import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
+
+@this(layout: Layout, beforeContent: BeforeContent)
+
+@(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@layout(pageTitle = Some(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}"), beforeContentBlock = beforeContent()) {
+    <h1 class="govuk-heading-xl">@Messages("vatcheck.result.invalidVatNo")</h1>
+    <p class="govuk-body-l">
+        @Messages("vatcheck.result.invalid.p")
+            @*Messages have to be on same line to prevent unwanted white space*@
+        @Messages("vatcheck.common.open.apostrophie")<b class="bold">@target</b>@Messages("vatcheck.common.close.apostrophie")@Messages("vatcheck.common.fullstop")
+    </p>
+    <p class="govuk-body">@Messages("vatcheck.result.invalid.no-match")</p>
+    @if(withConsultationNumber){
+        <p class="govuk-body">@Messages("vatcheck.result.invalid.no-proof")</p>
+    }
+    @processing_date(ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London")))
+    @print_this_page(false, false)
+    @search_again(false, false)
+    @exit_survey()
+}

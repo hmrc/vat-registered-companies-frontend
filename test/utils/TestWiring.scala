@@ -29,13 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
 
-
-  lazy val mockErrorHandler = {
-    val m = mock[FrontendErrorHandler]
-    when(m.notFoundTemplate(any())).thenReturn(Html("not found"))
-    m
-  }
-
   implicit val ec: ExecutionContext = defaultContext
 
   lazy val mockVatRegCoConnector: VatRegisteredCompaniesConnector = {

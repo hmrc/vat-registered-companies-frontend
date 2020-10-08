@@ -16,20 +16,15 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import utils.TestWiring
+import utils.BaseSpec
 
 import scala.concurrent.Future
 
 
-class ExitSurveyControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+class ExitSurveyControllerSpec extends BaseSpec {
 
   private val controller = new ExitSurveyController(cc)
 

@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages)
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-<p class="govuk-body">
-    <a
-    target="_blank"
-    rel="noreferrer"
-    href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.ExitSurveyController.exitSurvey"
-    id="exit-survey">@Messages("vatcheck.exitsurvey.link.copy")</a>
-    @Messages("vatcheck.exitsurvey.time")
-</p>
+@this(layout: Layout)
+
+@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@layout(pageTitle = Some(pageTitle)) {
+    <h1 class="govuk-heading-xl">@{Html(heading)}</h1>
+    <p class="govuk-body">@{Html(message)}</p>
+}

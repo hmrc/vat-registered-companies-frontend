@@ -14,22 +14,21 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.urls.Link
+@this(
+    govBetaBanner: GovBetaBanner
+)
 
-@(langMap: Map[String, Lang], langToCall: String => Call, customClass: Option[String] = None, appName: Option[String] = None)(implicit messages: Messages)
+@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-<p class="@if(customClass.isDefined) {@customClass.get}">
+<nav id="navigation-content" role="navigation">
+    @govBetaBanner("BETA")
 
-@langMap.map { case (key: String, value: Lang) =>
-    @if(messages.lang.code != value.code) {
-        @Html(s"""<a id="$key-switch" href="${langToCall(key)}" target="_self" data-sso="false">${key.capitalize}</a>""")
-    } else {
-        @key.capitalize
+    @if(appConfig.languageTranslationEnabled) {
+        @language_selection(
+                appConfig.languageMap,
+                appConfig.routeToSwitchLanguage,
+                Some("lang")
+        )
     }
+</nav>
 
-    @if(key != langMap.last._1) {
-        @Html(" | ")
-    }
-
-}
-</p>

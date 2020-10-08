@@ -1,5 +1,6 @@
 # common content
 vatcheck.common.title=Gwirio rhif TAW yn y DU
+service.name=Gwirio rhif TAW yn y DU
 vatcheck.common.page.title=Gwirio rhif TAW yn y DU - GOV.UK
 vatcheck.common.alpha=ALFFA
 vatcheck.common.beta=BETA

@@ -1,0 +1,80 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+@import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{LookupResponse, ConsultationNumber, VatNumber}
+@import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
+@import views.html.vatregisteredcompaniesfrontend.helpers._
+
+@this(layout: Layout, beforeContent: BeforeContent, govukPanel : GovukPanel)
+
+@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@panelContent(target: VatNumber, consultationNumber: Option[ConsultationNumber]) = @{
+
+    val no = consultationNumber.fold(""){x =>
+
+        s"""<p>
+        ${messages("vatcheck.result.valid.check-ref")}
+        <span class="govuk-!-font-weight-bold">$x</span>
+        </p>"""
+
+    }
+
+    s"""<p>${Messages("vatcheck.result.valid.vat-no")} <b class="bold">$target</b></p>
+       $no"""
+
+}
+
+@layout(
+    pageTitle = Some(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}"),
+    beforeContentBlock = beforeContent()
+) {
+    @lookup.target.map { t =>
+
+        @govukPanel(Panel(
+            title = Text(messages("vatcheck.result.validVatNo")),
+            content = HtmlContent(panelContent(t.vatNumber, lookup.consultationNumber))
+        ))
+
+        <div>
+            @if(withConsultationNumber && lookup.requester.isEmpty) {
+                <div class="govuk-inset-text">
+                    <p>@Messages("vatcheck.result.proof.invalid-requester.p1")</p>
+                </div>
+            }
+            <h2 class="govuk-heading-m">@Messages("vatcheck.result.reg-details")</h2>
+            <h3 class="govuk-heading-s">@Messages("vatcheck.result.business-name")</h3>
+            <p class="govuk-body">@t.name</p>
+            <h3 class="govuk-heading-s">@Messages("vatcheck.result.business-address-heading")</h3>
+            <p class="govuk-body">@t.address.lines.map { line =>
+                @line
+                <br/>
+            }</p>
+            @if(withConsultationNumber) {
+                @lookup.requester.map { vatNo =>
+                  <p class="govuk-body">@Messages("vatcheck.result.proof.vat-no-heading")
+                      <span class="govuk-!-font-weight-bold">@vatNo</span>
+                  </p>
+                }
+            }
+        </div>
+        @processing_date(lookup.processingDate)
+        @print_this_page(withConsultationNumber)
+        @search_again(withConsultationNumber)
+        @exit_survey()
+    }
+}

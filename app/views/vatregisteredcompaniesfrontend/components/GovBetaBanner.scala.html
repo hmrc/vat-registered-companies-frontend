@@ -14,13 +14,22 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages)
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-<p class="govuk-body">
-    <a
-    target="_blank"
-    rel="noreferrer"
-    href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.ExitSurveyController.exitSurvey"
-    id="exit-survey">@Messages("vatcheck.exitsurvey.link.copy")</a>
-    @Messages("vatcheck.exitsurvey.time")
-</p>
+@this(govukPhaseBanner : GovukPhaseBanner)
+
+@(content: String)(implicit messages: Messages, appConfig: AppConfig)
+
+@govukPhaseBanner(PhaseBanner(
+    tag = Some(Tag(
+      content = Text(content)
+    )),
+    content = HtmlContent(
+         s"""<span>
+                ${messages("vatcheck.common.alpha-info.p1")}
+                <a href="${appConfig.betaFeedbackUrlNoAuth}">${Messages("vatcheck.common.alpha-info.link")}</a>
+                ${messages("vatcheck.common.alpha-info.p2")}
+            </span>"""
+
+    )
+  ))
