@@ -15,9 +15,8 @@
  *@
 
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.views.FooterLinks
 @import views.html.vatregisteredcompaniesfrontend.components.{Scripts, GovBetaBanner}
-
+@import uk.gov.hmrc.hmrcfrontend.views.config.HmrcFooterItems
 @import uk.gov.hmrc.govukfrontend.views.Layouts
 
 
@@ -27,6 +26,7 @@
     scripts: Scripts,
     govBetaBanner : GovBetaBanner,
     govukPhaseBanner : GovukPhaseBanner,
+    hmrcFooter: HmrcFooter,
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue
 )
 @(pageTitle: Option[String] = None,
@@ -46,6 +46,6 @@
     headBlock = Some(head(headBlock)),
     scriptsBlock = scriptsBlock,
     beforeContentBlock = Some(beforeContentBlock),
-    footerItems = FooterLinks(),
+    footerBlock = Some(hmrcFooter()),
     bodyEndBlock = Some(scripts())
 )(content)
