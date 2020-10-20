@@ -45,11 +45,16 @@ trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with Test
   val sc: ServicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
   implicit val appConfig: AppConfig = new AppConfig(configuration, env, sc)
 
-  val govukTemplate = new govukTemplate(new GovukHeader, new GovukFooter, new GovukSkipLink)
+  val govukHeader = new GovukHeader
+  val govukFooter = new GovukFooter
+  val govukTemplate = new govukTemplate(govukHeader, govukFooter, new GovukSkipLink)
   val govukPhaseBanner = new GovukPhaseBanner(new govukTag)
+  val head = new Head(appConfig)
   val layout = new Layout(
-    new govukLayout(govukTemplate, new GovukHeader, new GovukFooter, new GovukBackLink),
-    new Head,
+    govukTemplate,
+    govukFooter,
+    govukHeader,
+    head,
     new Scripts,
     new GovBetaBanner(govukPhaseBanner),
     govukPhaseBanner,

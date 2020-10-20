@@ -18,22 +18,30 @@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.views.FooterLinks
 @import views.html.vatregisteredcompaniesfrontend.components.{Scripts, GovBetaBanner}
 
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Header => UnambiguousHeader}
+
 @import uk.gov.hmrc.govukfrontend.views.Layouts
 
-
 @this(
-    govukLayout: GovukLayout,
+    govukTemplate: GovukTemplate,
+    govukFooter: GovukFooter,
+    govukHeader: GovukHeader,
     head: Head,
     scripts: Scripts,
     govBetaBanner : GovBetaBanner,
     govukPhaseBanner : GovukPhaseBanner,
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue
 )
-@(pageTitle: Option[String] = None,
-        headBlock: Option[Html] = None,
-        scriptsBlock: Option[Html] = None,
-        beforeContentBlock: Html = Html("")
-)(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(
+    pageTitle: Option[String] = None,
+    beforeContentBlock: Html = Html("")
+)(
+    contentBlock: Html
+)(
+    implicit request: Request[_],
+    messages: Messages,
+    appConfig: AppConfig
+)
 
 @content = {
     @contentBlock
@@ -41,11 +49,43 @@
         ReportTechnicalIssue(appConfig.appName, Some(messages.lang.language))
     )
 }
-@govukLayout(
+
+// TODO raise an issue on play-frontend-govuk to see if we can get bodyStart included in govukLayout
+// if so we can do away with mainContentDefault, header and footer which are lifted from govukLayout
+// and call govukLayout directly passing bodyStart as below
+@tagManagerNoscript = {
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSFTCWZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+}
+
+
+@mainContentDefault = {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+        @content
+        </div>
+    </div>
+}
+
+@header = {
+    @govukHeader(UnambiguousHeader(
+    homepageUrl = Some("https://www.gov.uk/"),
+    serviceName = Some(messages("service.name")),
+    serviceUrl = Some(messages("service.homePageUrl")),
+    containerClasses = None))
+}
+
+@footer = {
+    @govukFooter(new Footer(meta = Some(Meta(items = Some(FooterLinks())))))
+}
+
+@govukTemplate(
     pageTitle = pageTitle,
-    headBlock = Some(head(headBlock)),
-    scriptsBlock = scriptsBlock,
+    headBlock = Some(head()),
+    headerBlock = header,
+    bodyStart = Some(tagManagerNoscript),
+    footerBlock = footer,
     beforeContentBlock = Some(beforeContentBlock),
-    footerItems = FooterLinks(),
     bodyEndBlock = Some(scripts())
-)(content)
+)(mainContentDefault)
