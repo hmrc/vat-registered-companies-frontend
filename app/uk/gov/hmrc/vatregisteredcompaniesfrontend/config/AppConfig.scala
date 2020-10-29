@@ -40,8 +40,6 @@ class AppConfig @Inject()(
 
   lazy val appName: String = config.get[String]("appName")
 
-  val footerLinkItems: Seq[String] = config.getOptional[Seq[String]]("footerLinkItems").getOrElse(Seq())
-
   private val encoding = "UTF-8"
   private val contactHost = config.getString(s"contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = loadConfig("appName")
@@ -55,10 +53,6 @@ class AppConfig @Inject()(
   lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
-  def contactAccessibilityHelpDeskLink(path: String): String = {
-    s"$contactHost/contact/accessibility?service=$contactFormServiceIdentifier&userAction=${encode(path, encoding)}"
-  }
-
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
@@ -69,9 +63,5 @@ class AppConfig @Inject()(
     config.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
 
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
-
-
-
-
 
 }

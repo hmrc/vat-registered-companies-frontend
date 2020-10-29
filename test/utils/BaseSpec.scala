@@ -25,7 +25,9 @@ import play.api.mvc.{ControllerComponents, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.govukfrontend.views.html.layouts.{govukLayout, govukTemplate}
-import uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcReportTechnicalIssue
+import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
+import uk.gov.hmrc.hmrcfrontend.views.config.HmrcFooterItems
+import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcFooter, hmrcFooter, hmrcReportTechnicalIssue}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
@@ -44,11 +46,17 @@ trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with Test
   implicit val lang: Lang = Lang.defaultLang
   val sc: ServicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
   implicit val appConfig: AppConfig = new AppConfig(configuration, env, sc)
+  implicit val accessibilityStatementConfig = new AccessibilityStatementConfig(configuration)
 
   val govukHeader = new GovukHeader
   val govukFooter = new GovukFooter
   val govukTemplate = new govukTemplate(govukHeader, govukFooter, new GovukSkipLink)
   val govukPhaseBanner = new GovukPhaseBanner(new govukTag)
+
+  val hmrcFooter = new HmrcFooter(
+    new GovukFooter,
+    new HmrcFooterItems(accessibilityStatementConfig)
+  )
   val head = new Head(appConfig)
   val layout = new Layout(
     new GovukLayout(govukTemplate, govukHeader, govukFooter, new GovukBackLink),
@@ -56,6 +64,7 @@ trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with Test
     new Scripts,
     new GovBetaBanner(govukPhaseBanner),
     govukPhaseBanner,
+    hmrcFooter,
     new hmrcReportTechnicalIssue
   )
 
