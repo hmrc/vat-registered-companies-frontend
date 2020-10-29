@@ -56,13 +56,8 @@ vatcheck.exitsurvey.time=(takes 30 seconds)
 global.error.pageNotFound404.title=Page not found - Check a UK VAT number - GOV.UK
 global.error.pageNotFound404.heading=Page not found
 global.error.pageNotFound404.message=<p class="govuk-body">If you typed the web address, check it is correct.</p> \
-  <p class="govuk-body">If you pasted the web address, check you copied the entire address.</p>\
-  <p class="govuk-body">If the web address is correct or you selected a link or button, \
-  <a class="govuk-link" href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/vat-enquiries">contact the VAT helpline</a>\
-   if you need to check a UK VAT number.</p>
+  <p class="govuk-body">If you pasted the web address, check you copied the entire address.</p>
 
 global.error.InternalServerError500.title=Sorry, there is a problem with the service - Check a UK VAT number - GOV.UK
 global.error.InternalServerError500.heading=Sorry, there is a problem with the service
-global.error.InternalServerError500.message=<p class="govuk-body">Try again later.</p> \
-  <p class="govuk-body"><a class="govuk-link" href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/vat-enquiries">Contact the VAT helpline</a> \
-  if you need to check a UK VAT number.</p>
+global.error.InternalServerError500.message=<p class="govuk-body">Try again later.</p>
