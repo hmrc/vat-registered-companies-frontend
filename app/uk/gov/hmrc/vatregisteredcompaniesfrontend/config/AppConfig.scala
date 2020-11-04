@@ -57,7 +57,7 @@ class AppConfig @Inject()(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
 
-  def routeToSwitchLanguage: String => Call = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
+  def routeToSwitchLanguage: String => Call = (lang: String) => routes.CustomLanguageSwitchController.switchToLanguage(lang)
 
   lazy val languageTranslationEnabled: Boolean =
     config.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)

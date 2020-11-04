@@ -7,13 +7,13 @@ object AppDependencies {
 
   val compile = Seq(
 
-    "uk.gov.hmrc"             %% "bootstrap-play-26"                % "1.16.0",
+    "uk.gov.hmrc"             %% "bootstrap-play-26"             % "2.0.0",
     "uk.gov.hmrc"             %% "play-frontend-hmrc"            % "0.19.0-play-26",
-    "uk.gov.hmrc"             %% "play-frontend-govuk"           % "0.50.0-play-26",
+    "uk.gov.hmrc"             %% "play-frontend-govuk"           % "0.53.0-play-26",
     "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.3.0-play-26",
-    "uk.gov.hmrc"             %% "play-language"                 % "3.4.0",
-    "uk.gov.hmrc"             %% "simple-reactivemongo"          % "7.20.0-play-26",
-    "uk.gov.hmrc"             %% "mongo-caching"                 % "6.6.0-play-26",
+    "uk.gov.hmrc"             %% "play-language"                 % "4.4.0-play-26",
+    "uk.gov.hmrc"             %% "simple-reactivemongo"          % "7.30.0-play-26",
+    "uk.gov.hmrc"             %% "mongo-caching"                 % "6.15.0-play-26",
     "org.typelevel"           %% "cats-core"                     % "1.1.0"
   )
 
@@ -25,7 +25,7 @@ object AppDependencies {
     "uk.gov.hmrc"               %% "service-integration-test" % "0.2.0"                 % "test, it",
     "org.scalatestplus.play"    %% "scalatestplus-play"       % "3.1.2"                 % "test, it",
     "org.mockito"               %  "mockito-core"             % "2.24.0"                % "test, it",
-    "uk.gov.hmrc"               %% "bootstrap-play-26"        % "1.16.0"                 % Test classifier "tests"
+    "uk.gov.hmrc"               %% "bootstrap-play-26"        % "2.0.0"                 % Test classifier "tests"
   )
 
 }
