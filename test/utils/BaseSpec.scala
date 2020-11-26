@@ -28,6 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.html.layouts.{govukLayout, govukTemplate}
 import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
 import uk.gov.hmrc.hmrcfrontend.views.config.HmrcFooterItems
 import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcFooter, hmrcFooter, hmrcReportTechnicalIssue}
+import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
@@ -53,11 +54,8 @@ trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with Test
   val govukTemplate = new govukTemplate(govukHeader, govukFooter, new GovukSkipLink)
   val govukPhaseBanner = new GovukPhaseBanner(new govukTag)
 
-  val hmrcFooter = new HmrcFooter(
-    new GovukFooter,
-    new HmrcFooterItems(accessibilityStatementConfig)
-  )
-  val head = new Head(appConfig)
+  val hmrcFooter = new HmrcFooter()
+  val head = new Head(HmrcTrackingConsentSnippet, appConfig)
   val layout = new Layout(
     new GovukLayout(govukTemplate, govukHeader, govukFooter, new GovukBackLink),
     head,
