@@ -1,8 +1,9 @@
 
 window.onload = function() {
 
-    if(document.getElementById('get-help-action')) {
-        document.getElementById('get-help-action').addEventListener('click', function() {
+    var helpLinks = document.getElementsByClassName('get-help-action');
+    for (let i=0; i<helpLinks.length; i++) {
+        helpLinks.item(i).addEventListener('click', function() {
             ga('send', 'event', 'link-click', document.title, 'Get help with this page');
         });
     }

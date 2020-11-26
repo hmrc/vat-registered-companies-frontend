@@ -36,7 +36,11 @@
 @content = {
     @contentBlock
     @hmrcReportTechnicalIssue(
-        ReportTechnicalIssue(appConfig.appName)
+        ReportTechnicalIssue(
+            appConfig.appName,
+            if (messages.lang.code == "cy") Cy else En,
+            classes = Some("get-help-action")
+        )
     )
 }
 
