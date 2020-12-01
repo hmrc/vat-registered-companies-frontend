@@ -1,3 +1,5 @@
+service.homePageUrl=/check-vat-number/enter-vat-details
+
 # common content
 vatcheck.common.title=Gwirio rhif TAW yn y DU
 service.name=Gwirio rhif TAW yn y DU
