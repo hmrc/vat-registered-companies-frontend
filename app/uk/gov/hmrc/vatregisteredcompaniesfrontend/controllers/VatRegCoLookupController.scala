@@ -23,7 +23,7 @@ import javax.inject.Inject
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.controller.{BaseController, FrontendBaseController, FrontendController}
@@ -46,6 +46,16 @@ class VatRegCoLookupController @Inject()(
 )(implicit config: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   import VatRegCoLookupController.form
+
+  def cymraeg: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(
+      Redirect(
+        routes.VatRegCoLookupController.lookupForm()
+      ).withLang(
+        Lang.apply("cy")
+      )
+    )
+  }
 
   def lookupForm: Action[AnyContent] = Action.async { implicit request =>
     cache.sessionUuid(request).fold {
