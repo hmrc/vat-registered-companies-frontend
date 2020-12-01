@@ -5,6 +5,7 @@
 
 GET        /assets/*file                              controllers.Assets.at(path="/public", file)
 
+GET        /cymraeg                                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.cymraeg
 GET        /enter-vat-details                         uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.lookupForm
 POST       /enter-vat-details                         uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.submit
 
