@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,19 @@ package utils
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.{Application, Configuration, Environment, Mode}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{ControllerComponents, MessagesControllerComponents}
 import play.api.test.FakeRequest
+import play.api.{Application, Configuration, Environment, Mode}
 import uk.gov.hmrc.govukfrontend.views.html.components._
-import uk.gov.hmrc.govukfrontend.views.html.layouts.{govukLayout, govukTemplate}
+import uk.gov.hmrc.govukfrontend.views.html.layouts.govukTemplate
 import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
-import uk.gov.hmrc.hmrcfrontend.views.config.HmrcFooterItems
-import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcFooter, hmrcFooter, hmrcReportTechnicalIssue}
-import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
+import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import views.html.vatregisteredcompaniesfrontend.components.{BeforeContent, Button, GovBetaBanner, InputText, Scripts}
-import views.html.{ErrorTemplate, Head, Layout}
+import views.html.ErrorTemplate
+import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
 trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
@@ -55,25 +53,11 @@ trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with Test
   val govukPhaseBanner = new GovukPhaseBanner(new govukTag)
 
   val hmrcFooter = new HmrcFooter()
-  val head = new Head(HmrcTrackingConsentSnippet, appConfig)
-  val layout = new Layout(
-    new GovukLayout(govukTemplate, govukHeader, govukFooter, new GovukBackLink),
-    head,
-    new Scripts,
-    new GovBetaBanner(govukPhaseBanner),
-    govukPhaseBanner,
-    hmrcFooter,
-    new hmrcReportTechnicalIssue
-  )
+  val lookupPage = app.injector.instanceOf[LookupPage]
+  val confirmationPage = app.injector.instanceOf[ConfirmationPage]
+  val invalidVatNumberPage = app.injector.instanceOf[InvalidVatNumberPage]
 
-  val formHelper = new FormWithCSRF
-  val errorTemplate = new ErrorTemplate(layout)
-  val inputText = new InputText(new govukInput(new govukErrorMessage, new govukHint, new govukLabel))
-  val govukErrorSummary = new govukErrorSummary
-  val button = new Button(new GovukButton)
-  val govukCheckboxes = new GovukCheckboxes(new govukErrorMessage, new govukFieldset, new govukHint, new govukLabel)
-  val beforeContent = new BeforeContent(new GovBetaBanner(govukPhaseBanner))
-  val govukPanel = new GovukPanel
+  val errorTemplate = app.injector.instanceOf[ErrorTemplate]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
