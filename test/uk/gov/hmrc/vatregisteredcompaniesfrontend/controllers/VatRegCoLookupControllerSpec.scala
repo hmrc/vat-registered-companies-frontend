@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,25 +50,9 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
     mockVatRegCoConnector,
     mockSessionCache,
     mcc,
-    new LookupPage(
-      layout,
-      formHelper,
-      errorTemplate,
-      inputText,
-      govukErrorSummary,
-      button,
-      govukCheckboxes,
-      beforeContent
-    ),
-    new InvalidVatNumberPage(
-      layout,
-      beforeContent
-    ),
-    new ConfirmationPage(
-      layout,
-      beforeContent,
-      govukPanel
-    )
+    lookupPage,
+    invalidVatNumberPage,
+    confirmationPage
   )
   when(mockSessionCache.sessionUuid(fakeRequest)).thenReturn(Some("foo"))
   when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
