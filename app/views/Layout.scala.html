@@ -38,8 +38,8 @@
     @hmrcReportTechnicalIssue(
         ReportTechnicalIssue(
             appConfig.appName,
-            Some(messages.lang.language),
-            Some("get-help-action")
+            if (messages.lang.code == "cy") Cy else En,
+            classes = Some("get-help-action")
         )
     )
 }
