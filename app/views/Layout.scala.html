@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import views.html.vatregisteredcompaniesfrontend.components.{Scripts, GovBetaBanner}
 @import uk.gov.hmrc.govukfrontend.views.Layouts
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
 
 @this(
     govukLayout: GovukLayout,
@@ -25,6 +26,7 @@
     govBetaBanner : GovBetaBanner,
     govukPhaseBanner : GovukPhaseBanner,
     hmrcFooter: HmrcFooter,
+    hmrcStandardFooter: HmrcStandardFooter,
     hmrcReportTechnicalIssue: HmrcReportTechnicalIssue
 )
 
@@ -48,6 +50,6 @@
     pageTitle = pageTitle,
     headBlock = Some(head()),
     beforeContentBlock = Some(beforeContentBlock),
-    footerBlock = Some(hmrcFooter()),
+    footerBlock = Some(hmrcStandardFooter()),
     bodyEndBlock = Some(scripts())
 )(content)
