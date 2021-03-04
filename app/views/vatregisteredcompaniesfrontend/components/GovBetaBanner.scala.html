@@ -21,15 +21,14 @@
 @(content: String)(implicit messages: Messages, appConfig: AppConfig)
 
 @govukPhaseBanner(PhaseBanner(
-    tag = Some(Tag(
-      content = Text(content)
-    )),
-    content = HtmlContent(
-         s"""<span>
-                ${messages("vatcheck.common.alpha-info.p1")}
-                <a href="${appConfig.betaFeedbackUrlNoAuth}">${Messages("vatcheck.common.alpha-info.link")}</a>
-                ${messages("vatcheck.common.alpha-info.p2")}
-            </span>"""
-
-    )
-  ))
+  tag = Some(Tag(
+    content = Text(content)
+  )),
+  content = HtmlContent(
+    s"""<span>
+      ${messages("vatcheck.common.alpha-info.p1")}
+      <a class="govuk-link" href="${appConfig.betaFeedbackUrlNoAuth}">${Messages("vatcheck.common.alpha-info.link")}</a>
+      ${messages("vatcheck.common.alpha-info.p2")}
+    </span>"""
+  )
+))

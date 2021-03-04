@@ -20,9 +20,13 @@
 @eventAction = @{ if(withConsultationNumber) {"UK VAT number with proof"} else {"UK VAT number"} }
 
 <p class="govuk-body">
-    <a
+  <a
+    class="govuk-link"
     onclick="ga('send', 'event', 'link - click', '@valid @eventAction', 'Print or save this page');"
-    href="javascript:window.print()">@Messages("vatcheck.print")</a>
+    href="javascript:window.print()"
+  >
+    @Messages("vatcheck.print")
+  </a>
 </p>
 
 
