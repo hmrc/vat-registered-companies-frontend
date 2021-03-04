@@ -20,7 +20,11 @@
 @eventAction = @{ if(withConsultationNumber) {"UK VAT number with proof"} else {"UK VAT number"} }
 
 <p class="govuk-body">
-    <a
+  <a
+    class="govuk-link"
     onclick="ga('send', 'event', 'link - click', '@valid @eventAction', 'Search again');"
-    href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.lookupForm">@Messages("vatcheck.searchAgain")</a>
+    href="@uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.lookupForm"
+  >
+    @Messages("vatcheck.searchAgain")
+  </a>
 </p>
