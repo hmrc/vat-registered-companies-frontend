@@ -28,7 +28,7 @@ class ExitSurveyController @Inject()
   implicit val appConfig: AppConfig
 ) extends BackendController(cc)  {
 
-  def exitSurvey = Action { implicit request =>
+  def exitSurvey = Action {
     Redirect(appConfig.feedbackSurveyUrl).withNewSession
   }
 
