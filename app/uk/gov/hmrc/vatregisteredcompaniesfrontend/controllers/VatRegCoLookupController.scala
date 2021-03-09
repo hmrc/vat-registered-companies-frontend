@@ -23,10 +23,9 @@ import javax.inject.Inject
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Mapping}
-import play.api.i18n.{I18nSupport, Lang, MessagesApi}
+import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.controller.{BaseController, FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
@@ -47,7 +46,7 @@ class VatRegCoLookupController @Inject()(
 
   import VatRegCoLookupController.form
 
-  def cymraeg: Action[AnyContent] = Action.async { implicit request =>
+  def cymraeg: Action[AnyContent] = Action.async {
     Future.successful(
       Redirect(
         routes.VatRegCoLookupController.lookupForm()
@@ -80,7 +79,6 @@ class VatRegCoLookupController @Inject()(
       errors => Future(BadRequest(lookupPage(errors))),
       lookup => connector.lookup(lookup) flatMap { x =>
         cache.sessionUuid(request).fold {
-          val id = java.util.UUID.randomUUID.toString
           Redirect(routes.VatRegCoLookupController.submit())
             .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
         } { sessionId =>

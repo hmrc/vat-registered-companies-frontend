@@ -6,6 +6,8 @@ val appName = "vat-registered-companies-frontend"
 
 PlayKeys.playDefaultPort := 8730
 
+scalaVersion := "2.12.11"
+
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(

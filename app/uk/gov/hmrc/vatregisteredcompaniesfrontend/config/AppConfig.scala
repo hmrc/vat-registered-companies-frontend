@@ -16,12 +16,7 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
-import java.net.URLEncoder.encode
-import java.time.ZonedDateTime
-
 import javax.inject.{Inject, Singleton}
-import play.Logger
-import play.api.data.format
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import play.api.{Configuration, Environment}
@@ -36,12 +31,11 @@ class AppConfig @Inject()(
   environment: Environment,
   servicesConfig: ServicesConfig) {
 
-  private def loadConfig(key: String) = config.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  private def loadConfig(key: String) = config.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   lazy val appName: String = config.get[String]("appName")
 
-  private val encoding = "UTF-8"
-  private val contactHost = config.getString(s"contact-frontend.host").getOrElse("")
+  private val contactHost = config.getOptional[String](s"contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = loadConfig("appName")
 
   lazy val assetsPrefix: String = loadConfig(s"assets.url") + loadConfig(s"assets.version")
@@ -60,7 +54,7 @@ class AppConfig @Inject()(
   def routeToSwitchLanguage: String => Call = (lang: String) => routes.CustomLanguageSwitchController.switchToLanguage(lang)
 
   lazy val languageTranslationEnabled: Boolean =
-    config.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
+    config.getOptional[Boolean]("microservice.services.features.welsh-translation").getOrElse(true)
 
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
 
