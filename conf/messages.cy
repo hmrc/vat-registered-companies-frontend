@@ -37,7 +37,7 @@ error.requester-and-target-same=Rhaid i’ch rhif TAW yn y DU fod yn wahanol i�
 # results
 vatcheck.result.invalidVatNo=Rhif TAW yn y DU dilys
 vatcheck.result.validVatNo=Rhif TAW yn y DU dilys
-vatcheck.result.processingDate=Chwiliwyd ar {0}
+vatcheck.result.processingDate=Cwblhawyd y chwiliad ar {0}
 vatcheck.result.invalid.p=Gwnaethoch chwilio am
 vatcheck.result.invalid.no-match=Nid yw hwn yn cyd-fynd â rhif TAW unrhyw fusnes sydd wedi’i gofrestru ar \
   gyfer TAW yn y DU.
