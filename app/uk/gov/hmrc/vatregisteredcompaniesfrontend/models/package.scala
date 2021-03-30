@@ -19,6 +19,8 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
+import play.api.i18n.Messages
+
 package object models {
 
   type CompanyName = String
@@ -32,7 +34,21 @@ package object models {
   }
 
   implicit class RichProcessingDate(val self: ProcessingDate) {
-    override def toString: String = self.format(DateTimeFormatter.ofPattern("h:mma"))
-  }
 
+    override def toString: String = self.format(DateTimeFormatter.ofPattern("h:mma"))
+
+    def formatWithWelsh(pattern: String)(implicit messages: Messages): String = {
+      self.format(
+        DateTimeFormatter.ofPattern(
+          if (messages.lang.code == "cy")
+            pattern.replace(
+              "MMMM",
+              "'"+messages("vatcheck.month."+self.getMonthValue)+"'"
+            ).replace("at", "am")
+          else pattern
+        )
+      )
+    }
+
+  }
 }
