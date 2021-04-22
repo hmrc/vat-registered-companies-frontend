@@ -29,12 +29,14 @@
 
         s"""<p>
         ${messages("vatcheck.result.valid.check-ref")}
+        </p>
+        <p>
         <span class="govuk-!-font-weight-bold">$x</span>
         </p>"""
 
     }
 
-    s"""<p>${Messages("vatcheck.result.valid.vat-no")} <b class="bold">$target</b></p>
+    s"""<p><b class="bold">$target</b></p>
        $no"""
 
 }
