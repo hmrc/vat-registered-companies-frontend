@@ -20,9 +20,6 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-
-  @govBetaBanner("BETA")
-
   @if(appConfig.languageTranslationEnabled) {
     @language_selection(
       appConfig.languageMap,
