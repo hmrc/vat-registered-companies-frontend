@@ -19,10 +19,9 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{status, _}
-import utils.BaseSpec
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 import scala.concurrent.Future
-
 
 class ExitSurveyControllerSpec extends BaseSpec {
 

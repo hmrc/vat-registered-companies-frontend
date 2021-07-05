@@ -1,12 +1,11 @@
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "vat-registered-companies-frontend"
 
 PlayKeys.playDefaultPort := 8730
 
-scalaVersion := "2.12.11"
+scalaVersion := "2.12.13"
 
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
@@ -14,7 +13,7 @@ lazy val scoverageSettings = {
     // Semicolon-separated list of regexs matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := "<empty>;views.*;prod.*;uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.*;.*models.*;.*test.*",
     ScoverageKeys.coverageExcludedFiles := "<empty>;.*BuildInfo.*;.*Routes.*;",
-    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -22,7 +21,7 @@ lazy val scoverageSettings = {
 
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
     majorVersion                     := 0,
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
@@ -38,3 +37,4 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
+  .settings(scalacOptions ++= Seq("-P:silencer:pathFilters=routes", "-P:silencer:globalFilters=Unused import"))

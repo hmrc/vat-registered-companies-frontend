@@ -18,7 +18,7 @@
   govBetaBanner: GovBetaBanner
 )
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@()(implicit messages: Messages, appConfig: AppConfig)
 
   @if(appConfig.languageTranslationEnabled) {
     @language_selection(

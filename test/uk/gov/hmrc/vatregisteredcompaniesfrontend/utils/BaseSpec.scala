@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package uk.gov.hmrc.vatregisteredcompaniesfrontend.utils
 
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

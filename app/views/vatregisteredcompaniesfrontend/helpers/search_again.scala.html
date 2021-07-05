@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(withConsultationNumber: Boolean, validVatNumber: Boolean = true)(implicit request: Request[_], messages: Messages)
+@(withConsultationNumber: Boolean, validVatNumber: Boolean = true)(implicit messages: Messages)
 
 @valid = @{if (validVatNumber) {"Valid"} else {"Invalid"} }
 @eventAction = @{ if(withConsultationNumber) {"UK VAT number with proof"} else {"UK VAT number"} }

@@ -16,9 +16,7 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
-
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
-
 import org.mockito.ArgumentMatchers.{any, eq => matching}
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -26,8 +24,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
-import utils.BaseSpec
-import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 import scala.concurrent.Future
 
