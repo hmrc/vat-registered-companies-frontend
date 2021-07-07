@@ -17,16 +17,16 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import javax.inject.Inject
-import play.api.mvc.ControllerComponents
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import play.api.mvc.MessagesControllerComponents
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
 class ExitSurveyController @Inject()
 (
-  cc: ControllerComponents
+  mcc: MessagesControllerComponents
 )(
   implicit val appConfig: AppConfig
-) extends BackendController(cc)  {
+) extends FrontendController(mcc)  {
 
   def exitSurvey = Action {
     Redirect(appConfig.feedbackSurveyUrl).withNewSession

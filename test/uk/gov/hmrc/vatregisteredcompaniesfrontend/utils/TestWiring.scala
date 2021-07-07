@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package utils
-
+package uk.gov.hmrc.vatregisteredcompaniesfrontend.utils
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.concurrent.Execution.defaultContext
-import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,9 +31,8 @@ trait TestWiring extends MockitoSugar {
   lazy val mockVatRegCoConnector: VatRegisteredCompaniesConnector = {
     val mymock = mock[VatRegisteredCompaniesConnector]
 
-    when(mymock.lookup( any())(any(), any())).thenReturn(Future.successful(Some((any()))))
+    when(mymock.lookup(any())(any(), any())).thenReturn(Future.successful(Some((any()))))
     mymock
   }
-
 
 }

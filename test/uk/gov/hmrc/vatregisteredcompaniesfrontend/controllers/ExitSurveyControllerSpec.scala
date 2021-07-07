@@ -19,14 +19,13 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{status, _}
-import utils.BaseSpec
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 import scala.concurrent.Future
 
-
 class ExitSurveyControllerSpec extends BaseSpec {
 
-  private val controller = new ExitSurveyController(cc)
+  private val controller = new ExitSurveyController(mcc)
 
   "ExitSurveyController" should {
     "return 303 SEE_OTHER" in {

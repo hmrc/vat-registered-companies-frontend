@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package uk.gov.hmrc.vatregisteredcompaniesfrontend.utils
 
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -28,7 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.html.layouts.govukTemplate
 import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
 import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import views.html.ErrorTemplate
 import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
@@ -43,7 +43,7 @@ trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with Test
   val mcc: MessagesControllerComponents = uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents()
   val messagesApi: MessagesApi = mcc.messagesApi
   implicit val lang: Lang = Lang.defaultLang
-  val sc: ServicesConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
+  val sc: ServicesConfig = new ServicesConfig(configuration)
   implicit val appConfig: AppConfig = new AppConfig(configuration, env, sc)
   implicit val accessibilityStatementConfig = new AccessibilityStatementConfig(configuration)
 

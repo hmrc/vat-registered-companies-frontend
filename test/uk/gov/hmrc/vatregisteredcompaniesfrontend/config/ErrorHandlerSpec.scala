@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
-
-import utils.BaseSpec
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 class ErrorHandlerSpec extends BaseSpec {
 
