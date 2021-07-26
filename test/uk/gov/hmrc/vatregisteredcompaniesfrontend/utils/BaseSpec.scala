@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.utils
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -33,7 +34,7 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import views.html.ErrorTemplate
 import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
-trait BaseSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
+trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
   val env: Environment = Environment.simple()
   val configuration: Configuration = Configuration.load(env)

@@ -49,7 +49,7 @@ class VatRegCoLookupController @Inject()(
   def cymraeg: Action[AnyContent] = Action.async {
     Future.successful(
       Redirect(
-        routes.VatRegCoLookupController.lookupForm()
+        routes.VatRegCoLookupController.lookupForm
       ).withLang(
         Lang.apply("cy")
       )
@@ -58,7 +58,7 @@ class VatRegCoLookupController @Inject()(
 
   def lookupForm: Action[AnyContent] = Action.async { implicit request =>
     cache.sessionUuid(request).fold {
-      Redirect(routes.VatRegCoLookupController.lookupForm())
+      Redirect(routes.VatRegCoLookupController.lookupForm)
         .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
     } { _ =>
       Future.successful(Ok(lookupPage(form)))
@@ -79,7 +79,7 @@ class VatRegCoLookupController @Inject()(
       errors => Future(BadRequest(lookupPage(errors))),
       lookup => connector.lookup(lookup) flatMap { x =>
         cache.sessionUuid(request).fold {
-          Redirect(routes.VatRegCoLookupController.submit())
+          Redirect(routes.VatRegCoLookupController.submit)
             .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
         } { sessionId =>
           cacheLookup(sessionId, lookup).flatMap{ _ =>
@@ -88,36 +88,36 @@ class VatRegCoLookupController @Inject()(
                 if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty
               =>
                 cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber())
+                  Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber)
                 }
               case Some(response: LookupResponse)
                 if response.target.isEmpty & lookup.withConsultationNumber
               =>
                 cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber())
+                  Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber)
                 }
               case Some(response: LookupResponse)
                 if response.target.isEmpty
               =>
                 cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber())
+                  Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber)
                 }
               case Some(response: LookupResponse)
                 if lookup.withConsultationNumber & response.requester.nonEmpty
               =>
                 cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber())
+                  Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber)
                 }
               case Some(response: LookupResponse)
                 if lookup.withConsultationNumber
               =>
                 cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber())
+                  Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber)
                 }
               case Some(response: LookupResponse)
               =>
                 cacheResponse(sessionId, response).map{ _ =>
-                  Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber())
+                  Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber)
                 }
               case _ => throw new MissingLookupResponseException
             }
@@ -138,7 +138,7 @@ class VatRegCoLookupController @Inject()(
   } yield lookup
 
   private def unknown(implicit request: Request[AnyContent]) =
-    getLookupFromCache.fold(Redirect(routes.VatRegCoLookupController.lookupForm())) { x =>
+    getLookupFromCache.fold(Redirect(routes.VatRegCoLookupController.lookupForm)) { x =>
       Ok(invalidVatNumberPage(x.target, x.withConsultationNumber))
     }
 
@@ -147,7 +147,7 @@ class VatRegCoLookupController @Inject()(
       l <- getLookupFromCache
       r <- getLookupResponseFromCache
     } yield (l, r)
-    x.fold(Redirect(routes.VatRegCoLookupController.lookupForm())) { x =>
+    x.fold(Redirect(routes.VatRegCoLookupController.lookupForm)) { x =>
       Ok(confirmationPage(x._2, x._1.withConsultationNumber))
     }
   }
