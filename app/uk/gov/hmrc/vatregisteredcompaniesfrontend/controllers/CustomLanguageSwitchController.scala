@@ -30,7 +30,7 @@ class CustomLanguageSwitchController @Inject()(
   controllerComponents: ControllerComponents
 ) extends LanguageController( languageUtils, controllerComponents) with I18nSupport {
 
-  def fallbackURL: String = routes.VatRegCoLookupController.lookupForm().url
+  def fallbackURL: String = routes.VatRegCoLookupController.lookupForm.url
 
   def languageMap: Map[String, Lang] = appConfig.languageMap
 }

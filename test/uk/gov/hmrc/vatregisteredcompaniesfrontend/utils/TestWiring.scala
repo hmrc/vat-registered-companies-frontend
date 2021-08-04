@@ -19,14 +19,14 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.utils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.concurrent.Execution.defaultContext
+import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TestWiring extends MockitoSugar {
 
-  implicit val ec: ExecutionContext = defaultContext
+  implicit val ec: ExecutionContext = global
 
   lazy val mockVatRegCoConnector: VatRegisteredCompaniesConnector = {
     val mymock = mock[VatRegisteredCompaniesConnector]
