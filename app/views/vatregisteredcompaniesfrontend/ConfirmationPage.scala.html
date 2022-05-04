@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{LookupResponse, ConsultationNumber, VatNumber}
-@import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
-@import views.html.vatregisteredcompaniesfrontend.helpers._
+@import views.html.vatregisteredcompaniesfrontend.helpers.{processing_date, print_this_page, search_again, exit_survey}
 
-@this(layout: Layout, beforeContent: BeforeContent, govukPanel : GovukPanel)
+@this(layout: Layout, govukPanel : GovukPanel)
 
-@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(lookup: LookupResponse, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages)
 
 @panelContent(target: VatNumber, consultationNumber: Option[ConsultationNumber]) = @{
 
@@ -42,8 +40,7 @@
 }
 
 @layout(
-    pageTitle = Some(s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}"),
-    beforeContentBlock = beforeContent()
+    pageTitle = (s"${Messages("vatcheck.result.validVatNo")} - ${Messages("vatcheck.common.page.title")}")
 ) {
     @lookup.target.map { t =>
 

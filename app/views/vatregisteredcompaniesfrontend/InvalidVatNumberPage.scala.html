@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@
 
 @import java.time.{ZonedDateTime, ZoneId}
 
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.VatNumber
 @import views.html.vatregisteredcompaniesfrontend.helpers._
-@import views.html.vatregisteredcompaniesfrontend.components.BeforeContent
 
-@this(layout: Layout, beforeContent: BeforeContent)
+@this(layout: Layout)
 
-@(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(target: VatNumber, withConsultationNumber: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = Some(s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}"), beforeContentBlock = beforeContent()) {
+@layout(pageTitle = (s"${Messages("vatcheck.result.invalidVatNo")} - ${Messages("vatcheck.common.page.title")}")) {
     <h1 class="govuk-heading-xl">@Messages("vatcheck.result.invalidVatNo")</h1>
     <p class="govuk-body-l">
         @Messages("vatcheck.result.invalid.p")

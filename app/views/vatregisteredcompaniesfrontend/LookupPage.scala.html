@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 @import views.html.vatregisteredcompaniesfrontend.helpers._
-@import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button, BeforeContent}
+@import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button}
 
 
 @this(
@@ -26,15 +25,13 @@
     inputText: InputText,
     govukErrorSummary: GovukErrorSummary,
     button: Button,
-    govukCheckboxes: GovukCheckboxes,
-    beforeContent: BeforeContent
+    govukCheckboxes: GovukCheckboxes
 )
 
-@(lookupForm: Form[_])(implicit request: Request[_], messages: Messages, config: AppConfig)
+@(lookupForm: Form[_])(implicit request: Request[_], messages: Messages)
 
 
-@layout(pageTitle = Some(s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}"),
-    beforeContentBlock = beforeContent()
+@layout(pageTitle = (s"${if(lookupForm.hasErrors){Messages("vatcheck.common.error.title")}else{""}} ${Messages("vatcheck.lookup.heading")} - ${Messages("vatcheck.common.page.title")}")
 ) {
 
     @formHelper(uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes.VatRegCoLookupController.submit) {
