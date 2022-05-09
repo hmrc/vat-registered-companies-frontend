@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import play.api.mvc.{ControllerComponents, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment, Mode}
 import uk.gov.hmrc.govukfrontend.views.html.components._
-import uk.gov.hmrc.govukfrontend.views.html.layouts.govukTemplate
 import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
 import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter
 import uk.gov.hmrc.http.HeaderCarrier
@@ -50,8 +49,8 @@ trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with T
 
   val govukHeader = new GovukHeader
   val govukFooter = new GovukFooter
-  val govukTemplate = new govukTemplate(govukHeader, govukFooter, new GovukSkipLink)
-  val govukPhaseBanner = new GovukPhaseBanner(new govukTag)
+  val govukTemplate = new GovukTemplate(govukHeader, govukFooter, new GovukSkipLink, new FixedWidthPageLayout)
+  val govukPhaseBanner = new GovukPhaseBanner(new GovukTag)
 
   val hmrcFooter = new HmrcFooter()
   val lookupPage = app.injector.instanceOf[LookupPage]

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,42 +14,17 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import views.html.helper.CSPNonce
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-@import views.html.vatregisteredcompaniesfrontend.components.{Scripts, GovBetaBanner}
-@import uk.gov.hmrc.govukfrontend.views.Layouts
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
 
-@this(
-    govukLayout: GovukLayout,
-    head: Head,
-    scripts: Scripts,
-    govBetaBanner : GovBetaBanner,
-    govukPhaseBanner : GovukPhaseBanner,
-    hmrcFooter: HmrcFooter,
-    hmrcStandardFooter: HmrcStandardFooter,
-    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue
-)
+@this(hmrcLayout: HmrcLayout, standardBetaBanner: StandardBetaBanner, appConfig: AppConfig)
 
-@(
-    pageTitle: Option[String] = None,
-    beforeContentBlock: Html = Html("")
-)(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(pageTitle: String)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
-@content = {
-    @contentBlock
-    @hmrcReportTechnicalIssue(
-        ReportTechnicalIssue(
-            appConfig.appName,
-            if (messages.lang.code == "cy") "cy" else "en",
-            classes = Some("get-help-action")
-        )
-    )
-}
-
-@govukLayout(
-    pageTitle = pageTitle,
-    headBlock = Some(head()),
-    beforeContentBlock = Some(beforeContentBlock),
-    footerBlock = Some(hmrcStandardFooter()),
-    bodyEndBlock = Some(scripts())
-)(content)
+@hmrcLayout(
+pageTitle = Some(pageTitle),
+isWelshTranslationAvailable = appConfig.languageTranslationEnabled,
+nonce = CSPNonce.get,
+)(contentBlock)
