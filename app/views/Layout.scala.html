@@ -16,15 +16,22 @@
 
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
+
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
-@this(hmrcLayout: HmrcLayout, standardBetaBanner: StandardBetaBanner, appConfig: AppConfig)
+@this(hmrcLayout: HmrcLayout, standardBetaBanner: StandardBetaBanner, appConfig: AppConfig, hmrcReportTechnicalIssue: HmrcReportTechnicalIssueHelper)
 
 @(pageTitle: String)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+
+@content = {
+  @contentBlock
+  @hmrcReportTechnicalIssue()
+}
 
 @hmrcLayout(
 pageTitle = Some(pageTitle),
 isWelshTranslationAvailable = appConfig.languageTranslationEnabled,
 nonce = CSPNonce.get,
-)(contentBlock)
+)(content)
