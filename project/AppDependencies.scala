@@ -6,15 +6,15 @@ import sbt._
 object AppDependencies {
 
   val bootstrapVersion = "6.4.0"
+  val hmrcMongoVersion = "0.68.0"
 
   val compile = Seq(
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-28"    % bootstrapVersion,
     "uk.gov.hmrc"             %% "play-frontend-hmrc"            % "3.22.0-play-28",
     "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.11.0-play-28",
     "uk.gov.hmrc"             %% "play-language"                 % "5.2.0-play-28",
-    "uk.gov.hmrc"             %% "simple-reactivemongo"          % "8.0.0-play-28",
-    "uk.gov.hmrc"             %% "mongo-caching"                 % "7.2.0-play-28",
-    "org.typelevel"           %% "cats-core"                     % "2.7.0",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"            % hmrcMongoVersion,
+    "org.typelevel"           %% "cats-core"                     % "2.8.0",
     compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.5" cross CrossVersion.full),
     "com.github.ghik" % "silencer-lib" % "1.7.5" % Provided cross CrossVersion.full
   )

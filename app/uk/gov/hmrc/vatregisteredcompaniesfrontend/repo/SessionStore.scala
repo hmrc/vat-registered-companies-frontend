@@ -17,43 +17,53 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.repo
 
 import cats.data.OptionT
-import cats.implicits._
 import com.google.inject.{ImplementedBy, Inject, Singleton}
-import play.api.libs.json.{Json, OFormat}
-import play.modules.reactivemongo.ReactiveMongoComponent
-import uk.gov.hmrc.cache.model.Cache
-import uk.gov.hmrc.cache.repository.CacheMongoRepository
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.mongo.DatabaseUpdate
+import play.api.libs.json.{Reads, Writes}
+import uk.gov.hmrc.http.{HeaderCarrier}
+import uk.gov.hmrc.mongo.{CurrentTimestampSupport, MongoComponent}
+import uk.gov.hmrc.mongo.cache.{CacheIdType, DataKey, MongoCacheRepository}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 @ImplementedBy(classOf[SessionStoreImpl])
 trait SessionStore {
 
-  def get[A](sessionId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, format: OFormat[A]): OptionT[Future, A]
+  def getSession[A : ClassTag](sessionId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, reads: Reads[A]): OptionT[Future, A]
 
-  def put[A](sessionId: String, key: String, data: A)(implicit hc: HeaderCarrier, ec: ExecutionContext, format: OFormat[A]): Future[DatabaseUpdate[Cache]]
+  def putSession[A](sessionId: String, key: String, data: A )(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A]
 
+}
+object SessionIdType extends CacheIdType[String] {
+  def run: String => String = identity
 }
 
 @Singleton
-class SessionStoreImpl @Inject()(mongo: ReactiveMongoComponent)(implicit appConfig: AppConfig, ec: ExecutionContext) extends SessionStore {
+class SessionStoreImpl @Inject()(mongo: MongoComponent)(implicit appConfig: AppConfig, ec: ExecutionContext) extends
+  MongoCacheRepository[String](
+    mongoComponent = mongo,
+    collectionName = "sessions",
+    ttl = appConfig.mongoSessionExpireAfter,
+    timestampSupport = new CurrentTimestampSupport(),
+    cacheIdType = SessionIdType
+  )
+  with SessionStore {
 
-  private val expireAfterSeconds = appConfig.mongoSessionExpireAfter.toSeconds
-
-  private val cacheRepository = new CacheMongoRepository("sessions", expireAfterSeconds)(mongo.mongoConnector.db, ec)
-
-  override def get[A](sessionId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, format: OFormat[A]): OptionT[Future, A] = {
-    for {
-      a <- OptionT(cacheRepository.findById(sessionId))
-      b <- OptionT.fromOption[Future](a.data)
-    } yield (b \ key).as[A]
+  private def dataKeyForType[A](key: String) = {
+    DataKey[A](key)
   }
 
-  override def put[A](sessionId: String, key: String, data: A)(implicit hc: HeaderCarrier, ec: ExecutionContext, format: OFormat[A]): Future[DatabaseUpdate[Cache]] = {
-    cacheRepository.createOrUpdate(sessionId, key, Json.toJson(data))
+  override def getSession[A : ClassTag](sessionId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, reads: Reads[A]): OptionT[Future, A] = {
+  OptionT {
+      get[A](sessionId)(dataKeyForType(key))
+    }
+  }
+
+  override def putSession[A](sessionId: String, key: String, data: A)(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A] = {
+
+   put[A](sessionId)(DataKey[A](key), data).map(_ => data)
+
   }
 
 }

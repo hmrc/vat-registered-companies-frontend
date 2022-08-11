@@ -28,7 +28,7 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.repo.SessionStore
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
-class SessionCacheService @Inject()(appConfig: AppConfig, sessionStore: SessionStore) {
+class SessionCacheService @Inject()(sessionStore: SessionStore) {
 
   val logger = Logger(getClass)
 
@@ -42,7 +42,7 @@ class SessionCacheService @Inject()(appConfig: AppConfig, sessionStore: SessionS
     ec: ExecutionContext,
     format: OFormat[A]
   ): Future[Option[A]] = {
-    sessionStore.get[A](cacheId, id).fold {
+    sessionStore.getSession[A](cacheId, id).fold {
       logger.info(s"no ${scala.reflect.classTag[A].runtimeClass} in the cache")
       Option.empty[A]
     }(_.some)
@@ -57,7 +57,12 @@ class SessionCacheService @Inject()(appConfig: AppConfig, sessionStore: SessionS
     ec: ExecutionContext,
     format: OFormat[A]
   ): Future[Boolean] = {
-    sessionStore.put(cacheId, id, data).map(x => x.writeResult.ok)
+    sessionStore.putSession(cacheId, id, data)
+      .map(_ => true)
+      .recover
+      { case e  => logger.error(
+        s" Store session failed  for id :: $id and cache id :: $cacheId with error :: ${e.getMessage}", e)
+      false}
   }
 
 }
