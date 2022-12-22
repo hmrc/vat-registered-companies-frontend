@@ -1,7 +1,15 @@
 
 # vat-registered-companies-frontend
 
-This is a placeholder README.md for a new repository
+The purpose of a VRN checker service is to help customers comply with their responsibilities for calculating VAT
+liabilities by helping them ensure they are trading with registered third parties.
+
+Service can be used in production at - https://www.tax.service.gov.uk/check-vat-number/enter-vat-details
+
+# Run Services
+
+You can run services locally through Service Manager
+sm --start VAT_REG_CO_ALL
 
 ### License
 
