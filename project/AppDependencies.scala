@@ -1,6 +1,4 @@
 import play.core.PlayVersion.current
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
@@ -10,13 +8,10 @@ object AppDependencies {
 
   val compile = Seq(
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-28"    % bootstrapVersion,
-    "uk.gov.hmrc"             %% "play-frontend-hmrc"            % "3.34.0-play-28",
+    "uk.gov.hmrc"             %% "play-frontend-hmrc"            % "5.2.0-play-28",
     "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.12.0-play-28",
-    "uk.gov.hmrc"             %% "play-language"                 % "5.4.0-play-28",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"            % hmrcMongoVersion,
-    "org.typelevel"           %% "cats-core"                     % "2.9.0",
-    compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.5" cross CrossVersion.full),
-    "com.github.ghik" % "silencer-lib" % "1.7.5" % Provided cross CrossVersion.full
+    "org.typelevel"           %% "cats-core"                     % "2.9.0"
   )
 
   val test = Seq(
