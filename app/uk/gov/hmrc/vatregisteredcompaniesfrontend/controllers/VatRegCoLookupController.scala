@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,11 +68,11 @@ class VatRegCoLookupController @Inject()(
   val lookupCacheId = "lookupCache"
   val responseCacheId = "responseCache"
 
-  def cacheLookup(sessionId: String, lookup: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.put[Lookup](sessionId, lookupCacheId, lookup)
+  def cacheLookup(vatId: String, lookup: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.findById[Lookup](vatId, lookupCacheId, lookup)
 
-  def cacheResponse(sessionId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.put[LookupResponse](sessionId, responseCacheId, response)
+  def cacheResponse(vatId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.put[LookupResponse](vatId, responseCacheId, response)
 
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
