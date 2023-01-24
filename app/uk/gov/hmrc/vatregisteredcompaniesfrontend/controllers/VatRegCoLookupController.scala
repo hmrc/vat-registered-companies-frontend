@@ -68,12 +68,11 @@ class VatRegCoLookupController @Inject()(
   val lookupCacheId = "lookupCache"
   val responseCacheId = "responseCache"
 
-  def cacheLookup(vatId: String, lookup: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.findById[Lookup](vatId, lookupCacheId, lookup)
+  def cacheLookup(sessionId: String, lookup: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.put[Lookup](sessionId, lookupCacheId, lookup)
 
-  def cacheResponse(vatId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.put[LookupResponse](vatId, responseCacheId, response)
-
+  def cacheResponse(sessionId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
+    cache.put[LookupResponse](sessionId, responseCacheId, response)
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookupPage(errors))),
