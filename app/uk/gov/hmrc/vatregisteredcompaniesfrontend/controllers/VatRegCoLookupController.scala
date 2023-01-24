@@ -73,6 +73,7 @@ class VatRegCoLookupController @Inject()(
 
   def cacheResponse(sessionId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
     cache.put[LookupResponse](sessionId, responseCacheId, response)
+
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookupPage(errors))),
