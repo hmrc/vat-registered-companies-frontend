@@ -35,33 +35,33 @@ class SessionCacheService @Inject()(sessionStore: SessionStore) {
   def sessionUuid(request: Request[AnyContent]): Option[String] =  request.session.get("uuid")
 
   def get[A: ClassTag](
-    cacheId:String,
-    id: String
+                        cacheId:String,
+                        key: String
   )(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     format: OFormat[A]
   ): Future[Option[A]] = {
-    sessionStore.getSession[A](cacheId, id).fold {
+    sessionStore.getCache[A](cacheId, key).fold {
       logger.info(s"no ${scala.reflect.classTag[A].runtimeClass} in the cache")
       Option.empty[A]
     }(_.some)
   }
 
   def put[A](
-    cacheId:String,
-    id: String,
-    data: A
+              cacheId:String,
+              key: String,
+              data: A
   )(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     format: OFormat[A]
   ): Future[Boolean] = {
-    sessionStore.putSession(cacheId, id, data)
+    sessionStore.putCache(cacheId, key, data)
       .map(_ => true)
       .recover
       { case e  => logger.error(
-        s" Store session failed  for id :: $id and cache id :: $cacheId with error :: ${e.getMessage}", e)
+        s" Store session failed  for id :: $key and cache id :: $cacheId with error :: ${e.getMessage}", e)
       false}
   }
 

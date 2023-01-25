@@ -30,9 +30,9 @@ import scala.reflect.ClassTag
 @ImplementedBy(classOf[SessionStoreImpl])
 trait SessionStore {
 
-  def getSession[A : ClassTag](sessionId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, reads: Reads[A]): OptionT[Future, A]
+  def getCache[A : ClassTag](cacheId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, reads: Reads[A]): OptionT[Future, A]
 
-  def putSession[A](sessionId: String, key: String, data: A )(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A]
+  def putCache[A](cacheId: String, key: String, data: A )(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A]
 
 }
 object SessionIdType extends CacheIdType[String] {
@@ -54,15 +54,15 @@ class SessionStoreImpl @Inject()(mongo: MongoComponent)(implicit appConfig: AppC
     DataKey[A](key)
   }
 
-  override def getSession[A : ClassTag](sessionId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, reads: Reads[A]): OptionT[Future, A] = {
+  override def getCache[A : ClassTag](cacheId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, reads: Reads[A]): OptionT[Future, A] = {
   OptionT {
-      get[A](sessionId)(dataKeyForType(key))
+      get[A](cacheId)(dataKeyForType(key))
     }
   }
 
-  override def putSession[A](sessionId: String, key: String, data: A)(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A] = {
+  override def putCache[A](cacheId: String, key: String, data: A)(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A] = {
 
-   put[A](sessionId)(DataKey[A](key), data).map(_ => data)
+   put[A](cacheId)(DataKey[A](key), data).map(_ => data)
 
   }
 

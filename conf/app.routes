@@ -8,13 +8,13 @@ GET        /cymraeg                                   uk.gov.hmrc.vatregisteredc
 GET        /enter-vat-details                         uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.lookupForm
 POST       /enter-vat-details                         uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.submit
 
-GET        /unknown/requester/known                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithValidConsultationNumber
+GET        /unknown/requester/known                  uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithValidConsultationNumber
 GET        /unknown/requester/unknown                 uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithInvalidConsultationNumber
-GET        /unknown                                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithoutConsultationNumber
+GET        /unknown                           uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.unknownWithoutConsultationNumber
 
 GET        /known/requester/known                     uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithValidConsultationNumber
 GET        /known/requester/unknown                   uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithInvalidConsultationNumber
-GET        /known                                     uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithoutConsultationNumber
+GET        /known                            uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.VatRegCoLookupController.knownWithoutConsultationNumber
 
 GET        /language/:lang                            uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.CustomLanguageSwitchController.switchToLanguage(lang: String)
 

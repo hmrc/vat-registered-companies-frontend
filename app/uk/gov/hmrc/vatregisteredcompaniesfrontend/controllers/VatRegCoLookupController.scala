@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 import cats.data.OptionT
 import cats.implicits._
 import com.google.inject.Singleton
+
 import javax.inject.Inject
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -26,9 +27,10 @@ import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import views.html.vatregisteredcompaniesfrontend._
 
@@ -36,8 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VatRegCoLookupController @Inject()(
-  connector: VatRegisteredCompaniesConnector,
-  cache: SessionCacheService,
+  service: VatRegisteredCompaniesService,
   mcc: MessagesControllerComponents,
   lookupPage: LookupPage,
   invalidVatNumberPage: InvalidVatNumberPage,
@@ -57,95 +58,43 @@ class VatRegCoLookupController @Inject()(
   }
 
   def lookupForm: Action[AnyContent] = Action.async { implicit request =>
-    cache.sessionUuid(request).fold {
-      Redirect(routes.VatRegCoLookupController.lookupForm)
-        .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
-    } { _ =>
       Future.successful(Ok(lookupPage(form)))
-    }
   }
-
-  val lookupCacheId = "lookupCache"
-  val responseCacheId = "responseCache"
-
-  def cacheLookup(sessionId: String, lookup: Lookup)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.put[Lookup](sessionId, lookupCacheId, lookup)
-
-  def cacheResponse(sessionId: String, response: LookupResponse)(implicit request: Request[AnyContent]): Future[Boolean] =
-    cache.put[LookupResponse](sessionId, responseCacheId, response)
 
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookupPage(errors))),
-      lookup => connector.lookup(lookup) flatMap { x =>
-        cache.sessionUuid(request).fold {
-          Redirect(routes.VatRegCoLookupController.submit)
-            .withSession(request.session + ("uuid" -> java.util.UUID.randomUUID.toString)).pure[Future]
-        } { sessionId =>
-          cacheLookup(sessionId, lookup).flatMap{ _ =>
-            x match {
-              case Some(response: LookupResponse)
-                if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty
-              =>
-                cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber)
-                }
-              case Some(response: LookupResponse)
-                if response.target.isEmpty & lookup.withConsultationNumber
-              =>
-                cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber)
-                }
-              case Some(response: LookupResponse)
-                if response.target.isEmpty
-              =>
-                cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber)
-                }
-              case Some(response: LookupResponse)
-                if lookup.withConsultationNumber & response.requester.nonEmpty
-              =>
-                cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber)
-                }
-              case Some(response: LookupResponse)
-                if lookup.withConsultationNumber
-              =>
-                cacheResponse(sessionId, response).map { _ =>
-                  Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber)
-                }
-              case Some(response: LookupResponse)
-              =>
-                cacheResponse(sessionId, response).map{ _ =>
-                  Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber)
-                }
-              case _ => throw new MissingLookupResponseException
-            }
-          }
-        }
+      lookup => service.lookupVatComp(lookup) map {
+        case response if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty =>
+          Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber)
+            .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+        case response if response.target.isEmpty & lookup.withConsultationNumber =>
+          Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber)
+          .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+        case response if response.target.isEmpty =>
+          Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber)
+          .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+        case response if lookup.withConsultationNumber & response.requester.nonEmpty =>
+          Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber)
+            .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+        case _ if lookup.withConsultationNumber =>
+          Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber)
+            .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+        case _ => Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber)
+          .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
       }
     )
   }
 
-  def getLookupResponseFromCache(implicit request: Request[AnyContent]): OptionT[Future, LookupResponse] = for {
-    sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
-    lookup <- OptionT(cache.get[LookupResponse](sessionId, responseCacheId))
-  } yield lookup
-
-  def getLookupFromCache(implicit request: Request[AnyContent]): OptionT[Future, Lookup] = for {
-    sessionId <- OptionT.fromOption[Future](request.session.get("uuid"))
-    lookup <- OptionT(cache.get[Lookup](sessionId, lookupCacheId))
-  } yield lookup
-
   private def unknown(implicit request: Request[AnyContent]) =
-    getLookupFromCache.fold(Redirect(routes.VatRegCoLookupController.lookupForm)) { x =>
+    service.getLookupFromCache.fold(Redirect(routes.VatRegCoLookupController.lookupForm)) { x =>
       Ok(invalidVatNumberPage(x.target, x.withConsultationNumber))
     }
 
   private def known(implicit request: Request[AnyContent]) = {
     val x = for {
-      l <- getLookupFromCache
-      r <- getLookupResponseFromCache
+      l <- service.getLookupFromCache
+      r <- service.getLookupResponseFromCache
     } yield (l, r)
     x.fold(Redirect(routes.VatRegCoLookupController.lookupForm)) { x =>
       Ok(confirmationPage(x._2, x._1.withConsultationNumber))
