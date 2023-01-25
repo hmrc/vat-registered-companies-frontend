@@ -55,7 +55,8 @@ class VatRegisteredCompaniesService @Inject()(sessionCacheService: SessionCacheS
                                     ec: ExecutionContext): Future[LookupResponse] = {
     val cacheId = getCacheId(lookup)
     sessionCacheService.get[LookupResponse](cacheId, responseCacheId).flatMap{
-      case Some(lookupResponse) => Future.successful(lookupResponse)
+      case Some(lookupResponse) =>
+        Future.successful(lookupResponse)
       case None => connector.lookup(lookup).map { lookupResponse =>
         sessionCacheService.put[LookupResponse](cacheId, responseCacheId, lookupResponse)
         lookupResponse
