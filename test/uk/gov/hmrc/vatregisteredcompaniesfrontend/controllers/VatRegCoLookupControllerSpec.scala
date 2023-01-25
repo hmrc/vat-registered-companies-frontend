@@ -44,20 +44,18 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
   val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
 
   val controller = new VatRegCoLookupController(
-    mockVatRegCoConnector,
-    mockSessionCache,
+    mockVatRegCoService,
     mcc,
     lookupPage,
     invalidVatNumberPage,
     confirmationPage
   )
-  when(mockSessionCache.sessionUuid(fakeRequest)).thenReturn(Some("foo"))
-  when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
-    Future.successful(true)
-  }
-  when(mockSessionCache.put[LookupResponse](any(),any(),any())(any(),any(), any())).thenReturn {
-    Future.successful(true)
-  }
+//  when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
+//    Future.successful(true)
+//  }
+//  when(mockSessionCache.put[LookupResponse](any(),any(),any())(any(),any(), any())).thenReturn {
+//    Future.successful(true)
+//  }
 
   "VatRegCoLookup Controller" must {
 
@@ -80,8 +78,8 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
       val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
       val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
-      when(mockVatRegCoConnector.lookup(any())(any(), any())).thenReturn {
-       Future.successful(Some(lookupResponseObj))
+      when(mockVatRegCoService.lookupVatComp(any())(any(), any())).thenReturn {
+       Future.successful(lookupResponseObj)
       }
 
       val result = controller.submit()(request)
@@ -100,8 +98,8 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
       val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
 
-      when(mockVatRegCoConnector.lookup(matching(lookupObj))(any(), any())).thenReturn {
-        Future.successful(Some(lookupResponseObj))
+      when(mockVatRegCoService.lookupVatComp(matching(lookupObj))(any(), any())).thenReturn {
+        Future.successful(lookupResponseObj)
       }
 
       val result = controller.submit()(request)
