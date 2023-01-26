@@ -32,8 +32,6 @@ class SessionCacheService @Inject()(sessionStore: SessionStore) {
 
   val logger = Logger(getClass)
 
-  def sessionUuid(request: Request[AnyContent]): Option[String] =  request.session.get("uuid")
-
   def get[A: ClassTag](
                         cacheId:String,
                         key: String

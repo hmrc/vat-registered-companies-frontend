@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 import org.mockito.ArgumentMatchers.{any, eq => matching}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -75,17 +75,24 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
 
     "return OK and get lookupResponse object for a POST" in {
 
-      val request = FakeRequest("POST", "/enter-vat-details").withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+      val request = FakeRequest("POST", "/enter-vat-details")
+        .withFormUrlEncodedBody("target" -> testVatNumber, "withConsultationNumber" -> boolValue.toString, "requester" -> requesterVatNo.getOrElse(""))
+
       val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
       when(mockVatRegCoService.lookupVatComp(any())(any(), any())).thenReturn {
        Future.successful(lookupResponseObj)
       }
 
+      when(mockVatRegCoService.getCacheId(any())).thenReturn {
+        "lookupCacheKey"
+      }
+
       val result = controller.submit()(request)
 
       status(result) shouldBe Status.SEE_OTHER
 
+      reset(mockVatRegCoService)
     }
 
     "return OK and get invalid Reg No for a non-existing VAT No for a POST" in {
@@ -98,8 +105,12 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
       val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
 
-      when(mockVatRegCoService.lookupVatComp(matching(lookupObj))(any(), any())).thenReturn {
+      when(mockVatRegCoService.lookupVatComp(any())(any(), any())).thenReturn {
         Future.successful(lookupResponseObj)
+      }
+
+      when(mockVatRegCoService.getCacheId(any())).thenReturn {
+        "lookupCacheKey"
       }
 
       val result = controller.submit()(request)
