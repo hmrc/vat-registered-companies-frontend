@@ -36,18 +36,6 @@ class VatRegisteredCompaniesService @Inject()(sessionCacheService: SessionCacheS
   lazy val responseCacheId = "responseCache"
 
   def getCacheId(lookup: Lookup): String = {
-//    val basicKey = lookup.requester match {
-//      case Some(requester) => s"TARGET_${lookup.target}_REQUESTER_${requester}"
-//      case _ => s"TARGET_${lookup.target}"
-//    }
-//    val withOrWithoutConsultationNumber = {
-//      if (lookup.withConsultationNumber) {
-//        "_WITH_CONSULTATION_NUMBER"
-//      } else {
-//        "_WITHOUT_CONSULTATION_NUMBER"
-//      }
-//    }
-//    basicKey + withOrWithoutConsultationNumber
     Json.toJson(lookup).toString()
   }
 

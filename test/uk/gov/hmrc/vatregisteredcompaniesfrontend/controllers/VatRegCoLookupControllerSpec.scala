@@ -50,12 +50,6 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
     invalidVatNumberPage,
     confirmationPage
   )
-//  when(mockSessionCache.put[Lookup](any(),any(), any())(any(),any(), any())).thenReturn {
-//    Future.successful(true)
-//  }
-//  when(mockSessionCache.put[LookupResponse](any(),any(),any())(any(),any(), any())).thenReturn {
-//    Future.successful(true)
-//  }
 
   "VatRegCoLookup Controller" must {
 

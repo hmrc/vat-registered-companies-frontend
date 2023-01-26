@@ -64,24 +64,22 @@ class VatRegCoLookupController @Inject()(
   def submit: Action[AnyContent] = Action.async { implicit request =>
     form.bindFromRequest().fold(
       errors => Future(BadRequest(lookupPage(errors))),
-      lookup => service.lookupVatComp(lookup) map {
+      lookup => {
+        val redirectLocation = service.lookupVatComp(lookup) map {
         case response if response.target.isEmpty & lookup.withConsultationNumber & response.requester.nonEmpty =>
-          Redirect(routes.VatRegCoLookupController.unknownWithValidConsultationNumber)
-            .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+          routes.VatRegCoLookupController.unknownWithValidConsultationNumber
         case response if response.target.isEmpty & lookup.withConsultationNumber =>
-          Redirect(routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber)
-          .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+          routes.VatRegCoLookupController.unknownWithInvalidConsultationNumber
         case response if response.target.isEmpty =>
-          Redirect(routes.VatRegCoLookupController.unknownWithoutConsultationNumber)
-          .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+          routes.VatRegCoLookupController.unknownWithoutConsultationNumber
         case response if lookup.withConsultationNumber & response.requester.nonEmpty =>
-          Redirect(routes.VatRegCoLookupController.knownWithValidConsultationNumber)
-            .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+          routes.VatRegCoLookupController.knownWithValidConsultationNumber
         case _ if lookup.withConsultationNumber =>
-          Redirect(routes.VatRegCoLookupController.knownWithInvalidConsultationNumber)
-            .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
-        case _ => Redirect(routes.VatRegCoLookupController.knownWithoutConsultationNumber)
-          .withSession(request.session + ("cacheId" -> service.getCacheId(lookup)))
+          routes.VatRegCoLookupController.knownWithInvalidConsultationNumber
+        case _ => routes.VatRegCoLookupController.knownWithoutConsultationNumber
+
+      }
+        redirectLocation.map(Redirect(_).withSession(request.session + ("cacheId" -> service.getCacheId(lookup))))
       }
     )
   }
