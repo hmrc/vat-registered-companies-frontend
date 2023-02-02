@@ -36,11 +36,11 @@ class VatRegisteredCompaniesConnector @Inject()(
   lazy val url: String = s"${servicesConfig.baseUrl("vat-registered-companies")}/vat-registered-companies"
 
   def lookup(lookup: Lookup)
-            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Some[LookupResponse]] = lookup match {
+            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[LookupResponse] = lookup match {
     case a: Lookup if a.requester.nonEmpty =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.fold("")(_.clean)}").map(Some(_))
+      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.fold("")(_.clean)}")
     case a =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}").map(Some(_))
+      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}")
   }
 
 }

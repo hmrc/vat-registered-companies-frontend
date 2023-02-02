@@ -19,6 +19,8 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.utils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 
@@ -28,11 +30,6 @@ trait TestWiring extends MockitoSugar {
 
   implicit val ec: ExecutionContext = global
 
-  lazy val mockVatRegCoConnector: VatRegisteredCompaniesConnector = {
-    val mymock = mock[VatRegisteredCompaniesConnector]
-
-    when(mymock.lookup(any())(any(), any())).thenReturn(Future.successful(Some((any()))))
-    mymock
-  }
+  lazy val mockVatRegCoService: VatRegisteredCompaniesService = mock[VatRegisteredCompaniesService]
 
 }
