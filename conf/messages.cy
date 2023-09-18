@@ -17,6 +17,8 @@ vatcheck.searchAgain=Chwilio eto
 
 # common errors
 vatcheck.common.errorSummary=Mae problem wedi codi
+vatcheck.common.error.title=Gwall:
+global.error.prefix=Gwall
 
 # lookup form content
 vatcheck.lookup.heading=Beth yw’r rhif TAW yn y DU yr hoffech ei wirio?
