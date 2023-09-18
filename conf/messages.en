@@ -18,6 +18,7 @@ vatcheck.searchAgain=Search again
 # common errors
 vatcheck.common.errorSummary=There is a problem
 vatcheck.common.error.title=Error:
+global.error.prefix=Error
 
 # lookup form content
 vatcheck.lookup.heading=What is the UK VAT number you want to check?
