@@ -154,7 +154,7 @@ object VatRegCoLookupController {
   }
 
   private def vatNumberConstraint(key: String): Constraint[String] = Constraint {
-    case a if !a.matches(vatNoRegex) => Invalid(s"error.$key.invalid")
+    case a if !a.replaceAll("[a-zA-Z]", "").matches(vatNoRegex) => Invalid(s"error.$key.invalid")
     case _ => Valid
   }
 
