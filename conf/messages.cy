@@ -55,7 +55,7 @@ vatcheck.result.proof.vat-no={}
 vatcheck.result.proof.invalid-requester.p1=Nid oedd eich rhif TAW eich hun yn ddilys. Ni allwn roi \
   prawf o’ch gwiriad i chi. Gwiriwch eich rhif TAW eich hun a rhowch gynnig arall arni.
 
-vatcheck.exitsurvey.link.copy=Beth yw’ch barn am y gwasanaeth hwn?
+vatcheck.exitsurvey.link.copy=Beth yw’ch barn am y gwasanaeth hwn? (yn agor mewn tab newydd)
 vatcheck.exitsurvey.time=(Mae’n cymryd 30 eiliad)
 
 # months
