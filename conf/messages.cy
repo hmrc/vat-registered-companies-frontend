@@ -13,7 +13,7 @@ vatcheck.common.fullstop=.
 vatcheck.common.open.apostrophie=‘
 vatcheck.common.close.apostrophie=’
 vatcheck.print=Argraffu neu gadw’r dudalen hon
-vatcheck.searchAgain=Gwiriwch rif TAW arall
+vatcheck.searchAgain=Gwirio rhif TAW arall
 
 # common errors
 vatcheck.common.errorSummary=Mae problem wedi codi
