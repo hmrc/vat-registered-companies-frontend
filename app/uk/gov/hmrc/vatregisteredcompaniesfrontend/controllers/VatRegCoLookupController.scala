@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
-import cats.data.OptionT
 import cats.implicits._
 import com.google.inject.Singleton
 
@@ -29,9 +28,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.Lookup
 import views.html.vatregisteredcompaniesfrontend._
 
 import scala.concurrent.{ExecutionContext, Future}

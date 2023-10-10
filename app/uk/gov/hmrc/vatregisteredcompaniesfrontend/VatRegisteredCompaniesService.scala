@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, VatNumber}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.LookupResponse._
 

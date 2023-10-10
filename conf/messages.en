@@ -13,7 +13,7 @@ vatcheck.common.fullstop=.
 vatcheck.common.open.apostrophie=‘
 vatcheck.common.close.apostrophie=’
 vatcheck.print=Print or save this page
-vatcheck.searchAgain=Search again
+vatcheck.searchAgain=Check another VAT number
 
 # common errors
 vatcheck.common.errorSummary=There is a problem
