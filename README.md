@@ -9,7 +9,14 @@ Service can be used in production at - https://www.tax.service.gov.uk/check-vat-
 # Run Services
 
 You can run services locally through Service Manager
-sm --start VAT_REG_CO_ALL
+sm2 --start VAT_REG_CO_ALL
+
+## Testing and coverage 
+
+To run tests and coverage use: 
+```
+sbt clean coverage test coverageReport
+```
 
 ### License
 
