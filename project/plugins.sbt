@@ -8,5 +8,7 @@ resolvers += Resolver.jcenterRepo
 addSbtPlugin("uk.gov.hmrc"        % "sbt-auto-build"      % "3.14.0")
 addSbtPlugin("uk.gov.hmrc"        % "sbt-distributables"  % "2.2.0")
 addSbtPlugin("com.typesafe.play"  % "sbt-plugin"          % "2.8.18")
-addSbtPlugin("org.scoverage"      % "sbt-scoverage"       % "1.8.1")
+addSbtPlugin("org.scoverage"      % "sbt-scoverage"        % "2.0.6")
 addSbtPlugin("org.irundaia.sbt"   % "sbt-sassify"         % "1.4.11")
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
