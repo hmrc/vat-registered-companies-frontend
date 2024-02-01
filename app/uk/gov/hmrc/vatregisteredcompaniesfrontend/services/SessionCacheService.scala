@@ -17,14 +17,12 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.services
 
 import cats.implicits._
-import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.OFormat
-import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.repo.SessionStore
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
