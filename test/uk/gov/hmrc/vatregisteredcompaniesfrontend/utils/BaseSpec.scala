@@ -23,7 +23,7 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{ControllerComponents, MessagesControllerComponents}
 import play.api.test.FakeRequest
-import play.api.{Application, Configuration, Environment, Mode}
+import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
 import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter
@@ -45,7 +45,7 @@ trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with T
   implicit val lang: Lang = Lang.defaultLang
   val sc: ServicesConfig = new ServicesConfig(configuration)
   implicit val appConfig: AppConfig = new AppConfig(configuration, env, sc)
-  implicit val accessibilityStatementConfig = new AccessibilityStatementConfig(configuration)
+  val accessibilityStatementConfig = new AccessibilityStatementConfig(configuration)
 
   val govukHeader = new GovukHeader
   val govukFooter = new GovukFooter
@@ -61,6 +61,5 @@ trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with T
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .disable[com.kenshoo.play.metrics.PlayModule]
       .build()
 }
