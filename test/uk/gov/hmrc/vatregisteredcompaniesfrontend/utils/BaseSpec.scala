@@ -24,9 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{ControllerComponents, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
-import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config.AccessibilityStatementConfig
-import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
@@ -47,12 +45,6 @@ trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with T
   implicit val appConfig: AppConfig = new AppConfig(configuration, env, sc)
   val accessibilityStatementConfig = new AccessibilityStatementConfig(configuration)
 
-  val govukHeader = new GovukHeader
-  val govukFooter = new GovukFooter
-  val govukTemplate = new GovukTemplate(govukHeader, govukFooter, new GovukSkipLink, new FixedWidthPageLayout)
-  val govukPhaseBanner = new GovukPhaseBanner(new GovukTag)
-
-  val hmrcFooter = new HmrcFooter()
   val lookupPage = app.injector.instanceOf[LookupPage]
   val confirmationPage = app.injector.instanceOf[ConfirmationPage]
   val invalidVatNumberPage = app.injector.instanceOf[InvalidVatNumberPage]
