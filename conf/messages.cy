@@ -22,9 +22,7 @@ global.error.prefix=Gwall
 
 # lookup form content
 vatcheck.lookup.heading=Beth yw’r rhif TAW yn y DU yr hoffech ei wirio?
-vatcheck.lookup.target.hint=Rhif 9 neu 12 digid yw hwn, weithiau â ‘GB’ ar y dechrau, megis 123456789 neu GB123456789.
-vatcheck.lookup.withConsultationNumber.label=Dewiswch os hoffech gael prawf o’ch gwiriad (ar gyfer busnesau \
-  sydd wedi’u cofrestru ar gyfer TAW yn y DU yn unig)
+vatcheck.lookup.target.hint=9 rhif yw hwn, weithiau â ‘GB’ ar y dechrau. Er enghraifft 123456789 neu GB123456789. Mae hwn i’w weld ar dystysgrif cofrestru TAW Anycompany.
 vatcheck.lookup.requester.label=Nodwch eich rhif TAW yn y DU eich hun
 vatcheck.lookup.requester.hint=Mae angen hwn arnom er mwyn i ni allu rhoi cyfeirnod i chi.
 vatcheck.lookup.button=Chwilio
