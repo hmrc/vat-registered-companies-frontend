@@ -22,7 +22,7 @@ global.error.prefix=Error
 
 # lookup form content
 vatcheck.lookup.heading=What is the UK VAT number you want to check?
-vatcheck.lookup.target.hint=This is 9 or 12 numbers, sometimes with ‘GB’ at the start, like 123456789 or GB123456789.
+vatcheck.lookup.target.hint=This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on your VAT registration certificate.
 vatcheck.lookup.withConsultationNumber.label=Select if you want proof of your check \
   (for UK VAT-registered businesses only)
 vatcheck.lookup.requester.label=Enter your own UK VAT number
