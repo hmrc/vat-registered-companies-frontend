@@ -8,12 +8,24 @@ Service can be used in production at - https://www.tax.service.gov.uk/check-vat-
 
 # Run Services
 
-You can run services locally through Service Manager
+You can run services locally through Service Manager:
+```
 sm2 --start VAT_REG_CO_ALL
+```
 
-## Testing and coverage 
+To run repo on port 8730:
+```
+sbt run
+```
 
-To run tests and coverage use: 
+## Testing and coverage
+
+To run tests use:
+```
+sbt test
+```
+
+To run tests and coverage use:
 ```
 sbt clean coverage test coverageReport
 ```
