@@ -27,7 +27,6 @@ import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.Lookup
 import views.html.vatregisteredcompaniesfrontend._
 
@@ -40,7 +39,7 @@ class VatRegCoLookupController @Inject()(
   lookupPage: LookupPage,
   invalidVatNumberPage: InvalidVatNumberPage,
   confirmationPage: ConfirmationPage
-)(implicit config: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   import VatRegCoLookupController.form
 

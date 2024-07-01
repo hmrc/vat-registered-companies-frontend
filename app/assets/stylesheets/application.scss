@@ -1,7 +1,11 @@
 $govuk-assets-path: "/check-vat-number/assets/lib/govuk-frontend/govuk/assets/";
 $hmrc-assets-path: "/check-vat-number/assets/lib/hmrc-frontend/hmrc/";
 
-@import "lib/govuk-frontend/govuk/all";
+$govuk-suppressed-warnings: (
+        govuk-typography-scale-14
+);
+
+@import "lib/govuk-frontend/dist/govuk/base";
 @import "lib/hmrc-frontend/hmrc/all";
 
 @import "language-selection";

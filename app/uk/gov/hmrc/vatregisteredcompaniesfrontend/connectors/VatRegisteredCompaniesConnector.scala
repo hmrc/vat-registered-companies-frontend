@@ -17,19 +17,16 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors
 
 import javax.inject.Inject
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Lookup, LookupResponse, _}
-import  uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class VatRegisteredCompaniesConnector @Inject()(
-  http: HttpClient,
-  environment: Environment,
-  configuration: Configuration,
+  http: HttpClientV2,
   servicesConfig: ServicesConfig
 ) {
 
@@ -38,9 +35,9 @@ class VatRegisteredCompaniesConnector @Inject()(
   def lookup(lookup: Lookup)
             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[LookupResponse] = lookup match {
     case a: Lookup if a.requester.nonEmpty =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}/${a.requester.fold("")(_.clean)}")
+      http.get(url"$url/lookup/${a.target.clean}/${a.requester.fold("")(_.clean)}").execute[LookupResponse]
     case a =>
-      http.GET[LookupResponse](url = s"$url/lookup/${a.target.clean}")
+      http.get(url"$url/lookup/${a.target.clean}").execute[LookupResponse]
   }
 
 }
