@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 class ErrorHandlerSpec extends BaseSpec {
@@ -25,7 +26,7 @@ class ErrorHandlerSpec extends BaseSpec {
   "ErrorHandler should" must {
 
     "return an error page" in {
-      val result = errHandler.standardErrorTemplate("samplePageTitle", "sampleHeading", "sampleMessage")(fakeRequest)
+      val result = await(errHandler.standardErrorTemplate("samplePageTitle", "sampleHeading", "sampleMessage")(fakeRequest))
 
       result.body should include("samplePageTitle")
     }

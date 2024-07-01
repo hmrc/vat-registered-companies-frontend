@@ -52,7 +52,7 @@ class VatRegisteredCompaniesService @Inject()(sessionCacheService: SessionCacheS
     }
   }
 
-  def getLookupFromCache(implicit request: Request[AnyContent], hc: HeaderCarrier,
+  def getLookupFromCache(implicit request: Request[AnyContent],
                          ec: ExecutionContext): OptionT[Future, Lookup] = for {
     cacheId <- OptionT.fromOption[Future](request.session.get("cacheId"))
     lookup <- OptionT.fromOption[Future](getLookupFromCacheId(cacheId))

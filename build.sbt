@@ -31,5 +31,5 @@ lazy val microservice = Project(appName, file("."))
   )
   .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
+  .settings(scalacOptions ++= Seq("-Wconf:src=routes/.*:s", "-Wconf:src=views/.*html.*&cat=unused-imports:silent"))
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

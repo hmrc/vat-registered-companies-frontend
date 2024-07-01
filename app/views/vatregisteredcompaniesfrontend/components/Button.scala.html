@@ -18,7 +18,6 @@
 
 @(msg: String, attributes: Map[String, String] = Map.empty)(implicit messages: Messages)
 
-@onclick = @{Map("onclick" -> s"ga('send', 'event', 'button - click', '${messages("vatcheck.lookup.heading")}', 'Search');")}
 @govukButton(
  Button(
   content = Text(messages(msg)),

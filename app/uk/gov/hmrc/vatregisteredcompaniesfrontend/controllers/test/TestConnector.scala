@@ -17,27 +17,24 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.test
 
 import javax.inject.Inject
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
-import  uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class TestConnector @Inject()(
-  http: HttpClient,
-  environment: Environment,
-  configuration: Configuration,
-  servicesConfig: ServicesConfig
+                               http: HttpClientV2,
+                               servicesConfig: ServicesConfig
 ) {
 
   private val backendUrl: String = servicesConfig.baseUrl("vat-registered-companies")
 
   def trigger(url: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
-    http.GET[HttpResponse](s"$backendUrl/test-only/$url")
+    http.get(url"$backendUrl/test-only/$url").execute[HttpResponse]
 
   def trigger(url: String, param: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
-    http.GET[HttpResponse](s"$backendUrl/test-only/$url/$param")
+    http.get(url"$backendUrl/test-only/$url/$param").execute[HttpResponse]
 
 }
