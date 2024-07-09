@@ -18,21 +18,19 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 
 import javax.inject.Inject
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.ErrorTemplate
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorHandler @Inject()(
   errorTemplate: ErrorTemplate,
   val messagesApi: MessagesApi,
   implicit val appConfig: AppConfig
-) extends FrontendErrorHandler {
+)(implicit val ec: ExecutionContext) extends FrontendErrorHandler {
 
-  override def standardErrorTemplate(
-    pageTitle: String,
-    heading: String,
-    message: String
-  )(implicit request: Request[_]): Html =
-    errorTemplate(pageTitle, heading, message)
+   def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader): Future[Html] =
+     Future.successful(errorTemplate(pageTitle, heading, message))
 }
