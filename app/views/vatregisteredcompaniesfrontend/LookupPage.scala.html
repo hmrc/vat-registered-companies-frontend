@@ -15,6 +15,7 @@
  *@
 
 @import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button}
+@import views.html.helper.CSPNonce
 
 
 @this(
@@ -91,11 +92,23 @@
                 )
             ),
             attributes = Map(
-                "onclick" -> "ga('send', 'event', 'check - select', 'What is the VAT number you want to check', 'Select if you want proof of your check (for UK VAT-registered businesses only)')")
+                "id" -> "consultationNumberCheckBox"
+                )
         ))
 
         @button(msg = "vatcheck.lookup.button", attributes = Map(
-            "onclick" -> s"ga('send', 'event', 'button - click', '${messages("vatcheck.lookup.heading")}', 'Search');"
+            "id" -> "searchButton"
         ))
+
+<script type="text/javascript" @{CSPNonce.attr}>
+          document.getElementById("searchButton").addEventListener("click", function() {
+            ga('send', 'event', 'button - click', '${messages("vatcheck.lookup.heading")}', 'Search');
+          })
+
+         document.getElementById("consultationNumberCheckBox").addEventListener("click", function() {
+             ga('send', 'event', 'check - select', 'What is the VAT number you want to check', 'Select if you want proof of your check (for UK VAT-registered businesses only)')
+          })
+</script>
+<script @{CSPNonce.attr}  src='@controllers.routes.Assets.at("javascripts/tracker.js")'></script>
     }
 }

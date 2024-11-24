@@ -14,11 +14,14 @@
  * limitations under the License.
  *@
 
+@import views.html.helper.CSPNonce
+
 @this()
 
-@()
+@()(implicit request: RequestHeader)
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSFTCWZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<script src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
-<script>window.GOVUKFrontend.initAll();</script>
+<script @{CSPNonce.attr} src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
+<script @{CSPNonce.attr}>window.GOVUKFrontend.initAll();</script>
+
