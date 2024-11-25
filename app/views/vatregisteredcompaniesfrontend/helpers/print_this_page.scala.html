@@ -14,7 +14,10 @@
  * limitations under the License.
  *@
 
-@(withConsultationNumber: Boolean, validVatNumber: Boolean = true)(implicit messages: Messages)
+@import views.html.helper.CSPNonce
+
+
+@(withConsultationNumber: Boolean, validVatNumber: Boolean = true)(implicit messages: Messages, request: RequestHeader)
 
 @valid = @{if (validVatNumber) {"Valid"} else {"Invalid"} }
 @eventAction = @{ if(withConsultationNumber) {"UK VAT number with proof"} else {"UK VAT number"} }
@@ -22,11 +25,18 @@
 <p class="govuk-body">
   <a
     class="govuk-link"
-    onclick="ga('send', 'event', 'link - click', '@valid @eventAction', 'Print or save this page');"
-    href="javascript:window.print()"
+    id="printButton"
+    href=""
   >
     @Messages("vatcheck.print")
   </a>
 </p>
 
-
+<script type="text/javascript" @{CSPNonce.attr}>
+    document.getElementById("printButton").addEventListener("click", function() {
+      event.preventDefault();
+        window.print();
+      ga('send', 'event', 'link - click', '@valid @eventAction', 'Print or save this page');
+    })
+</script>
+<script @{CSPNonce.attr}  src='@controllers.routes.Assets.at("javascripts/tracker.js")'></script>

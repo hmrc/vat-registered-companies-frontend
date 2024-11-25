@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@(form: Form[_])(implicit messages: Messages)
+@import views.html.helper.CSPNonce
+
+    @(form: Form[_])(implicit messages: Messages, request: RequestHeader)
 
 @* the play-ui version uses the wrong classes *@
 @if(form.hasErrors) {
@@ -32,9 +34,10 @@
                     data-focuses="@error.key">
                     @Messages(error.message.split("[|]"), error.args: _*)
                     </a>
-                    <script type="text/javascript">
-                        ga('send', 'event', 'error - field', '@Messages("vatcheck.lookup.heading")', '@Messages(error.message.split("[|]"), error.args: _*)');
+                    <script type="text/javascript" @{CSPNonce.attr} >
+                      ga('send', 'event', 'error - field', '@Messages("vatcheck.lookup.heading")', '@Messages(error.message.split("[|]"), error.args: _*)');
                     </script>
+                    <script @{CSPNonce.attr}  src='@controllers.routes.Assets.at("javascripts/tracker.js")'></script>
                 </li>
             }
         </ul>
