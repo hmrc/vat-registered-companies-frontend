@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
+import cats.data.OptionT
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status
@@ -131,6 +132,81 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
 
       status(result) shouldBe Status.BAD_REQUEST
 
+    }
+
+    "redirect to lookup form with Welsh language for cymraeg action" in {
+      val result = controller.cymraeg()(fakeRequest)
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.VatRegCoLookupController.lookupForm.url)
+      cookies(result).get("PLAY_LANG").map(_.value) shouldBe Some("cy")
+    }
+
+
+    "redirect to appropriate routes for unknownWithInvalidConsultationNumber" in {
+      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none)
+
+      val result = controller.unknownWithInvalidConsultationNumber()(fakeRequest)
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.VatRegCoLookupController.lookupForm.url)
+    }
+
+    "redirect to appropriate routes for unknownWithValidConsultationNumber" in {
+      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none)
+
+      val result = controller.unknownWithValidConsultationNumber()(fakeRequest)
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.VatRegCoLookupController.lookupForm.url)
+    }
+
+    "redirect to appropriate routes for unknownWithoutConsultationNumber" in {
+      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none)
+
+      val result = controller.unknownWithoutConsultationNumber()(fakeRequest)
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.VatRegCoLookupController.lookupForm.url)
+    }
+
+    "return the known page with valid consultation number" in {
+      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.some(lookupObj))
+      when(mockVatRegCoService.getLookupResponseFromCache(any(), any(), any())).thenReturn(
+        OptionT.some(LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Valid")), ZonedDateTime.now()))
+      )
+
+      val result = controller.knownWithValidConsultationNumber()(fakeRequest)
+
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some("text/html")
+      contentAsString(result) should include("XYZ Exports")
+    }
+
+    "return the known page with invalid consultation number" in {
+      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.some(lookupObj))
+      when(mockVatRegCoService.getLookupResponseFromCache(any(), any(), any())).thenReturn(
+        OptionT.some(LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Invalid")), ZonedDateTime.now()))
+      )
+
+      val result = controller.knownWithInvalidConsultationNumber()(fakeRequest)
+
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some("text/html")
+      contentAsString(result) should include("XYZ Exports")
+    }
+
+    "return the known page without consultation number" in {
+      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.some(lookupObj))
+      when(mockVatRegCoService.getLookupResponseFromCache(any(), any(), any())).thenReturn(
+        OptionT.some(LookupResponse(Some(vatRegCompany), requesterVatNo, None, ZonedDateTime.now()))
+      )
+
+      val result = controller.knownWithoutConsultationNumber()(fakeRequest)
+
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some("text/html")
+      contentAsString(result) should include("XYZ Exports")
     }
 
   }
