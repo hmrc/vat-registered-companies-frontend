@@ -90,12 +90,9 @@
                     ))
                 )
             ),
-            attributes = Map(
-                "onclick" -> "ga('send', 'event', 'check - select', 'What is the VAT number you want to check', 'Select if you want proof of your check (for UK VAT-registered businesses only)')")
+
         ))
 
-        @button(msg = "vatcheck.lookup.button", attributes = Map(
-            "onclick" -> s"ga('send', 'event', 'button - click', '${messages("vatcheck.lookup.heading")}', 'Search');"
-        ))
+        @button(msg = "vatcheck.lookup.button")
     }
 }
