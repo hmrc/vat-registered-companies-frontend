@@ -26,7 +26,7 @@ import play.api.mvc.{AnyContent, Request, Session}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Address, Lookup, LookupResponse, VatRegisteredCompany}
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Address, CompanyName, Lookup, LookupResponse, VatNumber, VatRegisteredCompany}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 import java.time.{ZoneId, ZonedDateTime}
@@ -39,31 +39,37 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
   implicit val lookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
   implicit val testLookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
 
+  val mockSessionCacheService: SessionCacheService = mock[SessionCacheService]
+  val mockConnector: VatRegisteredCompaniesConnector = mock[VatRegisteredCompaniesConnector]
+
+  val testVatNumber = new VatNumber("GB987654321")
+  val missingVatNumber = new VatNumber("")
+  val invalidVatNumber = new VatNumber("InvalidVAT-HT6754")
+  val requesterVatNo: Some[VatNumber] = Some(new VatNumber("GB999999999999"))
+  val boolValue = true
+  val vatRegCompany: VatRegisteredCompany =  VatRegisteredCompany(
+    new CompanyName("XYZ Exports"),
+    new VatNumber("GB987654321"),
+    Address("33 HopeGreen", None, None, None, None, None, "UK")
+  )
+  val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
+
+  val target: Some[VatRegisteredCompany] = Some(VatRegisteredCompany("CompanyName", "123456789",Address("33 HopeGreen", None, None, None, None, None, "UK")))
+  val requester: Some[CompanyName] = Some("987654321")
+  val consultationNumber: Some[CompanyName] = Some("CONSULT123")
+  val processingDate: ZonedDateTime = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
+
+  val response: LookupResponse = LookupResponse(target, requester, consultationNumber, processingDate)
+
+  val cacheId: String = Json.toJson(lookupObj).toString()
+  val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
+  val mockRequest: Request[AnyContent] = mock[Request[AnyContent]]
+  val invalidCacheId = "invalid-json"
+  val lookupResponse: LookupResponse = LookupResponse(target, requester, consultationNumber, processingDate)
+
+
   "VatRegisteredCompaniesService" should {
     "retrieve cached lookup response if present" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val lookup = Lookup("123456789")
-      val testAddress = Address(
-        line1 = "123 Example Street",
-        line2 = Some("Example Town"),
-        line3 = Some("Example County"),
-        line4 = None,
-        line5 = None,
-        postcode = Some("EX1 1EX"),
-        countryCode = "GB"
-      )
-      val target = Some(VatRegisteredCompany("CompanyName", "123456789",testAddress))
-      val requester = Some("987654321")
-      val consultationNumber = Some("CONSULT123")
-      val processingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
-
-      val response = LookupResponse(target, requester, consultationNumber, processingDate)
-
-      val cacheId = Json.toJson(lookup).toString()
-
       when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
       when(mockSessionCacheService.get[LookupResponse](
         eqTo(cacheId),
@@ -72,58 +78,29 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
         .thenReturn(Future.successful(Some(response)))
 
 
-      val result = service.lookupVatComp(lookup).futureValue
+      val result = service.lookupVatComp(lookupObj).futureValue
 
       result shouldBe response
 
     }
 
     "call the connector and cache response if no cached data is present" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val lookup = Lookup("123456789")
-      val testAddress = Address(
-        line1 = "123 Example Street",
-        line2 = Some("Example Town"),
-        line3 = Some("Example County"),
-        line4 = None,
-        line5 = None,
-        postcode = Some("EX1 1EX"),
-        countryCode = "GB"
-      )
-      val target = Some(VatRegisteredCompany("CompanyName", "123456789",testAddress))
-      val requester = Some("987654321")
-      val consultationNumber = Some("CONSULT123")
-      val processingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
-
-      val response = LookupResponse(target, requester, consultationNumber, processingDate)
-      val cacheId = Json.toJson(lookup).toString()
-
       when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
         .thenReturn(Future.successful(None))
 
-      when(mockConnector.lookup(eqTo(lookup))(any(), any()))
+      when(mockConnector.lookup(eqTo(lookupObj))(any(), any()))
         .thenReturn(Future.successful(response))
 
       when(mockSessionCacheService.put[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId), eqTo(response))(any(), any(), any()))
         .thenReturn(Future.successful(true))
 
-      val result = service.lookupVatComp(lookup).futureValue
+      val result = service.lookupVatComp(lookupObj).futureValue
 
       result shouldBe response
 
     }
 
     "return None if cache ID is missing in session" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val lookup = Lookup("123456789")
-      val cacheId = Json.toJson(lookup).toString()
-
       when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
       when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
         .thenReturn(Future.successful(None))
@@ -134,29 +111,6 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
     }
 
     "retrieve lookup from cache ID when present in session" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val lookup = Lookup("123456789")
-      val testAddress = Address(
-        line1 = "123 Example Street",
-        line2 = Some("Example Town"),
-        line3 = Some("Example County"),
-        line4 = None,
-        line5 = None,
-        postcode = Some("EX1 1EX"),
-        countryCode = "GB"
-      )
-      val target = Some(VatRegisteredCompany("CompanyName", "123456789",testAddress))
-      val requester = Some("987654321")
-      val consultationNumber = Some("CONSULT123")
-      val processingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
-
-      val response = LookupResponse(target, requester, consultationNumber, processingDate)
-      val cacheId = Json.toJson(lookup).toString()
-
-      val mockRequest = mock[Request[AnyContent]]
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
 
       when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
@@ -165,17 +119,10 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
 
       val result = service.getLookupFromCache(mockRequest, execute).value.futureValue
 
-      result shouldBe Some(lookup)
+      result shouldBe Some(lookupObj)
     }
 
     "return None if cache ID in session is invalid" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val invalidCacheId = "invalid-json"
-
-      val mockRequest = mock[Request[AnyContent]]
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> invalidCacheId)))
 
       val result = service.getLookupFromCache(mockRequest, execute).value.futureValue
@@ -184,29 +131,6 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
     }
 
     "retrieve lookup response from cache if cache ID is valid" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val testAddress = Address(
-        line1 = "123 Example Street",
-        line2 = Some("Example Town"),
-        line3 = Some("Example County"),
-        line4 = None,
-        line5 = None,
-        postcode = Some("EX1 1EX"),
-        countryCode = "GB"
-      )
-      val target = Some(VatRegisteredCompany("CompanyName", "123456789",testAddress))
-      val requester = Some("987654321")
-      val consultationNumber = Some("CONSULT123")
-      val processingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
-
-      val lookupResponse = LookupResponse(target, requester, consultationNumber, processingDate)
-
-      val cacheId = "valid-cache-id"
-
-      val mockRequest = mock[Request[AnyContent]]
 
       when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
 
@@ -222,13 +146,6 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
     }
 
     "return None when lookup response is missing in cache" in {
-      val mockSessionCacheService = mock[SessionCacheService]
-      val mockConnector = mock[VatRegisteredCompaniesConnector]
-      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-
-      val cacheId = "valid-cache-id"
-
-      val mockRequest = mock[Request[AnyContent]]
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
 
       when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))

@@ -35,41 +35,34 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
   case class TestData(id: String, vatNumber: Int)
   implicit val testDataFormat: OFormat[TestData] = Json.format[TestData]
 
+  val mockSessionStore: SessionStore = mock[SessionStore]
+  val service = new SessionCacheService(mockSessionStore)
+
+  val cacheId = "testCacheId"
+  val testKey = "testKey"
+  val testData: TestData = TestData("GB123456789", 456789)
+
+  implicit val reads: Reads[TestData] = testDataFormat
+  implicit val classTag: ClassTag[TestData] = ClassTag(classOf[TestData])
+
   "SessionCacheService" should {
 
     "retrieve data successfully from cache" in {
-      val mockSessionStore = mock[SessionStore]
-      val service = new SessionCacheService(mockSessionStore)
 
-      val cacheId = "testCacheId"
-      val key = "testKey"
-      val testData = TestData("GB123456789", 456789)
-
-      implicit val reads: Reads[TestData] = testDataFormat
-      implicit val classTag: ClassTag[TestData] = ClassTag(classOf[TestData])
-
-      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(key))(eqTo(classTag), any(), any(), eqTo(reads)))
+      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(testKey))(eqTo(classTag), any(), any(), eqTo(reads)))
         .thenReturn(OptionT(Future.successful(Option(testData))))
 
-      val result = service.get[TestData](cacheId, key).futureValue
+      val result = service.get[TestData](cacheId, testKey).futureValue
 
       result shouldBe Some(testData)
     }
 
     "return None when data is not in cache" in {
-      val mockSessionStore = mock[SessionStore]
-      val service = new SessionCacheService(mockSessionStore)
 
-      val cacheId = "testCacheId"
-      val key = "testKey"
-
-      implicit val reads: Reads[TestData] = testDataFormat
-      implicit val classTag: ClassTag[TestData] = ClassTag(classOf[TestData])
-
-      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(key))(eqTo(classTag), any(), any(), eqTo(reads)))
+      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(testKey))(eqTo(classTag), any(), any(), eqTo(reads)))
         .thenReturn(OptionT(Future.successful(None: Option[TestData])))
 
-      val result = service.get[TestData](cacheId, key).futureValue
+      val result = service.get[TestData](cacheId, testKey).futureValue
 
       result shouldBe None
     }
