@@ -36,10 +36,8 @@ import scala.reflect.ClassTag
 class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with ScalaFutures {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
   implicit val lookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
   implicit val testLookupResponseFormat: OFormat[LookupResponse] = Json.format[LookupResponse]
-
 
   "VatRegisteredCompaniesService" should {
     "retrieve cached lookup response if present" in {
@@ -118,57 +116,72 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
 
     }
 
-//    "return None if cache ID is missing in session" in {
-//      val mockSessionCacheService = mock[SessionCacheService]
-//      val mockConnector = mock[VatRegisteredCompaniesConnector]
-//      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-//
-//      val lookup = Lookup("123456789")
-//      val cacheId = Json.toJson(lookup).toString()
-//
-//      val mockRequest = mock[Request[AnyContent]]
-////      when(mockRequest.session).thenReturn(Session())
-//
-////      when(mockRequest.session.get("cacheId")).thenReturn(None)
-//
-//      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
-//        .thenReturn(Future.successful(None))
-//
-//      val result = service.getLookupFromCache(eqTo(mockRequest), any()).value.futureValue
-//
-//      result shouldBe None
-//    }
+    "return None if cache ID is missing in session" in {
+      val mockSessionCacheService = mock[SessionCacheService]
+      val mockConnector = mock[VatRegisteredCompaniesConnector]
+      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
 
-//    "retrieve lookup from cache ID when present in session" in {
-//      val mockSessionCacheService = mock[SessionCacheService]
-//      val mockConnector = mock[VatRegisteredCompaniesConnector]
-//      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-//
-//      val lookup = Lookup("123456789")
-//      val cacheId = Json.toJson(lookup).toString()
-//
-//      val mockRequest = mock[Request[AnyContent]]
-//      when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
-//
-//      val result = service.getLookupFromCache(mockRequest, any()).value.futureValue
-//
-//      result shouldBe Some(lookup)
-//    }
+      val lookup = Lookup("123456789")
+      val cacheId = Json.toJson(lookup).toString()
 
-//    "return None if cache ID in session is invalid" in {
-//      val mockSessionCacheService = mock[SessionCacheService]
-//      val mockConnector = mock[VatRegisteredCompaniesConnector]
-//      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-//
-//      val invalidCacheId = "invalid-json"
-//
-//      val mockRequest = mock[Request[AnyContent]]
-//      when(mockRequest.session).thenReturn(Session(Map("cacheId" -> invalidCacheId)))
-//
-//      val result = service.getLookupFromCache(mockRequest, any()).value.futureValue
-//
-//      result shouldBe None
-//    }
+      when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val result = service.getLookupResponseFromCache(fakeRequest, hc, execute).value.futureValue
+
+      result shouldBe None
+    }
+
+    "retrieve lookup from cache ID when present in session" in {
+      val mockSessionCacheService = mock[SessionCacheService]
+      val mockConnector = mock[VatRegisteredCompaniesConnector]
+      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
+
+      val lookup = Lookup("123456789")
+      val testAddress = Address(
+        line1 = "123 Example Street",
+        line2 = Some("Example Town"),
+        line3 = Some("Example County"),
+        line4 = None,
+        line5 = None,
+        postcode = Some("EX1 1EX"),
+        countryCode = "GB"
+      )
+      val target = Some(VatRegisteredCompany("CompanyName", "123456789",testAddress))
+      val requester = Some("987654321")
+      val consultationNumber = Some("CONSULT123")
+      val processingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
+
+      val response = LookupResponse(target, requester, consultationNumber, processingDate)
+      val cacheId = Json.toJson(lookup).toString()
+
+      val mockRequest = mock[Request[AnyContent]]
+      when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
+
+      when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+        .thenReturn(Future.successful(Some(response)))
+
+      val result = service.getLookupFromCache(mockRequest, execute).value.futureValue
+
+      result shouldBe Some(lookup)
+    }
+
+    "return None if cache ID in session is invalid" in {
+      val mockSessionCacheService = mock[SessionCacheService]
+      val mockConnector = mock[VatRegisteredCompaniesConnector]
+      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
+
+      val invalidCacheId = "invalid-json"
+
+      val mockRequest = mock[Request[AnyContent]]
+      when(mockRequest.session).thenReturn(Session(Map("cacheId" -> invalidCacheId)))
+
+      val result = service.getLookupFromCache(mockRequest, execute).value.futureValue
+
+      result shouldBe None
+    }
 
     "retrieve lookup response from cache if cache ID is valid" in {
       val mockSessionCacheService = mock[SessionCacheService]
@@ -194,42 +207,36 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
       val cacheId = "valid-cache-id"
 
       val mockRequest = mock[Request[AnyContent]]
+
+      when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
+
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
 
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
         .thenReturn(Future.successful(Some(lookupResponse)))
 
-      val result = service.getLookupResponseFromCache(eqTo(mockRequest), hc, any()).value.futureValue
+
+      val result = service.getLookupResponseFromCache(mockRequest, hc, execute).value.futureValue
 
       result shouldBe Some(lookupResponse)
     }
 
-//    "return None when lookup response is missing in cache" in {
-//      val mockSessionCacheService = mock[SessionCacheService]
-//      val mockConnector = mock[VatRegisteredCompaniesConnector]
-//      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
-//
-//      val cacheId = "valid-cache-id"
-//
-//      val testAddress = Address(
-//        line1 = "123 Example Street",
-//        line2 = Some("Example Town"),
-//        line3 = Some("Example County"),
-//        line4 = None,
-//        line5 = None,
-//        postcode = Some("EX1 1EX"),
-//        countryCode = "GB"
-//      )
-//
-//      val mockRequest = mock[Request[AnyContent]]
-//      when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
-//
-//      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
-//        .thenReturn(Future.successful(None))
-//
-//      val result = service.getLookupResponseFromCache(mockRequest, hc, any()).value.futureValue
-//
-//      result shouldBe None
-//    }
+    "return None when lookup response is missing in cache" in {
+      val mockSessionCacheService = mock[SessionCacheService]
+      val mockConnector = mock[VatRegisteredCompaniesConnector]
+      val service = new VatRegisteredCompaniesService(mockSessionCacheService, mockConnector)
+
+      val cacheId = "valid-cache-id"
+
+      val mockRequest = mock[Request[AnyContent]]
+      when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
+
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+        .thenReturn(Future.successful(None))
+
+      val result = service.getLookupResponseFromCache(mockRequest, hc, execute).value.futureValue
+
+      result shouldBe None
+    }
   }
 }
