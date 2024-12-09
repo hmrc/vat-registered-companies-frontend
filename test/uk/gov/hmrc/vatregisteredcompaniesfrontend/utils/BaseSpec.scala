@@ -31,6 +31,8 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import views.html.ErrorTemplate
 import views.html.vatregisteredcompaniesfrontend.{ConfirmationPage, InvalidVatNumberPage, LookupPage}
 
+import scala.concurrent.ExecutionContext
+
 trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with TestWiring {
 
   val env: Environment = Environment.simple()
@@ -50,6 +52,8 @@ trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with T
   val invalidVatNumberPage = app.injector.instanceOf[InvalidVatNumberPage]
 
   val errorTemplate = app.injector.instanceOf[ErrorTemplate]
+
+  implicit val execute: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()

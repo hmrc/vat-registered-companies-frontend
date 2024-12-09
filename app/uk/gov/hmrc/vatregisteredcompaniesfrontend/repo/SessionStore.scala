@@ -67,3 +67,4 @@ class SessionStoreImpl @Inject()(mongo: MongoComponent)(implicit appConfig: AppC
   }
 
 }
+
