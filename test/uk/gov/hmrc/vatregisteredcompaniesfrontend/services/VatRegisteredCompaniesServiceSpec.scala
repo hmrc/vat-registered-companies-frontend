@@ -29,6 +29,7 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompan
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{Address, CompanyName, Lookup, LookupResponse, VatNumber, VatRegisteredCompany}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
+import java.time.format.DateTimeFormatter
 import java.time.{ZoneId, ZonedDateTime}
 import scala.concurrent.Future
 import scala.reflect.ClassTag
@@ -155,5 +156,23 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
 
       result shouldBe None
     }
+
+    "format processingDate using both YYYY and yyyy to validate correct year behavior" in {
+
+      val formatterYYYY = DateTimeFormatter.ofPattern("d MMMM YYYY 'at' h:mma '(BST).'")
+      val formatteryyyy = DateTimeFormatter.ofPattern("d MMMM yyyy 'at' h:mma '(BST).'")
+
+      val processingDate = ZonedDateTime.of(2024, 12, 31, 23, 59, 59, 0, ZoneId.of("Europe/London"))
+
+      val resultWithYYYY = processingDate.format(formatterYYYY)
+      val resultWithyyyy = processingDate.format(formatteryyyy)
+
+//      println(s"Formatted date with 'YYYY': $resultWithYYYY")
+//      println(s"Formatted date with 'yyyy': $resultWithyyyy")
+
+      resultWithYYYY should include("31 December 2025") // Demonstrates the issue with "YYYY"
+      resultWithyyyy should include("31 December 2024") // Validates the fix with "yyyy"
+    }
+
   }
 }
