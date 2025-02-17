@@ -28,7 +28,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.Lookup
-import views.html.vatregisteredcompaniesfrontend._
+import views.html.vatregisteredcompaniesfrontend.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -134,7 +134,7 @@ object VatRegCoLookupController {
       "target" -> mandatoryVatNumber("target"),
       "withConsultationNumber" -> boolean,
       "requester" -> mandatoryIfTrue("withConsultationNumber", mandatoryVatNumber("requester"))
-    )(Lookup.apply)(Lookup.unapply)
+    )(Lookup.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 
   private def combine[T](c1: Constraint[T], c2: Constraint[T]): Constraint[T] = Constraint { v =>

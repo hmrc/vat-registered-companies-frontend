@@ -17,8 +17,8 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.services
 
 import cats.data.OptionT
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{Json, OFormat, Reads}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -66,5 +66,26 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
 
       result shouldBe None
     }
+
+    "store data successfully in cache" in {
+
+      when(mockSessionStore.putCache(eqTo(cacheId), eqTo(testKey), eqTo(testData))(any(), any(), any()))
+        .thenReturn(Future.successful(()))
+
+      val result = service.put(cacheId, testKey, testData).futureValue
+
+      result shouldBe true
+    }
+
+    "return false when storing data in cache fails" in {
+
+      when(mockSessionStore.putCache(eqTo(cacheId), eqTo(testKey), eqTo(testData))(any(), any(), any()))
+        .thenReturn(Future.failed(new RuntimeException("Cache storage failed")))
+
+      val result = service.put(cacheId, testKey, testData).futureValue
+
+      result shouldBe false
+    }
+    
   }
 }
