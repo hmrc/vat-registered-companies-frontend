@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec

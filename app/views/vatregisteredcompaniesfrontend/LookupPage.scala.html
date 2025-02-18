@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.vatregisteredcompaniesfrontend.components.{InputText, Button}
+@import views.html.vatregisteredcompaniesfrontend.components.InputText
 
 
 @this(
@@ -23,7 +23,7 @@
     errorTemplate: ErrorTemplate,
     inputText: InputText,
     govukErrorSummary: GovukErrorSummary,
-    button: Button,
+    govukButton: GovukButton,
     govukCheckboxes: GovukCheckboxes
 )
 
@@ -93,6 +93,10 @@
 
         ))
 
-        @button(msg = "vatcheck.lookup.button")
+        @govukButton(
+            Button(
+                content = Text(messages("vatcheck.lookup.button"))
+            )
+        )
     }
 }

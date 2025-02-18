@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers.{status, _}
+import play.api.test.Helpers.*
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 
 import scala.concurrent.Future
