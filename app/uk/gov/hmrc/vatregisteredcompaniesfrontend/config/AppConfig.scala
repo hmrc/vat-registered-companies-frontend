@@ -23,7 +23,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 @Singleton
 class AppConfig @Inject()(
@@ -58,4 +58,9 @@ class AppConfig @Inject()(
 
   val mongoSessionExpireAfter: Duration = servicesConfig.getDuration("mongodb.session.expireAfter")
 
+  lazy val rateLimitEnabled: Boolean        = config.get[Boolean]("filters.rateLimit.enabled")
+  lazy val rateLimitBucketSize: Int         = config.get[Int]("filters.rateLimit.bucketSize")
+  lazy val rateLimitPeriod: FiniteDuration  = config.get[FiniteDuration]("filters.rateLimit.period")
+
+  lazy val rateLimitRatePerSecond: Double = rateLimitBucketSize.toDouble / rateLimitPeriod.toSeconds
 }

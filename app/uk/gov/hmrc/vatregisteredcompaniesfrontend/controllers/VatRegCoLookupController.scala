@@ -26,6 +26,7 @@ import play.api.data.{Form, Mapping}
 import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.filters.IpRateLimitFilter
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.Lookup
 import views.html.vatregisteredcompaniesfrontend.*
@@ -38,7 +39,8 @@ class VatRegCoLookupController @Inject()(
   mcc: MessagesControllerComponents,
   lookupPage: LookupPage,
   invalidVatNumberPage: InvalidVatNumberPage,
-  confirmationPage: ConfirmationPage
+  confirmationPage: ConfirmationPage,
+  ipRateLimitFilter: IpRateLimitFilter
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   import VatRegCoLookupController.form
@@ -95,15 +97,15 @@ class VatRegCoLookupController @Inject()(
     }
   }
 
-  def unknownWithInvalidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def unknownWithInvalidConsultationNumber: Action[AnyContent] = (Action andThen ipRateLimitFilter).async { implicit request =>
     unknown
   }
 
-  def unknownWithValidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def unknownWithValidConsultationNumber: Action[AnyContent] = (Action andThen ipRateLimitFilter).async { implicit request =>
     unknown
   }
 
-  def unknownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def unknownWithoutConsultationNumber: Action[AnyContent] = (Action andThen ipRateLimitFilter).async { implicit request =>
     unknown
   }
 
