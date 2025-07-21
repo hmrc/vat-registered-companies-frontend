@@ -17,19 +17,25 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import cats.data.OptionT
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.*
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, _}
+import play.api.test.Helpers.*
+import play.api.mvc.{Action, AnyContent}
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import org.scalatestplus.play.BaseOneAppPerSuite
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.filters.IpRateLimitFilter
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, *}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
-
+import org.scalatest.Assertion
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 import scala.concurrent.Future
 
-class VatRegCoLookupControllerSpec extends BaseSpec {
+class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
 
   val mockSessionCache = mock[SessionCacheService]
   val testVatNumber = new VatNumber("GB987654321")
@@ -44,13 +50,42 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
   )
   val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
 
-  val controller = new VatRegCoLookupController(
-    mockVatRegCoService,
-    mcc,
-    lookupPage,
-    invalidVatNumberPage,
-    confirmationPage
-  )
+  override lazy val app: Application = buildAppConfig()
+  val controller: VatRegCoLookupController = buildController(app)
+
+  def buildAppConfig(rateLimitEnabled: Boolean = true): Application = new GuiceApplicationBuilder()
+    .configure(
+      "metrics.enabled" -> "false",
+      "filters.rateLimit.enabled" -> rateLimitEnabled,
+      "filters.rateLimit.bucketSize" -> 10
+    )
+    .build()
+
+  def buildController(app: Application): VatRegCoLookupController = {
+    new VatRegCoLookupController(
+      mockVatRegCoService,
+      mcc,
+      lookupPage,
+      invalidVatNumberPage,
+      confirmationPage,
+      new IpRateLimitFilter(app.injector.instanceOf[AppConfig])
+    )
+  }
+
+  def verifyRateLimitingActions(controller: VatRegCoLookupController, assertion: Seq[Int] => Assertion): Unit = {
+    when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none[Future, Lookup])
+
+    val actions: Seq[Action[AnyContent]] = Seq(
+      controller.unknownWithoutConsultationNumber,
+      controller.unknownWithValidConsultationNumber,
+      controller.unknownWithInvalidConsultationNumber
+    )
+
+    actions.foreach { action =>
+      val statuses = for (_ <- 0 until 100) yield status(action()(fakeRequest))
+      assertion(statuses)
+    }
+  }
 
   "VatRegCoLookup Controller" must {
 
@@ -168,6 +203,17 @@ class VatRegCoLookupControllerSpec extends BaseSpec {
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.VatRegCoLookupController.lookupForm.url)
+    }
+
+    "return TOO_MANY_REQUESTS when too many unknown VAT lookup requests are made" in {
+      verifyRateLimitingActions(controller, statuses => atLeast(1, statuses) shouldBe Status.TOO_MANY_REQUESTS)
+    }
+
+    "return SEE_OTHER when rate limiting is disabled for unknown VAT lookup requests" in {
+      val appWithRateLimitDisabled = buildAppConfig(rateLimitEnabled = false)
+      val controllerWithNoRateLimit = buildController(appWithRateLimitDisabled)
+
+      verifyRateLimitingActions(controllerWithNoRateLimit, statuses => all(statuses) shouldBe SEE_OTHER)
     }
 
     "return the known page with valid consultation number" in {
