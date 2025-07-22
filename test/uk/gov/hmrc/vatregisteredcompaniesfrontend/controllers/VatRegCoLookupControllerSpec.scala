@@ -76,6 +76,9 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none[Future, Lookup])
 
     val actions: Seq[Action[AnyContent]] = Seq(
+      controller.knownWithoutConsultationNumber,
+      controller.knownWithInvalidConsultationNumber,
+      controller.knownWithValidConsultationNumber,
       controller.unknownWithoutConsultationNumber,
       controller.unknownWithValidConsultationNumber,
       controller.unknownWithInvalidConsultationNumber
@@ -222,7 +225,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
         OptionT.some[Future](LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Valid")), ZonedDateTime.now()))
       )
 
-      val result = controller.knownWithValidConsultationNumber()(fakeRequest)
+      val result = controller.knownWithValidConsultationNumber()(fakeRequestWithIp)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")
@@ -235,7 +238,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
         OptionT.some[Future](LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Invalid")), ZonedDateTime.now()))
       )
 
-      val result = controller.knownWithInvalidConsultationNumber()(fakeRequest)
+      val result = controller.knownWithInvalidConsultationNumber()(fakeRequestWithIp)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")
@@ -248,7 +251,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
         OptionT.some[Future](LookupResponse(Some(vatRegCompany), requesterVatNo, None, ZonedDateTime.now()))
       )
 
-      val result = controller.knownWithoutConsultationNumber()(fakeRequest)
+      val result = controller.knownWithoutConsultationNumber()(fakeRequestWithIp)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")

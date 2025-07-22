@@ -38,6 +38,7 @@ trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with T
   val env: Environment = Environment.simple()
   val configuration: Configuration = Configuration.load(env)
   val fakeRequest = FakeRequest("GET", "/")
+  val fakeRequestWithIp = FakeRequest().withHeaders("True-Client-IP" -> "10.0.0.1")
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val cc: ControllerComponents = play.api.test.Helpers.stubControllerComponents()
   val mcc: MessagesControllerComponents = uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents()

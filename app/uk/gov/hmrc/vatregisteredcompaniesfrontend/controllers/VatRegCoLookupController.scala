@@ -109,15 +109,15 @@ class VatRegCoLookupController @Inject()(
     unknown
   }
 
-  def knownWithValidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def knownWithValidConsultationNumber: Action[AnyContent] = (Action andThen ipRateLimitFilter).async { implicit request =>
     known
   }
 
-  def knownWithInvalidConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def knownWithInvalidConsultationNumber: Action[AnyContent] = (Action andThen ipRateLimitFilter).async { implicit request =>
     known
   }
 
-  def knownWithoutConsultationNumber: Action[AnyContent] = Action.async { implicit request =>
+  def knownWithoutConsultationNumber: Action[AnyContent] = (Action andThen ipRateLimitFilter).async { implicit request =>
     known
   }
 
