@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.config
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.Call
+import scala.annotation.nowarn
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers.routes
@@ -28,7 +29,7 @@ import scala.concurrent.duration._
 @Singleton
 class AppConfig @Inject()(
   val config: Configuration,
-  environment: Environment,
+  @nowarn("msg=unused explicit parameter") environment: Environment,
   servicesConfig: ServicesConfig) {
 
   private def loadConfig(key: String) = config.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))

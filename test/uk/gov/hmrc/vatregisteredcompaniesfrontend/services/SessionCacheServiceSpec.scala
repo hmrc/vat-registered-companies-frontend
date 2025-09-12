@@ -49,8 +49,9 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
 
     "retrieve data successfully from cache" in {
 
-      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(testKey))(eqTo(classTag), any(), any(), eqTo(reads)))
+      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(testKey))(using eqTo(classTag), any(), any(), eqTo(reads)))
         .thenReturn(OptionT(Future.successful(Option(testData))))
+
 
       val result = service.get[TestData](cacheId, testKey).futureValue
 
@@ -59,7 +60,7 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
 
     "return None when data is not in cache" in {
 
-      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(testKey))(eqTo(classTag), any(), any(), eqTo(reads)))
+      when(mockSessionStore.getCache[TestData](eqTo(cacheId), eqTo(testKey))(using eqTo(classTag), any(), any(), eqTo(reads)))
         .thenReturn(OptionT(Future.successful(None: Option[TestData])))
 
       val result = service.get[TestData](cacheId, testKey).futureValue
@@ -69,7 +70,7 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
 
     "store data successfully in cache" in {
 
-      when(mockSessionStore.putCache(eqTo(cacheId), eqTo(testKey), eqTo(testData))(any(), any(), any()))
+      when(mockSessionStore.putCache(eqTo(cacheId), eqTo(testKey), eqTo(testData))(using any(), any(), any()))
         .thenReturn(Future.successful(()))
 
       val result = service.put(cacheId, testKey, testData).futureValue
@@ -79,7 +80,7 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
 
     "return false when storing data in cache fails" in {
 
-      when(mockSessionStore.putCache(eqTo(cacheId), eqTo(testKey), eqTo(testData))(any(), any(), any()))
+      when(mockSessionStore.putCache(eqTo(cacheId), eqTo(testKey), eqTo(testData))(using any(), any(), any()))
         .thenReturn(Future.failed(new RuntimeException("Cache storage failed")))
 
       val result = service.put(cacheId, testKey, testData).futureValue

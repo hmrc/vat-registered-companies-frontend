@@ -73,7 +73,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
   }
 
   def verifyRateLimitingActions(controller: VatRegCoLookupController, assertion: Seq[Int] => Assertion): Unit = {
-    when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none[Future, Lookup])
+    when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT.none[Future, Lookup])
 
     val actions: Seq[Action[AnyContent]] = Seq(
       controller.knownWithoutConsultationNumber,
@@ -113,7 +113,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
 
       val lookupResponseObj = new LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
-      when(mockVatRegCoService.lookupVatComp(any())(any(), any())).thenReturn {
+      when(mockVatRegCoService.lookupVatComp(any())(using any(), any())).thenReturn {
        Future.successful(lookupResponseObj)
       }
 
@@ -138,7 +138,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
       val lookupResponseObj = new LookupResponse(None, requesterVatNo, Some(new ConsultationNumber("Consul9999")), ZonedDateTime.of(LocalDateTime.now,ZoneId.of("Europe/London")))
 
 
-      when(mockVatRegCoService.lookupVatComp(any())(any(), any())).thenReturn {
+      when(mockVatRegCoService.lookupVatComp(any())(using any(), any())).thenReturn {
         Future.successful(lookupResponseObj)
       }
 
@@ -182,7 +182,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
 
 
     "redirect to appropriate routes for unknownWithInvalidConsultationNumber" in {
-      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none[Future, Lookup])
+      when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT.none[Future, Lookup])
 
       val result = controller.unknownWithInvalidConsultationNumber()(fakeRequest)
 
@@ -191,7 +191,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     }
 
     "redirect to appropriate routes for unknownWithValidConsultationNumber" in {
-      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none[Future, Lookup])
+      when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT.none[Future, Lookup])
 
       val result = controller.unknownWithValidConsultationNumber()(fakeRequest)
 
@@ -200,7 +200,7 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     }
 
     "redirect to appropriate routes for unknownWithoutConsultationNumber" in {
-      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT.none[Future, Lookup])
+      when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT.none[Future, Lookup])
 
       val result = controller.unknownWithoutConsultationNumber()(fakeRequest)
 
@@ -220,8 +220,8 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     }
 
     "return the known page with valid consultation number" in {
-      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT[Future, Lookup](Future.successful(Some(lookupObj))))
-      when(mockVatRegCoService.getLookupResponseFromCache(any(), any(), any())).thenReturn(
+      when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT[Future, Lookup](Future.successful(Some(lookupObj))))
+      when(mockVatRegCoService.getLookupResponseFromCache(using any(), any(), any())).thenReturn(
         OptionT.some[Future](LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Valid")), ZonedDateTime.now()))
       )
 
@@ -233,8 +233,8 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     }
 
     "return the known page with invalid consultation number" in {
-      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT[Future, Lookup](Future.successful(Some(lookupObj))))
-      when(mockVatRegCoService.getLookupResponseFromCache(any(), any(), any())).thenReturn(
+      when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT[Future, Lookup](Future.successful(Some(lookupObj))))
+      when(mockVatRegCoService.getLookupResponseFromCache(using any(), any(), any())).thenReturn(
         OptionT.some[Future](LookupResponse(Some(vatRegCompany), requesterVatNo, Some(new ConsultationNumber("Invalid")), ZonedDateTime.now()))
       )
 
@@ -246,8 +246,8 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     }
 
     "return the known page without consultation number" in {
-      when(mockVatRegCoService.getLookupFromCache(any(), any())).thenReturn(OptionT[Future, Lookup](Future.successful(Some(lookupObj))))
-      when(mockVatRegCoService.getLookupResponseFromCache(any(), any(), any())).thenReturn(
+      when(mockVatRegCoService.getLookupFromCache(using any(), any())).thenReturn(OptionT[Future, Lookup](Future.successful(Some(lookupObj))))
+      when(mockVatRegCoService.getLookupResponseFromCache(using any(), any(), any())).thenReturn(
         OptionT.some[Future](LookupResponse(Some(vatRegCompany), requesterVatNo, None, ZonedDateTime.now()))
       )
 

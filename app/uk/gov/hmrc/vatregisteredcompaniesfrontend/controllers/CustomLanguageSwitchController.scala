@@ -19,12 +19,13 @@ package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 import javax.inject.Inject
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Lang}
+import scala.annotation.nowarn
 import play.api.mvc._
 import uk.gov.hmrc.play.language._
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
 
 class CustomLanguageSwitchController @Inject()(
-  configuration: Configuration,
+  @nowarn("msg=unused explicit parameter") configuration: Configuration,
   val appConfig: AppConfig,
   languageUtils: LanguageUtils,
   controllerComponents: ControllerComponents

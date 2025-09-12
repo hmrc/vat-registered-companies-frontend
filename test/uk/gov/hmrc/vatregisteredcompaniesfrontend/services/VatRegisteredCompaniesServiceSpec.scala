@@ -75,7 +75,7 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
       when(mockSessionCacheService.get[LookupResponse](
         eqTo(cacheId),
         eqTo(service.responseCacheId)
-      )(any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
         .thenReturn(Future.successful(Some(response)))
 
 
@@ -86,13 +86,13 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
     }
 
     "call the connector and cache response if no cached data is present" in {
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]],any(), any(), any()))
         .thenReturn(Future.successful(None))
 
-      when(mockConnector.lookup(eqTo(lookupObj))(any(), any()))
+      when(mockConnector.lookup(eqTo(lookupObj))(using any(), any()))
         .thenReturn(Future.successful(response))
 
-      when(mockSessionCacheService.put[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId), eqTo(response))(any(), any(), any()))
+      when(mockSessionCacheService.put[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId), eqTo(response))(using any(), any(), any()))
         .thenReturn(Future.successful(true))
 
       val result = service.lookupVatComp(lookupObj).futureValue
@@ -103,10 +103,10 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
 
     "return None if cache ID is missing in session" in {
       when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]],any(), any(), any()))
         .thenReturn(Future.successful(None))
 
-      val result = service.getLookupResponseFromCache(fakeRequest, hc, execute).value.futureValue
+      val result = service.getLookupResponseFromCache(using fakeRequest, hc, execute).value.futureValue
 
       result shouldBe None
     }
@@ -115,10 +115,10 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
 
       when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]],any(), any(), any()))
         .thenReturn(Future.successful(Some(response)))
 
-      val result = service.getLookupFromCache(mockRequest, execute).value.futureValue
+      val result = service.getLookupFromCache(using mockRequest, execute).value.futureValue
 
       result shouldBe Some(lookupObj)
     }
@@ -126,7 +126,7 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
     "return None if cache ID in session is invalid" in {
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> invalidCacheId)))
 
-      val result = service.getLookupFromCache(mockRequest, execute).value.futureValue
+      val result = service.getLookupFromCache(using mockRequest, execute).value.futureValue
 
       result shouldBe None
     }
@@ -137,11 +137,11 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
 
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
 
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
         .thenReturn(Future.successful(Some(lookupResponse)))
 
 
-      val result = service.getLookupResponseFromCache(mockRequest, hc, execute).value.futureValue
+      val result = service.getLookupResponseFromCache(using mockRequest, hc, execute).value.futureValue
 
       result shouldBe Some(lookupResponse)
     }
@@ -149,10 +149,10 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
     "return None when lookup response is missing in cache" in {
       when(mockRequest.session).thenReturn(Session(Map("cacheId" -> cacheId)))
 
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(any[ClassTag[LookupResponse]],any(), any(), any()))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]],any(), any(), any()))
         .thenReturn(Future.successful(None))
 
-      val result = service.getLookupResponseFromCache(mockRequest, hc, execute).value.futureValue
+      val result = service.getLookupResponseFromCache(using mockRequest, hc, execute).value.futureValue
 
       result shouldBe None
     }
