@@ -26,7 +26,7 @@ class ErrorHandlerSpec extends BaseSpec {
   "ErrorHandler should" must {
 
     "return an error page" in {
-      val result = await(errHandler.standardErrorTemplate("samplePageTitle", "sampleHeading", "sampleMessage")(fakeRequest))
+      val result = await(errHandler.standardErrorTemplate("samplePageTitle", "sampleHeading", "sampleMessage")(using fakeRequest))
 
       result.body should include("samplePageTitle")
     }

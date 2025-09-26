@@ -2,7 +2,7 @@ val appName = "vat-registered-companies-frontend"
 
 PlayKeys.playDefaultPort := 8730
 
-scalaVersion := "3.3.6"
+scalaVersion := "3.7.0"
 
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
@@ -34,5 +34,6 @@ lazy val microservice = Project(appName, file("."))
     "-Wconf:msg=unused-imports:silent",
     "-Wconf:src=routes/.*:s",
     "-Wconf:msg=Flag.*repeatedly:s",
+    "-Wconf:msg=unused implicit parameter:silent",
     "-Wconf:src=views/.*html.*:s"))
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
