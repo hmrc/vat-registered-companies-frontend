@@ -5,6 +5,8 @@ $govuk-suppressed-warnings: (
         govuk-typography-scale-14
 );
 
+$govuk-new-organisation-colours: true;
+
 @import "lib/govuk-frontend/dist/govuk/base";
 @import "lib/hmrc-frontend/hmrc/all";
 
