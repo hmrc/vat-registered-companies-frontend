@@ -4,13 +4,13 @@ import sbt._
 object AppDependencies {
 
   private val playVersion = "play-30"
-  val bootstrapVersion = "10.6.0"
+  val bootstrapVersion = "10.7.0"
   val hmrcMongoVersion = "2.12.0"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% s"bootstrap-frontend-$playVersion"            % bootstrapVersion,
-    "uk.gov.hmrc"             %% s"play-frontend-hmrc-$playVersion"            % "12.31.0",
-    "uk.gov.hmrc"             %% s"play-conditional-form-mapping-$playVersion" % "3.4.0",
+    "uk.gov.hmrc"             %% s"play-frontend-hmrc-$playVersion"            % "13.4.0",
+    "uk.gov.hmrc"             %% s"play-conditional-form-mapping-$playVersion" % "3.5.0",
     "uk.gov.hmrc.mongo"       %% s"hmrc-mongo-$playVersion"                    % hmrcMongoVersion,
     "org.typelevel"           %% "cats-core"                                   % "2.13.0",
     "com.digitaltangible"     %% "play-guard"                                  % "3.0.0"
