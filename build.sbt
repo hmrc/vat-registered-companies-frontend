@@ -29,7 +29,6 @@ lazy val microservice = Project(appName, file("."))
     ),
     scoverageSettings
   )
-  .configs(IntegrationTest)
   .settings(scalacOptions ++= Seq(
     "-Wconf:msg=unused-imports:silent",
     "-Wconf:src=routes/.*:s",

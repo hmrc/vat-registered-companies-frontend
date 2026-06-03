@@ -9,7 +9,7 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% s"bootstrap-frontend-$playVersion"            % bootstrapVersion,
-    "uk.gov.hmrc"             %% s"play-frontend-hmrc-$playVersion"            % "13.4.0",
+    "uk.gov.hmrc"             %% s"play-frontend-hmrc-$playVersion"            % "13.7.0",
     "uk.gov.hmrc"             %% s"play-conditional-form-mapping-$playVersion" % "3.5.0",
     "uk.gov.hmrc.mongo"       %% s"hmrc-mongo-$playVersion"                    % hmrcMongoVersion,
     "org.typelevel"           %% "cats-core"                                   % "2.13.0",
@@ -22,6 +22,6 @@ object AppDependencies {
     "org.mockito"               %  "mockito-core"                 % "5.21.0",
     "org.jsoup"                 %  "jsoup"                        % "1.22.1",
     "com.vladsch.flexmark"      % "flexmark-all"                  % "0.64.8"
-  ).map(_ % "test, it")
+  ).map(_ % Test)
 
 }
