@@ -129,7 +129,7 @@ object VatRegCoLookupController {
 
   import uk.gov.voa.play.form.ConditionalMappings._
 
-  private val vatNoRegex: String = "^[0-9]{9}|[0-9]{12}|[gbGB]{2}[0-9]{9}|[gbGB]{2}[0-9]{12}$"
+  private val vatNoRegex: String = "^(?:GB)?(?:[0-9]{9}|[0-9]{12})$"
 
   val form: Form[Lookup] = Form(
     mapping(
@@ -157,7 +157,10 @@ object VatRegCoLookupController {
   }
 
   private def mandatoryVatNumber(key: String): Mapping[String] = {
-    text.transform[String](_.replace(" ", "").replace("[gbGB]{2}", ""), s => s).verifying(combine(required(key),vatNumberConstraint(key)))
+    text
+      .transform[String](_.replaceAll("""\p{Z}+""", "").toUpperCase, identity)
+      .verifying(combine(required(key), vatNumberConstraint(key)))
+      .transform[String](_.stripPrefix("GB"), identity)
   }
 
 }
