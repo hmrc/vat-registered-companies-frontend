@@ -34,6 +34,8 @@ trait SessionStore {
 
   def putCache[A](cacheId: String, key: String, data: A )(implicit hc: HeaderCarrier, ec: ExecutionContext, writes: Writes[A]): Future[A]
 
+  def deleteCache(cacheId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
+
 }
 object SessionIdType extends CacheIdType[String] {
   def run: String => String = identity
@@ -66,5 +68,8 @@ class SessionStoreImpl @Inject()(mongo: MongoComponent)(implicit appConfig: AppC
 
   }
 
-}
+  override def deleteCache(cacheId: String, key: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    delete[Any](cacheId)(DataKey[Any](key))
+  }
 
+}

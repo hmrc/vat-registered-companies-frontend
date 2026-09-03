@@ -61,4 +61,19 @@ class SessionCacheService @Inject()(sessionStore: SessionStore) {
       false}
   }
 
+  def delete(
+              cacheId:String,
+              key: String
+  )(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Boolean] = {
+    sessionStore.deleteCache(cacheId, key)
+      .map(_ => true)
+      .recover
+      { case e  => logger.error(
+        s" Delete session failed for id :: $key and cache id :: $cacheId with error :: ${e.getMessage}", e)
+      false}
+  }
+
 }
