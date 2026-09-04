@@ -42,13 +42,23 @@ class VatRegisteredCompaniesService @Inject()(sessionCacheService: SessionCacheS
   def lookupVatComp(lookup: Lookup)(implicit hc: HeaderCarrier,
                                     ec: ExecutionContext): Future[LookupResponse] = {
     val cacheId = getCacheId(lookup)
-    sessionCacheService.get[LookupResponse](cacheId, responseCacheId).flatMap{
-      case Some(lookupResponse) =>
+
+    def lookupBackend: Future[LookupResponse] = connector.lookup(lookup).flatMap {
+      case lookupResponse if lookupResponse.target.nonEmpty =>
+        sessionCacheService
+          .put[LookupResponse](cacheId, responseCacheId, lookupResponse)
+          .map(_ => lookupResponse)
+      case lookupResponse =>
         Future.successful(lookupResponse)
-      case None => connector.lookup(lookup).map { lookupResponse =>
-        sessionCacheService.put[LookupResponse](cacheId, responseCacheId, lookupResponse)
-        lookupResponse
-      }
+    }
+
+    sessionCacheService.get[LookupResponse](cacheId, responseCacheId).flatMap {
+      case Some(cachedResponse) if cachedResponse.target.nonEmpty =>
+        Future.successful(cachedResponse)
+      case Some(_) =>
+        sessionCacheService.delete(cacheId, responseCacheId).flatMap(_ => lookupBackend)
+      case None =>
+        lookupBackend
     }
   }
 

@@ -87,6 +87,26 @@ class SessionCacheServiceSpec extends BaseSpec with ScalaFutures {
 
       result shouldBe false
     }
+
+    "delete data successfully from cache" in {
+
+      when(mockSessionStore.deleteCache(eqTo(cacheId), eqTo(testKey))(using any(), any()))
+        .thenReturn(Future.successful(()))
+
+      val result = service.delete(cacheId, testKey).futureValue
+
+      result shouldBe true
+    }
+
+    "return false when deleting data from cache fails" in {
+
+      when(mockSessionStore.deleteCache(eqTo(cacheId), eqTo(testKey))(using any(), any()))
+        .thenReturn(Future.failed(new RuntimeException("Cache delete failed")))
+
+      val result = service.delete(cacheId, testKey).futureValue
+
+      result shouldBe false
+    }
     
   }
 }

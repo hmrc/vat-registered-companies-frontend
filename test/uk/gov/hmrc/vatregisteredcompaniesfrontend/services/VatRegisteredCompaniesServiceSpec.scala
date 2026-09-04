@@ -70,35 +70,162 @@ class VatRegisteredCompaniesServiceSpec extends BaseSpec  with MockitoSugar with
 
 
   "VatRegisteredCompaniesService" should {
-    "retrieve cached lookup response if present" in {
-      when(mockSessionCacheService.toString).thenReturn("MockedSessionCacheService")
-      when(mockSessionCacheService.get[LookupResponse](
-        eqTo(cacheId),
-        eqTo(service.responseCacheId)
-      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
-        .thenReturn(Future.successful(Some(response)))
+    "return a successful cached lookup response without calling the connector" in {
+      reset(mockSessionCacheService, mockConnector)
 
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(Some(response)))
 
       val result = service.lookupVatComp(lookupObj).futureValue
 
       result shouldBe response
-
+      verify(mockSessionCacheService).get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(mockConnector, never()).lookup(eqTo(lookupObj))(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService, never()).put[LookupResponse](
+        any[String],
+        any[String],
+        any[LookupResponse]
+      )(using any[HeaderCarrier], any(), any())
+      verify(mockSessionCacheService, never()).delete(any[String], any[String])(using any[HeaderCarrier], any())
     }
 
-    "call the connector and cache response if no cached data is present" in {
-      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]],any(), any(), any()))
-        .thenReturn(Future.successful(None))
+    "call the connector and cache a successful lookup response when cache is empty" in {
+      reset(mockSessionCacheService, mockConnector)
 
-      when(mockConnector.lookup(eqTo(lookupObj))(using any(), any()))
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(None))
+      when(mockConnector.lookup(eqTo(lookupObj))(using any[HeaderCarrier], any()))
         .thenReturn(Future.successful(response))
 
-      when(mockSessionCacheService.put[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId), eqTo(response))(using any(), any(), any()))
+      when(
+        mockSessionCacheService.put[LookupResponse](
+          eqTo(cacheId),
+          eqTo(service.responseCacheId),
+          eqTo(response)
+        )(using any[HeaderCarrier], any(), any())
+      )
         .thenReturn(Future.successful(true))
 
       val result = service.lookupVatComp(lookupObj).futureValue
 
       result shouldBe response
+      verify(mockSessionCacheService).get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(mockConnector).lookup(eqTo(lookupObj))(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService).put[LookupResponse](
+        eqTo(cacheId),
+        eqTo(service.responseCacheId),
+        eqTo(response)
+      )(using any[HeaderCarrier], any(), any())
+    }
 
+    "reuse the cached successful response on repeated submissions" in {
+      reset(mockSessionCacheService, mockConnector)
+
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(None), Future.successful(Some(response)))
+      when(mockConnector.lookup(eqTo(lookupObj))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(response))
+
+      when(
+        mockSessionCacheService.put[LookupResponse](
+          eqTo(cacheId),
+          eqTo(service.responseCacheId),
+          eqTo(response)
+        )(using any[HeaderCarrier], any(), any())
+      )
+        .thenReturn(Future.successful(true))
+
+      service.lookupVatComp(lookupObj).futureValue shouldBe response
+      service.lookupVatComp(lookupObj).futureValue shouldBe response
+
+      verify(mockSessionCacheService, times(2)).get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(mockConnector).lookup(eqTo(lookupObj))(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService).put[LookupResponse](
+        eqTo(cacheId),
+        eqTo(service.responseCacheId),
+        eqTo(response)
+      )(using any[HeaderCarrier], any(), any())
+    }
+
+    "ignore an unsuccessful cached response, clear it and call the connector" in {
+      reset(mockSessionCacheService, mockConnector)
+
+      val cachedUnsuccessfulResponse = response.copy(target = None)
+
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(Some(cachedUnsuccessfulResponse)))
+      when(mockSessionCacheService.delete(eqTo(cacheId), eqTo(service.responseCacheId))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(true))
+      when(mockConnector.lookup(eqTo(lookupObj))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(response))
+      when(
+        mockSessionCacheService.put[LookupResponse](
+          eqTo(cacheId),
+          eqTo(service.responseCacheId),
+          eqTo(response)
+        )(using any[HeaderCarrier], any(), any())
+      )
+        .thenReturn(Future.successful(true))
+
+      val result = service.lookupVatComp(lookupObj).futureValue
+
+      result shouldBe response
+      verify(mockSessionCacheService).delete(eqTo(cacheId), eqTo(service.responseCacheId))(using any[HeaderCarrier], any())
+      verify(mockConnector).lookup(eqTo(lookupObj))(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService).put[LookupResponse](
+        eqTo(cacheId),
+        eqTo(service.responseCacheId),
+        eqTo(response)
+      )(using any[HeaderCarrier], any(), any())
+    }
+
+    "not cache an unsuccessful lookup response when cache is empty" in {
+      reset(mockSessionCacheService, mockConnector)
+
+      val unsuccessfulResponse = response.copy(target = None)
+
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(None))
+      when(mockConnector.lookup(eqTo(lookupObj))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(unsuccessfulResponse))
+
+      val result = service.lookupVatComp(lookupObj).futureValue
+
+      result shouldBe unsuccessfulResponse
+      verify(mockSessionCacheService).get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(mockConnector).lookup(eqTo(lookupObj))(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService, never()).delete(any[String], any[String])(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService, never()).put[LookupResponse](
+        any[String],
+        any[String],
+        any[LookupResponse]
+      )(using any[HeaderCarrier], any(), any())
+    }
+
+    "call the connector when clearing an unsuccessful cached response fails" in {
+      reset(mockSessionCacheService, mockConnector)
+
+      val cachedUnsuccessfulResponse = response.copy(target = None)
+      val unsuccessfulResponse = response.copy(target = None)
+
+      when(mockSessionCacheService.get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(Some(cachedUnsuccessfulResponse)))
+      when(mockSessionCacheService.delete(eqTo(cacheId), eqTo(service.responseCacheId))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(false))
+      when(mockConnector.lookup(eqTo(lookupObj))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(unsuccessfulResponse))
+
+      val result = service.lookupVatComp(lookupObj).futureValue
+
+      result shouldBe unsuccessfulResponse
+      verify(mockSessionCacheService).get[LookupResponse](eqTo(cacheId), eqTo(service.responseCacheId))(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(mockSessionCacheService).delete(eqTo(cacheId), eqTo(service.responseCacheId))(using any[HeaderCarrier], any())
+      verify(mockConnector).lookup(eqTo(lookupObj))(using any[HeaderCarrier], any())
+      verify(mockSessionCacheService, never()).put[LookupResponse](
+        any[String],
+        any[String],
+        any[LookupResponse]
+      )(using any[HeaderCarrier], any(), any())
     }
 
     "return None if cache ID is missing in session" in {

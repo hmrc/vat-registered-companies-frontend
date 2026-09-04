@@ -17,16 +17,21 @@
 package uk.gov.hmrc.vatregisteredcompaniesfrontend.controllers
 
 import cats.data.OptionT
+import org.mockito.ArgumentMatchers.{eq => eqTo}
 import org.mockito.ArgumentMatchers.*
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{never, reset, times, verify, when}
 import play.api.http.Status
+import play.api.libs.json.OFormat
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.api.mvc.{Action, AnyContent}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import org.scalatestplus.play.BaseOneAppPerSuite
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.VatRegisteredCompaniesService
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.config.AppConfig
+import uk.gov.hmrc.vatregisteredcompaniesfrontend.connectors.VatRegisteredCompaniesConnector
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.filters.IpRateLimitFilter
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.models.{ConsultationNumber, Lookup, *}
 import uk.gov.hmrc.vatregisteredcompaniesfrontend.services.SessionCacheService
@@ -34,6 +39,7 @@ import uk.gov.hmrc.vatregisteredcompaniesfrontend.utils.BaseSpec
 import org.scalatest.Assertion
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
 
@@ -49,6 +55,12 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
     Address("33 HopeGreen", None, None, None, None, None, "UK")
   )
   val lookupObj = new Lookup(testVatNumber, boolValue, requesterVatNo)
+  val submittedLookupFormData = Map(
+    "target" -> testVatNumber,
+    "withConsultationNumber" -> boolValue.toString,
+    "requester" -> requesterVatNo.getOrElse("")
+  )
+  val expectedLookupObj = VatRegCoLookupController.form.bind(submittedLookupFormData).value.get
 
   override lazy val app: Application = buildAppConfig()
   val controller: VatRegCoLookupController = buildController(app)
@@ -64,6 +76,17 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
   def buildController(app: Application): VatRegCoLookupController = {
     new VatRegCoLookupController(
       mockVatRegCoService,
+      mcc,
+      lookupPage,
+      invalidVatNumberPage,
+      confirmationPage,
+      new IpRateLimitFilter(app.injector.instanceOf[AppConfig])
+    )
+  }
+
+  def buildControllerWithService(app: Application, service: VatRegisteredCompaniesService): VatRegCoLookupController = {
+    new VatRegCoLookupController(
+      service,
       mcc,
       lookupPage,
       invalidVatNumberPage,
@@ -152,6 +175,154 @@ class VatRegCoLookupControllerSpec extends BaseSpec with BaseOneAppPerSuite {
 
       redirectLocation(result).get shouldBe "/check-vat-number/unknown/requester/known"
 
+    }
+
+    "call backend and cache successful lookup during the submit to result page journey" in {
+      val connector = mock[VatRegisteredCompaniesConnector]
+      val sessionCacheService = mock[SessionCacheService]
+      val service = new VatRegisteredCompaniesService(sessionCacheService, connector)
+      val controller = buildControllerWithService(app, service)
+      val expectedCacheId = service.getCacheId(expectedLookupObj)
+      val lookupResponseObj = new LookupResponse(
+        Some(vatRegCompany),
+        expectedLookupObj.requester,
+        Some(new ConsultationNumber("Consul9999")),
+        ZonedDateTime.of(LocalDateTime.now, ZoneId.of("Europe/London"))
+      )
+
+      val request = FakeRequest("POST", "/enter-vat-details")
+        .withFormUrlEncodedBody(
+          "target" -> testVatNumber,
+          "withConsultationNumber" -> boolValue.toString,
+          "requester" -> requesterVatNo.getOrElse("")
+        )
+
+      when(connector.lookup(eqTo(expectedLookupObj))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(lookupResponseObj))
+      when(sessionCacheService.put[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId),
+        eqTo(lookupResponseObj)
+      )(using any[HeaderCarrier], any(), any()))
+        .thenReturn(Future.successful(true))
+      when(sessionCacheService.get[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId)
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(None), Future.successful(Some(lookupResponseObj)))
+
+      val submitResult = controller.submit()(request)
+      val cacheId = session(submitResult).get("cacheId").get
+
+      status(submitResult) shouldBe Status.SEE_OTHER
+      cacheId shouldBe expectedCacheId
+      redirectLocation(submitResult) shouldBe Some("/check-vat-number/known/requester/known")
+
+      val resultPage = controller.knownWithValidConsultationNumber()(
+        fakeRequestWithIp.withSession("cacheId" -> cacheId)
+      )
+
+      status(resultPage) shouldBe OK
+      contentAsString(resultPage) should include("XYZ Exports")
+      verify(sessionCacheService, times(2)).get[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId)
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(connector).lookup(eqTo(expectedLookupObj))(using any[HeaderCarrier], any())
+      verify(sessionCacheService).put[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId),
+        eqTo(lookupResponseObj)
+      )(using any[HeaderCarrier], any(), any())
+    }
+
+    "reuse a successful cached lookup during submit without calling backend" in {
+      val connector = mock[VatRegisteredCompaniesConnector]
+      val sessionCacheService = mock[SessionCacheService]
+      val service = new VatRegisteredCompaniesService(sessionCacheService, connector)
+      val controller = buildControllerWithService(app, service)
+      val expectedCacheId = service.getCacheId(expectedLookupObj)
+      val lookupResponseObj = new LookupResponse(
+        Some(vatRegCompany),
+        expectedLookupObj.requester,
+        Some(new ConsultationNumber("Consul9999")),
+        ZonedDateTime.of(LocalDateTime.now, ZoneId.of("Europe/London"))
+      )
+
+      val request = FakeRequest("POST", "/enter-vat-details")
+        .withFormUrlEncodedBody(
+          "target" -> testVatNumber,
+          "withConsultationNumber" -> boolValue.toString,
+          "requester" -> requesterVatNo.getOrElse("")
+        )
+
+      when(sessionCacheService.get[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId)
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(Some(lookupResponseObj)))
+
+      val result = controller.submit()(request)
+
+      status(result) shouldBe Status.SEE_OTHER
+      session(result).get("cacheId") shouldBe Some(expectedCacheId)
+      redirectLocation(result) shouldBe Some("/check-vat-number/known/requester/known")
+      verify(sessionCacheService).get[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId)
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(connector, never()).lookup(eqTo(expectedLookupObj))(using any[HeaderCarrier], any())
+      verify(sessionCacheService, never()).put[LookupResponse](
+        any[String],
+        any[String],
+        any[LookupResponse]
+      )(using any[HeaderCarrier], any(), any())
+    }
+
+    "call backend and not cache an unsuccessful lookup during submit when cache is empty" in {
+      val connector = mock[VatRegisteredCompaniesConnector]
+      val sessionCacheService = mock[SessionCacheService]
+      val service = new VatRegisteredCompaniesService(sessionCacheService, connector)
+      val controller = buildControllerWithService(app, service)
+      val expectedCacheId = service.getCacheId(expectedLookupObj)
+      val lookupResponseObj = new LookupResponse(
+        None,
+        expectedLookupObj.requester,
+        Some(new ConsultationNumber("Consul9999")),
+        ZonedDateTime.of(LocalDateTime.now, ZoneId.of("Europe/London"))
+      )
+
+      val request = FakeRequest("POST", "/enter-vat-details")
+        .withFormUrlEncodedBody(
+          "target" -> testVatNumber,
+          "withConsultationNumber" -> boolValue.toString,
+          "requester" -> requesterVatNo.getOrElse("")
+        )
+
+      when(sessionCacheService.get[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId)
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]]))
+        .thenReturn(Future.successful(None))
+      when(connector.lookup(eqTo(expectedLookupObj))(using any[HeaderCarrier], any()))
+        .thenReturn(Future.successful(lookupResponseObj))
+
+      val result = controller.submit()(request)
+
+      status(result) shouldBe Status.SEE_OTHER
+      session(result).get("cacheId") shouldBe Some(expectedCacheId)
+      redirectLocation(result) shouldBe Some("/check-vat-number/unknown/requester/known")
+      verify(sessionCacheService).get[LookupResponse](
+        eqTo(expectedCacheId),
+        eqTo(service.responseCacheId)
+      )(using any[ClassTag[LookupResponse]], any[HeaderCarrier], any(), any[OFormat[LookupResponse]])
+      verify(connector).lookup(eqTo(expectedLookupObj))(using any[HeaderCarrier], any())
+      verify(sessionCacheService, never()).delete(any[String], any[String])(using any[HeaderCarrier], any())
+      verify(sessionCacheService, never()).put[LookupResponse](
+        any[String],
+        any[String],
+        any[LookupResponse]
+      )(using any[HeaderCarrier], any(), any())
     }
 
     "return BadRequest Exception for an empty VAT RegNo input" in {
