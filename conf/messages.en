@@ -37,11 +37,13 @@ error.requester.invalid=Enter your own UK VAT number in the correct format
 error.requester-and-target-same=Your own UK VAT number must be different to the UK VAT number you want to check
 
 # results
-vatcheck.result.invalidVatNo=Invalid UK VAT number
+vatcheck.result.invalidVatNo=VAT registration not found
 vatcheck.result.validVatNo=Valid UK VAT number
 vatcheck.result.processingDate=Search completed on {0}
 vatcheck.result.invalid.p=You searched for
-vatcheck.result.invalid.no-match=This does not match the VAT number of any UK VAT-registered business.
+vatcheck.result.invalid.no-match=We could not find a matching VAT registration for this VAT number.
+vatcheck.result.invalid.no-vat-no=Databases may not yet include new VAT registrations if they have only \
+  been registered within 48 hours.
 vatcheck.result.invalid.no-proof=We can only give a proof of check reference number for a valid UK VAT number.
 vatcheck.result.valid.vat-no=VAT number 
 vatcheck.result.valid.check-ref=Your proof of check reference 

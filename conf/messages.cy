@@ -37,12 +37,13 @@ error.requester.invalid=Nodwch eich rhif TAW yn y DU eich hun yn y fformat cywir
 error.requester-and-target-same=Rhaid i’ch rhif TAW yn y DU fod yn wahanol i’r rhif TAW yn y DU yr hoffech ei wirio
 
 # results
-vatcheck.result.invalidVatNo=Rhif TAW yn y DU dilys
+vatcheck.result.invalidVatNo=Heb ddod o hyd i gofrestriad TAW
 vatcheck.result.validVatNo=Rhif TAW yn y DU dilys
 vatcheck.result.processingDate=Cwblhawyd y chwiliad ar {0}
 vatcheck.result.invalid.p=Gwnaethoch chwilio am
-vatcheck.result.invalid.no-match=Nid yw hwn yn cyd-fynd â rhif TAW unrhyw fusnes sydd wedi’i gofrestru ar \
-  gyfer TAW yn y DU.
+vatcheck.result.invalid.no-match=Nid oeddem yn gallu dod o hyd i gofrestriad TAW sy’n cyd-fynd â’r rhif TAW hwn.
+vatcheck.result.invalid.no-vat-no=Efallai na fydd y cronfeydd data yn cynnwys cofrestriadau TAW newydd eto os mai dim ond o \
+  fewn y 48 awr diwethaf y cawsant eu cofrestru.
 vatcheck.result.invalid.no-proof=Dim ond ar gyfer rhif TAW yn y DU sy’n ddilys y gallwn roi cyfeirnod i chi \
   fel prawf o’ch gwiriad.
 vatcheck.result.valid.vat-no=Rhif TAW
